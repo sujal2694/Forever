@@ -13,7 +13,7 @@ export default function LoginPage() {
                     <hr className="h-[2] w-12 border-none rounded-b-full bg-gray-800" />
                 </div>
 
-                <form className="text-center w-[45vw] my-8">
+                <form className="text-center md:w-[45vw] lg:w-[20vw] my-8">
                     <div className="flex items-center justify-center flex-col gap-4">
                         <input className="border border-gray-700 p-3 w-full outline-none" type="email" placeholder="Email" required/>
                         <input className="border border-gray-700 p-3 w-full outline-none" type="password" placeholder="Password" required/>

@@ -2,12 +2,13 @@
 import Navbar from "../components/Navbar"
 import Image from "next/image"
 import { assets, products } from "../frontend_assets/assets"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { Context } from "../context/Context"
 import Footer from "../components/Footer"
 
 const Collection = () => {
     const { searchBar, setSearchBar, currency } = useContext(Context);
+
     return (
         <div>
             <Navbar />
@@ -83,15 +84,15 @@ const Collection = () => {
                             </select>
                         </div>
 
-                        <div className="mt-4 grid grid-cols-4 md:grid-cols-3 gap-3">
-                            {products.slice(1,20).map((item, index) => {
+                        <div className="mt-4 grid lg:grid-cols-4 md:grid-cols-3 gap-3">
+                            {products.slice(1).map((item, index) => {
                                 return (
                                     <div key={index}>
                                         <div className="overflow-hidden">
                                             <Image className="hover:scale-110 transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
                                         </div>
                                         <p className="text-sm text-gray-600 tracking-wide">{item.name}</p>
-                                        <p className="text-sm text-gray-600">${(item.price * currency)/20}</p>
+                                        <p className="text-sm text-gray-600">${(item.price * currency) / 20}</p>
                                     </div>
                                 )
                             })}

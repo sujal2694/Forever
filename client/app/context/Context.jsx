@@ -1,11 +1,11 @@
 "use client"
 import { createContext, useState } from "react";
+import { products } from "../frontend_assets/assets";
 
 export const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
 
-    const [product_list, setProductList] = useState();
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
 
