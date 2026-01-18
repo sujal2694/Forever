@@ -30,7 +30,7 @@ export default function Navbar() {
 
                 <div>
                     <ul className="flex items-center gap-7">
-                        <Link href='/collection'></Link><li onClick={()=>{setMenu("search"); setSearchBar(true)}}><Image className="w-5 cursor-pointer" src={assets.search_icon} alt="serach icon"></Image></li>
+                        <Link href='/collection'><li onClick={()=>{setMenu("search"); setSearchBar(true)}}><Image className="w-5 cursor-pointer" src={assets.search_icon} alt="serach icon"></Image></li></Link>
 
                         <Link href='/login'><li onClick={()=>setMenu("login")}><Image className="w-5 cursor-pointer" src={assets.profile_icon} alt="profile icon"></Image></li></Link>
 

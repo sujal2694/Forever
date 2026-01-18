@@ -1,3 +1,4 @@
+import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 
@@ -14,8 +15,8 @@ export default function LoginPage() {
 
                 <form className="text-center w-[45vw] my-8">
                     <div className="flex items-center justify-center flex-col gap-4">
-                        <input className="border border-gray-700 p-3 w-full" type="email" placeholder="Email" required/>
-                        <input className="border border-gray-700 p-3 w-full" type="password" placeholder="Password" required/>
+                        <input className="border border-gray-700 p-3 w-full outline-none" type="email" placeholder="Email" required/>
+                        <input className="border border-gray-700 p-3 w-full outline-none" type="password" placeholder="Password" required/>
                     </div>
                     <div className="flex items-center justify-between text-sm my-2">
                         <p>Forgot Password?</p>
@@ -25,6 +26,7 @@ export default function LoginPage() {
                 </form>
             </div>
         </div>
+        <Footer/>
         </>
     )
 }

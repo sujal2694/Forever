@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="flex items-start justify-between w-[85vw] m-auto mb-10 mt-16">
                 <div className="w-90">
                     <Image className="w-30" src={assets.logo} alt="logo" ></Image>
-                    <p className="mt-4 text-sm text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis suscipit, assumenda iste nulla repellat architecto deserunt cum voluptate libero repellendus.</p>
+                    <p className="mt-4 text-sm text-gray-500">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
                 </div>
 
                 <div className="flex items-start gap-10">
