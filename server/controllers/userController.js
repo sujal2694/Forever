@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
-import { useModel } from '../models/userSchema';
+import { useModel, userSchema } from '../models/userSchema.js';
 import validator from 'validator'
+import bcrypt from 'bcrypt'
 
 
 const createToken = (id) => {
@@ -8,22 +9,62 @@ const createToken = (id) => {
 }
 
 export const registerUser = async (req, res) => {
-    const { email, paasword } = req.body;
+    const { email, password } = req.body;
     try {
-        const exists = useModel.findOne({email});
+        const exists = useModel.findOne({ email });
         if (exists) {
-            res.json({success: false, message: "User already exists."})
+            return res.json({ success: false, message: "User already exists." })
         }
 
         //validating email
-        if (validator.isEmail(email)) {
-            res.json({success:false, message: "Email is incorrect."})
+        if (!validator.isEmail(email)) {
+            return res.json({ success: false, message: "Email is incorrect." })
         }
 
-        
+        if (password.length < 8) {
+            return res.json({success:false, message:'Paaword is weak, Make strong & use atleast 8 charachters.'})
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new userSchema({
+            email: email,
+            password: hashedPassword
+        })
+
+        const user = await newUser.save();
+        const token = createToken(user._id)
+        res.json({success:true, token})
+
+
 
     } catch (error) {
-        res.json({success:false, message: "error"})
+        res.json({ success: false, message: "error" })
         console.log(error);
+    }
+}
+
+export const loginUser = async (req,res)=>{
+    const {email,password} = req.body;
+    try {
+        const user = await userSchema.findOne({email})
+
+        if (!user) {
+            return res.json({success:false,message:"User doesn't exists"})
+        }
+
+        const isMatch = await bcrypt.compare(password,user.password)
+
+        if (!isMatch) {
+            return res,json({success:false,message:"Invalid credentials"})
+        }
+        
+        const token = createToken(user._id);
+        res.json({success:true,token})
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:"Error"})
     }
 }
