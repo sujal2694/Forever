@@ -9,7 +9,7 @@ const Contact = () => {
     return (
         <div>
             <Navbar />
-            <hr className='h-[1] w-[85vw] lg:w-[70vw] m-auto bg-gray-300 border-none' />
+            <hr className='h-[1] w-[85vw] lg:w-[80vw] m-auto bg-gray-300 border-none' />
             <div className='w-[85vw] lg:w-[70vw] m-auto'>
                 <div className='text-center'>
                     <h1 className='flex items-center justify-center text-2xl lg:text-3xl uppercase my-7 text-gray-400 gap-2'>contact   <span className='text-gray-800'>us</span><hr className='w-12 h-[2] bg-black border-none rounded-4xl' /></h1>

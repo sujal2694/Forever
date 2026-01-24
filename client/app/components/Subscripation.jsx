@@ -5,7 +5,7 @@ const Subscripation = () => {
     return (
         <div className="w-full ">
             <div className="w-full mb-40">
-                <div className="flex items-center justify-center flex-col w-[85vw] lg:w-[70vw] m-auto ">
+                <div className="flex items-center justify-center flex-col w-[85vw] lg:w-[80vw] m-auto ">
                     <h1 className="text-2xl font-semibold mb-3">Subscribe now & get 20% off</h1>
                     <p className="text-lg text-gray-400 mb-4">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam.</p>
                     <div className="lg:w-[30vw] md:w-[40vw] h-12 flex items-center">

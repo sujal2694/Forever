@@ -8,11 +8,13 @@ export const ContextProvider = ({ children }) => {
 
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
+    const url = "http://localhost:4000"
 
     const ContextValue = {
         searchBar,
         setSearchBar,
         currency,
+        url,
     }
 
     return (

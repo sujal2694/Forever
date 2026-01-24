@@ -14,12 +14,12 @@ const About = () => {
                     <hr className="w-12 h-[2] border-none bg-black" />
                 </div>
 
-                <div className="flex items-start justify-between gap-10 my-10 h-[500px]">
+                <div className="flex items-start justify-between gap-10 my-10 h-[500px] lg:h-[700px]">
                     <div className="w-full h-full">
                         <Image className="w-full h-full" src={assets.about_img} alt=""></Image>
                     </div>
 
-                    <div className="w-full">
+                    <div className="w-full lg:w-[30vw]">
                         <p className="text-md text-gray-500">Forever was born out of a passion for innovation and a desire to revolutionize the way people shop online. Our journey began with a simple idea: to provide a platform where customers can easily discover, explore, and purchase a wide range of products from the comfort of their homes.</p>
                         <br />
                         <p className="text-md text-gray-500">Since our inception, we've worked tirelessly to curate a diverse selection of high-quality products that cater to every taste and preference. From fashion and beauty to electronics and home essentials, we offer an extensive collection sourced from trusted brands and suppliers.</p>

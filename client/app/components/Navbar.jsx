@@ -11,7 +11,7 @@ export default function Navbar() {
     const [openSidebar, setOpenSidebar] = useState(false);
     return (
         <div className="w-full py-3">
-            <div className="w-[85vw] lg:w-[70vw] m-auto flex items-center justify-between">
+            <div className="w-[85vw] lg:w-[80vw] m-auto flex items-center justify-between">
                 <div>
                     <Image className="w-40 cursor-pointer" src={assets.logo} alt="logo"></Image>
                 </div>

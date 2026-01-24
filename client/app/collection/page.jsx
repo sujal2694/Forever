@@ -14,22 +14,22 @@ const Collection = () => {
             <Navbar />
             {searchBar
                 ? <div>
-                    <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[70vw] m-auto" />
-                    <div className="w-[85vw] lg:w-[70vw] m-auto flex items-center justify-center gap-4 py-5 bg-gray-400/10">
+                    <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[80vw] m-auto" />
+                    <div className="w-[85vw] lg:w-[80vw] m-auto flex items-center justify-center gap-4 py-5 bg-gray-400/10">
                         <div className="w-fit relative">
                             <input className="w-90 border border-gray-400 rounded-4xl p-2 pl-5" type="text" placeholder="Search" />
                             <Image className="w-4 absolute right-5 top-3" src={assets.search_icon} alt="search"></Image>
                         </div>
                         <Image onClick={() => setSearchBar(false)} className="w-3 cursor-pointer" src={assets.cross_icon} alt="remove"></Image>
                     </div>
-                    <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[70vw] m-auto" />
+                    <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[80vw] m-auto" />
                 </div>
                 : ""}
 
             <div className="mb-20">
-                <hr className="border-none bg-gray-300 h-[1] w-[85vw] lg:w-[70vw] m-auto" />
+                <hr className="border-none bg-gray-300 h-[1] w-[85vw] lg:w-[80vw] m-auto" />
 
-                <div className="w-[85vw] lg:w-[70vw] m-auto mt-12 flex items-start gap-8">
+                <div className="w-[85vw] lg:w-[80vw] m-auto mt-12 flex items-start gap-8">
                     <div>
                         <h1 className="uppercase text-xl">filters</h1>
 
@@ -84,15 +84,17 @@ const Collection = () => {
                             </select>
                         </div>
 
-                        <div className="mt-4 grid lg:grid-cols-4 md:grid-cols-3 gap-3">
+                        <div className="mt-4 grid lg:grid-cols-4 md:grid-cols-3 gap-4">
                             {products.slice(1).map((item, index) => {
                                 return (
-                                    <div key={index}>
+                                    <div key={index} className="mb-5">
                                         <div className="overflow-hidden">
                                             <Image className="hover:scale-110 transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
                                         </div>
-                                        <p className="text-sm text-gray-600 tracking-wide">{item.name}</p>
-                                        <p className="text-sm text-gray-600">${(item.price * currency) / 20}</p>
+                                        <div className="pl-3">
+                                            <p className="text-sm text-gray-600 tracking-wide mt-2">{item.name}</p>
+                                            <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
+                                        </div>
                                     </div>
                                 )
                             })}

@@ -4,7 +4,7 @@ import { assets } from "../frontend_assets/assets"
 
 export default function Hero() {
     return(
-        <div className="flex items-center w-[85vw] lg:w-[70vw] m-auto border border-gray-700 max-sm:flex-col mb-16 mt-5">
+        <div className="flex items-center w-[85vw] lg:w-[80vw] m-auto border border-gray-700 max-sm:flex-col mb-40 mt-5">
             <div className="w-[50%] max-sm:w-full flex items-center justify-center my-8">
                 <div>
                     <div className="flex items-center h-full gap-2.5">

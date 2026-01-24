@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { useModel, userSchema } from '../models/userSchema.js';
+import { userModel } from '../models/userModel.js';
 import validator from 'validator'
 import bcrypt from 'bcrypt'
 
@@ -11,7 +11,7 @@ const createToken = (id) => {
 export const registerUser = async (req, res) => {
     const { email, password } = req.body;
     try {
-        const exists = useModel.findOne({ email });
+        const exists = userModel.findOne(email);
         if (exists) {
             return res.json({ success: false, message: "User already exists." })
         }
@@ -28,7 +28,7 @@ export const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUser = new userSchema({
+        const newUser = new userModel({
             email: email,
             password: hashedPassword
         })
@@ -48,7 +48,7 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req,res)=>{
     const {email,password} = req.body;
     try {
-        const user = await userSchema.findOne({email})
+        const user = await userModel.findOne({email})
 
         if (!user) {
             return res.json({success:false,message:"User doesn't exists"})
