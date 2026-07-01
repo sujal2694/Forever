@@ -61,13 +61,13 @@ export default function Navbar() {
                         {isLogedin 
                             ? <Link href='/profile'><Image onClick={() => navMenuHandler("login")} className="w-5 cursor-pointer" src={assets.profile_icon} alt="profile-image" /></Link>
                             : <Link href='/login'><li onClick={() => navMenuHandler("login")}>
-                                <button className="border border-gray-400/50 px-5 py-1 rounded-2xl text-sm hover:shadow-2xs hover:shadow-gray-700/50 cursor-pointer hover:scale-[1.1] transition-all duration-300">Log In</button>
+                                <button className="bg-button text-gray-700 hover:bg-transparent px-5 py-1 rounded-2xl text-sm hover:shadow-2xs hover:shadow-button cursor-pointer hover:scale-[1.1] transition-all duration-300">Log In</button>
                             </li></Link>
                         }
 
                         <Link href="/cart"><li onClick={() => navMenuHandler("cart")} className="relative">
                             <Image className="w-5 cursor-pointer" src={assets.cart_icon} alt="cart icon" />
-                            <p className="bg-black h-4 w-4 rounded-full absolute bottom-[-5px] right-[-5px] text-white flex items-center justify-center text-[10px] font-semibold cursor-pointer">0</p>
+                            <p className="bg-button h-4 w-4 rounded-full absolute bottom-[-5px] right-[-5px] text-gray-700 flex items-center justify-center text-[10px] font-semibold cursor-pointer">0</p>
                         </li></Link>
 
                         <li className="hidden max-sm:block">

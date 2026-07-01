@@ -22,12 +22,12 @@ export default function ProductPage() {
                 <div className="grid lg:grid-cols-5 md:grid-cols-3 gap-6 space-y-5 lg:space-y-10 grid-cols-1">
                     {products.slice(1, 11).map((item, index) => {
                         return (
-                            <div key={index} className="w-fit hover:scale-[1.1] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300">
+                            <div key={index} className="w-fit hover:scale-[1.01] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300">
                                 <div className="overflow-hidden">
-                                    <Image className="hover:scale-110 rounded-2xl group-hover:rounded-2xl hover:rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
+                                    <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
                                 </div>
-                                <p className="text-sm lg:group-hover:text-md group-hover:text-white group-hover:px-2 text-gray-600 mt-2 tracking-wide">{item.name}</p>
-                                <p className="text-sm lg:group-hover:text-md group-hover:text-white group-hover:px-2 text-gray-600 mt-1">${(item.price * currency) / 20}</p>
+                                <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
+                                <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
                             </div>
                         )
                     })}
@@ -47,12 +47,12 @@ export default function ProductPage() {
             <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-6 mb-40 ">
                 {products.slice(10, 14).map((item, index) => {
                     return (
-                        <div key={index} className="w-fit hover:scale-[1.1] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:p-2 lg:hover:p-3 hover:shadow-2xl shadow-shadow group transition-all duration-300">
+                        <div key={index} className="w-fit hover:scale-[1.01] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300">
                             <div className="overflow-hidden">
-                                <Image className="hover:scale-110 hover:rounded-2xl rounded-2xl group-hover:rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
+                                <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
                             </div>
-                            <p className="text-sm lg:group-hover:text-md group-hover:text-white text-gray-600 mt-2 tracking-wide translate-all duration-200">{item.name}</p>
-                            <p className="text-sm lg:group-hover:text-md group-hover:text-white text-gray-600 mt-1 translate-all duration-200">${(item.price * currency) / 20}</p>
+                            <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
+                            <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
                         </div>
                     )
                 })}
