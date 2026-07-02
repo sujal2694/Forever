@@ -3,6 +3,7 @@ import cors from 'cors'
 import 'dotenv/config'
 import { connectDB } from './config/db.js';
 import { userRouter } from './routes/userRoutes.js';
+import addressRouter from './routes/addressRoute.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ connectDB();
 
 //api endpoints
 app.use('/api/user', userRouter);
+app.use('/api/address', addressRouter);
 
 
 app.get('/',(req,res)=>{

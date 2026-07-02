@@ -10,6 +10,7 @@ export default function Navbar() {
     const { setSearchBar, isLogedin } = useContext(Context);
     const [menu, setMenu] = useState("home");
     const [openSidebar, setOpenSidebar] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const router = useRouter();
 
     const navMenuHandler = (menuItem) => {
@@ -20,15 +21,23 @@ export default function Navbar() {
     useEffect(() => {
         const saved = localStorage.getItem("menu");
         if (saved) setMenu(saved);
+
+        window.addEventListener("scroll", ()=>{
+            if (scrollY > 50) {
+                setIsScrolled(true)
+            } else {
+                setIsScrolled(false)
+            }
+        })
     }, [])
 
     return (
-        <div className="w-full py-3 fixed top-0 left-0 z-10 backdrop-blur-2xl bg-white/30 pt-5 shadow-2xl shadow-navbar">
+        <div className={`w-full py-3 fixed top-0 left-0 z-10 pt-5 ${isScrolled ? "backdrop-blur-lg shadow-sm" : ""} transition-all duration-500`}>
             <div className="w-[85vw] lg:w-[80vw] m-auto flex items-center justify-between">
                 <div>
-                    <Image onClick={()=> {navMenuHandler("home"); router.push("/")}} className="w-40 cursor-pointer" src={assets.logo} alt="logo" priority />
+                    <Image onClick={()=> {navMenuHandler("home"); router.push("/")}} className="w-40 cursor-pointer" src={assets.logo} alt="logo" loading="eager" />
                 </div>
-                <div className="flex items-center sm:gap-6 gap-4 max-sm:hidden">
+                <div className={`flex items-center sm:gap-6 gap-4 max-sm:hidden ${isScrolled ? "" : "px-7 py-3 rounded-full backdrop-blur-lg shadow-sm"} transition-all duration-500`}>
                     <ul className="flex items-center sm:gap-4 gap-2.5">
                         <Link href="/"><li onClick={() => navMenuHandler("home")} className="uppercase sm:text-sm text-gray-800 flex items-center justify-center flex-col cursor-pointer">
                             <p>home</p>
@@ -55,18 +64,18 @@ export default function Navbar() {
                 <div>
                     <ul className="flex items-center gap-7">
                         <Link href='/collection'><li onClick={() => { navMenuHandler("search"); setSearchBar(true) }}>
-                            <Image className="w-5 cursor-pointer" src={assets.search_icon} alt="search icon" />
+                            <Image className="w-5 cursor-pointer" src={assets.search_icon} alt="search icon" loading="eager" />
                         </li></Link>
 
                         {isLogedin 
-                            ? <Link href='/profile'><Image onClick={() => navMenuHandler("login")} className="w-5 cursor-pointer" src={assets.profile_icon} alt="profile-image" /></Link>
+                            ? <Link href='/profile'><Image onClick={() => navMenuHandler("login")} className="w-5 cursor-pointer" src={assets.profile_icon} alt="profile-image" loading="eager" /></Link>
                             : <Link href='/login'><li onClick={() => navMenuHandler("login")}>
                                 <button className="bg-button text-gray-700 hover:bg-transparent px-5 py-1 rounded-2xl text-sm hover:shadow-2xs hover:shadow-button cursor-pointer hover:scale-[1.1] transition-all duration-300">Log In</button>
                             </li></Link>
                         }
 
                         <Link href="/cart"><li onClick={() => navMenuHandler("cart")} className="relative">
-                            <Image className="w-5 cursor-pointer" src={assets.cart_icon} alt="cart icon" />
+                            <Image className="w-5 cursor-pointer" src={assets.cart_icon} alt="cart icon"loading="eager" />
                             <p className="bg-button h-4 w-4 rounded-full absolute bottom-[-5px] right-[-5px] text-gray-700 flex items-center justify-center text-[10px] font-semibold cursor-pointer">0</p>
                         </li></Link>
 
@@ -79,7 +88,7 @@ export default function Navbar() {
                 {/* Mobile Sidebar */}
                 <div className={openSidebar ? "bg-white absolute top-0 left-0 h-screen w-full transition-all duration-300 cursor-pointer z-50" : "bg-white absolute top-0 -left-full h-screen w-full transition-all duration-300 cursor-pointer z-50"}>
                     <div onClick={() => setOpenSidebar(false)} className="flex items-center gap-2.5 px-3 py-1 my-2">
-                        <Image src={assets.dropdown_icon} className="rotate-180 w-2" alt="back-btn" />
+                        <Image src={assets.dropdown_icon} className="rotate-180 w-2" alt="back-btn" loading="eager" />
                         <p className="text-gray-700">Back</p>
                     </div>
                     <hr className="border-none h-0.5 bg-gray-200" />

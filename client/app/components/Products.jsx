@@ -7,7 +7,7 @@ import { Context } from "../context/Context";
 export default function ProductPage() {
     const { currency } = useContext(Context);
     return (
-        <div className="w-[85vw] lg:w-[80vw] m-auto my-10">
+        <div className="w-[85vw] lg:w-[80vw] m-auto my-10 fade-in">
             <div className="mb-40">
                 <div className="text-center mb-8">
                     <div className="flex items-center justify-center mb-4 gap-2.5 w-full">
@@ -24,7 +24,7 @@ export default function ProductPage() {
                         return (
                             <div key={index} className="w-fit hover:scale-[1.01] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300">
                                 <div className="overflow-hidden">
-                                    <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
+                                    <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt="" loading="eager"></Image>
                                 </div>
                                 <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
                                 <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
@@ -49,7 +49,7 @@ export default function ProductPage() {
                     return (
                         <div key={index} className="w-fit hover:scale-[1.01] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300">
                             <div className="overflow-hidden">
-                                <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
+                                <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt="" loading="eager"></Image>
                             </div>
                             <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
                             <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>

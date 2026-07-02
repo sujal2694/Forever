@@ -9,7 +9,7 @@ const page = () => {
     return (
         <div>
             <Navbar />
-            <div className="w-[85vw] m-auto mt-28 border-b border-gray-600/30">
+            <div className="w-[85vw] m-auto mt-28 border-b border-gray-600/30 fade-in">
                 <div className="flex items-center justify-center">
                     <h2 className="flex items-center gap-3 text-4xl uppercase text-gray-600"><span className="text-black">Your</span> Cart <p className="bg-black h-[2] w-20"></p></h2>
                 </div>

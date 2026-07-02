@@ -1,14 +1,37 @@
+"use client"
 import Navbar from "../components/Navbar"
 import Image from "next/image"
 import { assets } from "../assets/assets"
 import Subscription from "../components/Subscription"
 import Footer from "../components/Footer"
+import { useEffect, useState } from "react"
 
 const About = () => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen py-10 px-4 mt-20 fade-in">
+                <Navbar />
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="w-12 h-12 border-4 border-gray-200 border-t-pink-600 rounded-full animate-spin"></div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
     return (
         <div>
             <Navbar />
-            <div className="w-[85vw] lg:w-[70vw] m-auto mt-20">
+            <div className="w-[85vw] lg:w-[70vw] m-auto mt-28 fade-in">
                 <div className="w-full flex items-center justify-center gap-2 my-10">
                     <h1 className="uppercase text-2xl lg:text-3xl text-gray-500">about <span className="text-gray-800">us</span></h1>
                     <hr className="w-12 h-[2] border-none bg-black" />

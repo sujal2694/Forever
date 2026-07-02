@@ -1,4 +1,5 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Image from 'next/image'
 import { assets } from '../assets/assets'
@@ -6,10 +7,31 @@ import Subscription from '../components/Subscription'
 import Footer from '../components/Footer'
 
 const Contact = () => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen py-10 px-4 mt-20 fade-in">
+                <Navbar />
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="w-12 h-12 border-4 border-gray-200 border-t-pink-600 rounded-full animate-spin"></div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
     return (
         <div>
             <Navbar />
-            <div className='w-[85vw] lg:w-[80vw] m-auto  mt-20'>
+            <div className='w-[85vw] lg:w-[80vw] m-auto  mt-28 fade-in'>
                 <div className='text-center my-12'>
                     <h1 className='flex items-center justify-center text-2xl lg:text-3xl uppercase my-7 text-gray-400 gap-2'>contact   <span className='text-gray-800'>us</span><hr className='w-12 h-[2] bg-black border-none rounded-4xl' /></h1>
                 </div>
@@ -36,7 +58,7 @@ const Contact = () => {
                 <div className='mb-16 mt-30'>
                     <Subscription />
                 </div>
-                <Footer/>
+                <Footer />
 
             </div>
         </div>

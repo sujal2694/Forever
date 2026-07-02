@@ -2,9 +2,10 @@ import Image from "next/image"
 import { assets } from "../assets/assets"
 
 
+
 export default function Hero() {
-    return(
-        <div className="flex items-center w-[85vw] lg:w-[80vw] m-auto border border-gray-700 max-sm:flex-col mb-40 mt-34">
+    return (
+        <div className="flex items-center w-[85vw] lg:w-[80vw] m-auto border border-gray-700 max-sm:flex-col mb-40 mt-34 fade-in">
             <div className="w-[50%] max-sm:w-full flex items-center justify-center my-8">
                 <div>
                     <div className="flex items-center h-full gap-2.5">
@@ -20,7 +21,7 @@ export default function Hero() {
             </div>
 
             <div className="w-[50%] h-full max-sm:w-full">
-                <Image className="w-full" src={assets.hero_img} alt="hero-image"></Image>
+                <Image className="w-full" src={assets.hero_img} alt="hero-image" loading="eager"></Image>
             </div>
         </div>
     )

@@ -12,6 +12,9 @@ const Collection = () => {
     const [subCategory, setSubCategory] = useState([]);
     const [sortType, setSortType] = useState("relevant");
     const [search, setSearch] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [isSubOpen, setIsSubOpen] = useState(false);
+
 
     const toggleCategory = (e) => {
         const value = e.target.value;
@@ -48,9 +51,9 @@ const Collection = () => {
             category.includes(item.category)) &&
             (subCategory.length === 0 ||
                 subCategory.includes(item.subCategory))
-        
+
         const searchMatch =
-        item.name.toLowerCase().includes(search.toLowerCase());
+            item.name.toLowerCase().includes(search.toLowerCase());
 
 
         return categoryMatch && subCategoryMatch && sorted && searchMatch;
@@ -68,30 +71,33 @@ const Collection = () => {
         <div>
             <Navbar />
             {searchBar
-                ? <div>
+                ? <div className="fade-in">
                     <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[80vw] m-auto mt-20" />
                     <div className="w-[85vw] lg:w-[80vw] m-auto flex items-center justify-center gap-4 py-5 bg-gray-300/5">
                         <div className="w-fit relative">
-                            <input className="w-90 border border-gray-400 rounded-4xl p-2 pl-5" type="text" placeholder="Search products..." onChange={(e)=>setSearch(e.target.value)} />
-                            <Image className="w-4 absolute right-5 top-3" src={assets.search_icon} alt="search"></Image>
+                            <input className="w-90 border border-gray-400 rounded-4xl p-2 pl-5" type="text" placeholder="Search products..." onChange={(e) => setSearch(e.target.value)} />
+                            <Image className="w-4 absolute right-5 top-3" src={assets.search_icon} alt="search" loading="eager"></Image>
                         </div>
-                        <Image onClick={() => setSearchBar(false)} className="w-3 cursor-pointer" src={assets.cross_icon} alt="remove"></Image>
+                        <Image onClick={() => setSearchBar(false)} className="w-3 cursor-pointer" src={assets.cross_icon} alt="remove" loading="eager"></Image>
                     </div>
                     <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[80vw] m-auto" />
                 </div>
                 : ""}
 
-            <div className={`mb-20 ${searchBar ? "" : "mt-28"}`}>
+            <div className={`mb-20 ${searchBar ? "" : "mt-28"} fade-in`}>
                 <hr className="border-none bg-gray-300 h-[1] w-[85vw] lg:w-[80vw] m-auto" />
 
-                <div className="w-[85vw] lg:w-[80vw] m-auto mt-12 grid grid-cols-1 md:flex gap-8">
+                <div className="w-[85vw] lg:w-[80vw] m-auto mt-12 grid grid-cols-1 md:flex gap-8 md:flex-col lg:flex-row">
                     <div>
                         <h1 className="uppercase text-xl">filters</h1>
 
-                        <div className="mt-6 flex items-center flex-col gap-5">
+                        <div className="mt-6 flex items-center md:flex-row lg:flex-col gap-5">
                             <div className="p-4 w-60 border border-gray-300">
-                                <h3 className="uppercase text-[15px]">categories</h3>
-                                <ul className="mt-3 text-sm text-gray-400 font-light tracking-wider">
+                                <div onClick={()=>setIsOpen(isOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
+                                    <h3 className="uppercase text-[15px]">categories</h3>
+                                    {isOpen ? <i className="bx bx-caret-up"></i> : <i className="bx bx-caret-down"></i>}
+                                </div>
+                                <ul className={`mt-3 text-sm text-gray-400 font-light tracking-wider ${isOpen ? "block" : "hidden"}`}>
                                     <li className="flex items-center gap-3">
                                         <input className="w-3" type="checkbox" value="Men" onChange={toggleCategory} />
                                         <p>Men</p>
@@ -108,8 +114,11 @@ const Collection = () => {
                             </div>
 
                             <div className="p-4 w-60 border border-gray-300">
-                                <h3 className="uppercase text-[15px]">type</h3>
-                                <ul className="mt-3 text-sm text-gray-400 font-light tracking-wider">
+                                <div onClick={()=>setIsSubOpen(isSubOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
+                                    <h3 className="uppercase text-[15px]">type</h3>
+                                    {isSubOpen ? <i className="bx bx-caret-up"></i> : <i className="bx bx-caret-down"></i>}
+                                </div>
+                                <ul className={`mt-3 text-sm text-gray-400 font-light tracking-wider ${isSubOpen ? "block" : "hidden"}`}>
                                     <li className="flex items-center gap-3">
                                         <input className="w-3" type="checkbox" value="Topwear" onChange={toggleSubCategory} />
                                         <p>Topwear</p>
@@ -139,15 +148,15 @@ const Collection = () => {
                             </select>
                         </div>
 
-                        <div className="md:mt-4 mt-10 grid lg:grid-cols-4 md:grid-cols-3 gap-4 overflow-hidden">
+                        <div className="md:mt-4 mt-10 grid lg:grid-cols-4 md:grid-cols-3 gap-4 space-y-5">
                             {filteredProducts.map((item, index) => {
                                 return (
-                                    <div key={index} className="mb-5">
+                                    <div key={index} className="w-fit hover:scale-[1.01] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300">
                                         <div className="overflow-hidden">
-                                            <Image className="hover:scale-110 w-full transition ease-in-out cursor-pointer" src={item.image[0]} alt=""></Image>
+                                            <Image className="w-full transition ease-in-out cursor-pointer rounded-2xl" src={item.image[0]} alt="" loading="eager"></Image>
                                         </div>
                                         <div className="pl-3">
-                                            <p className="text-sm text-gray-600 tracking-wide mt-2">{item.name}</p>
+                                            <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-nowrap">{item.name}</p>
                                             <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
                                         </div>
                                     </div>
