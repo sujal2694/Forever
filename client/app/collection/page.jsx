@@ -7,7 +7,7 @@ import { Context } from "../context/Context"
 import Footer from "../components/Footer"
 
 const Collection = () => {
-    const { searchBar, setSearchBar, currency } = useContext(Context);
+    const { searchBar, setSearchBar, currency, cartItems } = useContext(Context);
     const [category, setCategory] = useState([]);
     const [subCategory, setSubCategory] = useState([]);
     const [sortType, setSortType] = useState("relevant");
@@ -93,7 +93,7 @@ const Collection = () => {
 
                         <div className="mt-6 flex items-center md:flex-row lg:flex-col gap-5">
                             <div className="p-4 w-60 border border-gray-300">
-                                <div onClick={()=>setIsOpen(isOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
+                                <div onClick={() => setIsOpen(isOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
                                     <h3 className="uppercase text-[15px]">categories</h3>
                                     {isOpen ? <i className="bx bx-caret-up"></i> : <i className="bx bx-caret-down"></i>}
                                 </div>
@@ -114,7 +114,7 @@ const Collection = () => {
                             </div>
 
                             <div className="p-4 w-60 border border-gray-300">
-                                <div onClick={()=>setIsSubOpen(isSubOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
+                                <div onClick={() => setIsSubOpen(isSubOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
                                     <h3 className="uppercase text-[15px]">type</h3>
                                     {isSubOpen ? <i className="bx bx-caret-up"></i> : <i className="bx bx-caret-down"></i>}
                                 </div>
@@ -156,8 +156,24 @@ const Collection = () => {
                                             <Image className="w-full transition ease-in-out cursor-pointer rounded-2xl" src={item.image[0]} alt="" loading="eager"></Image>
                                         </div>
                                         <div className="pl-3">
-                                            <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-nowrap">{item.name}</p>
+                                            <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-wrap">{item.name}</p>
                                             <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
+                                        </div>
+                                        <div className="absolute right-5 bottom-14 flex items-center justify-center gap-3 bg-pink-50 px-2 py-2 rounded-full">
+                                            {cartItems.length === 0
+                                                ? <> <div className="p-1 bg-rose-200 rounded-full h-10 w-10 flex items-center justify-center">
+                                                    <i className="bx bx-minus"></i>
+                                                </div>
+                                                    <p className="font-semibold text-lg text-gray-400">1</p>
+                                                    <div className="p-1 bg-rose-200 rounded-full h-10 w-10 flex items-center justify-center">
+                                                        <i className="bx bx-plus"></i>
+                                                    </div>
+                                                </>
+                                                : <div className="p-1 bg-rose-200 rounded-full h-10 w-10 flex items-center justify-center">
+                                                    <i className="bx bx-plus"></i>
+                                                </div>
+                                            }
+
                                         </div>
                                     </div>
                                 )
