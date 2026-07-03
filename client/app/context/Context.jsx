@@ -5,66 +5,111 @@ import { createContext, useEffect, useState } from "react";
 export const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
-
     const [searchBar, setSearchBar] = useState(true);
-    const [isLogedin, setIsLogedin] = useState(false);
     const currency = 86;
     const url = "http://localhost:4000";
     const [cartItems, setCartItems] = useState({});
     const [productList, setProductList] = useState([]);
-
-    const fetchUser = () => {
-        let token = localStorage.getItem('token');
-        if (token !== null) {
-            setIsLogedin(true);
-        } else {
-            setIsLogedin(false);
-        }
-    }
+    const [token, setToken] = useState("");
+    const [isLogedin, setIsLogedin] = useState(false);
 
     const addToCart = async (itemid) => {
-        if (!cartItems[itemid]) {
-            setCartItems(prev => ({ ...prev, [itemid]: 1 }))
-        } else {
-            setCartItems(prev => ({ ...prev, [itemid]: prev[itemid] + 1 }))
-        }
-        if (token) {
-            await axios.post(url + "/api/cart/add-to-cart", { itemid }, { headers: { token } });
-        }
-    }
+        const safeItemId = itemid;
+        setCartItems((prev) => ({
+            ...prev,
+            [safeItemId]: (prev[safeItemId] || 0) + 1,
+        }));
 
-    const removeFromCart = async (itemid) => {
-        setCartItems(prev => ({ ...prev, [itemid]: prev[itemid] - 1 }));
         if (token) {
-            await axios.post(url + "/api/cart/remove-from-cart", { itemid }, { headers: { token } });
-        }
-    }
-
-    const getTotalCartAmt = async () => {
-        let totalAmt = 0;
-        for (const item in cartData) {
-            if (cartItems[item] > 0) {
-                let itemInfo = productList.find((product) => product._id === item);
-                totalAmt += itemInfo.price * cartData[item]
+            try {
+                await axios.post(
+                    `${url}/api/cart/add-to-cart`,
+                    { itemId: safeItemId },
+                    { headers: { token } }
+                );
+            } catch (error) {
+                console.error("Add to cart failed", error);
             }
         }
+    };
+
+    const removeFromCart = async (itemid) => {
+        setCartItems((prev) => {
+            const nextCart = { ...prev };
+            if (!nextCart[itemid]) return nextCart;
+            nextCart[itemid] = Math.max(0, nextCart[itemid] - 1);
+            if (nextCart[itemid] === 0) delete nextCart[itemid];
+            return nextCart;
+        });
+
+        if (token) {
+            try {
+                await axios.post(
+                    `${url}/api/cart/remove-from-cart`,
+                    { itemId: itemid },
+                    { headers: { token } }
+                );
+            } catch (error) {
+                console.error("Remove from cart failed", error);
+            }
+        }
+    };
+
+    const getTotalCartAmt = () => {
+        let totalAmt = 0;
+        Object.entries(cartItems).forEach(([itemId, quantity]) => {
+            if (quantity <= 0) return;
+            const itemInfo = productList.find((product) => product._id === itemId);
+            if (itemInfo) {
+                totalAmt += itemInfo.price * quantity;
+            }
+        });
         return totalAmt;
-    }
+    };
 
     const fetchProductList = async () => {
-        const response = await axios.get(url+"/api/product/list-product");
-        setProductList(response.data.data);
-    }
+        try {
+            const response = await axios.get(`${url}/api/product/list-product`);
+            setProductList(response.data.data || []);
+        } catch (error) {
+            console.error("Product list fetch failed", error);
+        }
+    };
 
-    const cartData = async (token) => {
-        const response = await axios.post(url+"/api/cart/get-cart",{},{headers:{token}});
-        setCartItems(response.data.cartData);
-    }
+    const fetchCartData = async (userToken = token) => {
+        if (!userToken) return;
+        try {
+            const response = await axios.post(
+                `${url}/api/cart/get-cart`,
+                {},
+                { headers: { token: userToken } }
+            );
+            if (response.data?.success) {
+                setCartItems(response.data.cartData || {});
+            }
+        } catch (error) {
+            console.error("Cart fetch failed", error);
+        }
+    };
 
     useEffect(() => {
-        fetchUser();
+        if (typeof window !== "undefined") {
+            const storedToken = localStorage.getItem("token") || "";
+            setToken(storedToken);
+            setIsLogedin(Boolean(storedToken));
+        }
+
         fetchProductList();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        setIsLogedin(Boolean(token));
+        if (token) {
+            fetchCartData(token);
+        }
+        console.log(cartItems);
+        
+    }, [token]);
 
     const ContextValue = {
         searchBar,
@@ -78,11 +123,9 @@ export const ContextProvider = ({ children }) => {
         addToCart,
         getTotalCartAmt,
         productList,
-    }
+        token,
+        setToken,
+    };
 
-    return (
-        <Context.Provider value={ContextValue}>
-            {children}
-        </Context.Provider>
-    )
-}
+    return <Context.Provider value={ContextValue}>{children}</Context.Provider>;
+};

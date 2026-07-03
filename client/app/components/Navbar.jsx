@@ -7,7 +7,7 @@ import { Context } from "../context/Context";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-    const { setSearchBar, isLogedin } = useContext(Context);
+    const { setSearchBar, isLogedin, cartItems } = useContext(Context);
     const [menu, setMenu] = useState("home");
     const [openSidebar, setOpenSidebar] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -19,16 +19,19 @@ export default function Navbar() {
     }
 
     useEffect(() => {
+        if (typeof window === "undefined") return;
+
         const saved = localStorage.getItem("menu");
         if (saved) setMenu(saved);
 
-        window.addEventListener("scroll", ()=>{
-            if (scrollY > 50) {
-                setIsScrolled(true)
-            } else {
-                setIsScrolled(false)
-            }
-        })
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        handleScroll();
+
+        return () => window.removeEventListener("scroll", handleScroll);
     }, [])
 
     return (
@@ -93,13 +96,13 @@ export default function Navbar() {
                     </div>
                     <hr className="border-none h-0.5 bg-gray-200" />
 
-                    <Link href='/'><p onClick={() => { navMenuHandler("home"); setOpenSidebar(false) }} className={`flex items-center gap-4 ${menu === "home" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-black text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-home"></i> Home</p></Link>
+                    <Link href='/'><p onClick={() => { navMenuHandler("home"); setOpenSidebar(false) }} className={`flex items-center gap-4 ${menu === "home" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-primary/70 text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-home"></i> Home</p></Link>
 
-                    <Link href='/collection'><p onClick={() => { navMenuHandler("collection"); setOpenSidebar(false) }} className={` flex items-center gap-4 ${menu === "collection" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-black text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-t-shirt"></i> Collection</p></Link>
+                    <Link href='/collection'><p onClick={() => { navMenuHandler("collection"); setOpenSidebar(false) }} className={` flex items-center gap-4 ${menu === "collection" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-primary/70 text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-t-shirt"></i> Collection</p></Link>
 
-                    <Link href='/about'><p onClick={() => { navMenuHandler("about"); setOpenSidebar(false) }} className={`flex items-center gap-4 ${menu === "about" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-black text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-info-circle"></i> About</p></Link>
+                    <Link href='/about'><p onClick={() => { navMenuHandler("about"); setOpenSidebar(false) }} className={`flex items-center gap-4 ${menu === "about" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-primary/70 text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-info-circle"></i> About</p></Link>
 
-                    <Link href='/contact'><p onClick={() => { navMenuHandler("contact"); setOpenSidebar(false) }} className={`flex items-center gap-4 ${menu === "contact" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-black text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-envelope"></i> Contact</p></Link>
+                    <Link href='/contact'><p onClick={() => { navMenuHandler("contact"); setOpenSidebar(false) }} className={`flex items-center gap-4 ${menu === "contact" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-primary/70 text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-envelope"></i> Contact</p></Link>
 
                 </div>
             </div>

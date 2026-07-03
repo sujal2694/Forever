@@ -7,14 +7,16 @@ import { Context } from "../context/Context"
 import Footer from "../components/Footer"
 
 const Collection = () => {
-    const { searchBar, setSearchBar, currency, cartItems } = useContext(Context);
+    const { searchBar, setSearchBar, currency, cartItems, addToCart, removeFromCart } = useContext(Context);
     const [category, setCategory] = useState([]);
     const [subCategory, setSubCategory] = useState([]);
     const [sortType, setSortType] = useState("relevant");
     const [search, setSearch] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [isSubOpen, setIsSubOpen] = useState(false);
+    const [hoverBg, setHoverBg] = useState({});
 
+    const hoverColors = ["#FF85BC", "#FDBA68"];
 
     const toggleCategory = (e) => {
         const value = e.target.value;
@@ -36,27 +38,12 @@ const Collection = () => {
         }
     };
 
-
     const filteredProducts = products.filter((item) => {
+        const categoryMatch = category.length === 0 || category.includes(item.category);
+        const subCategoryMatch = subCategory.length === 0 || subCategory.includes(item.subCategory);
+        const searchMatch = item.name.toLowerCase().includes(search.toLowerCase());
 
-        const categoryMatch =
-            category.length === 0 ||
-            category.includes(item.category);
-
-        const subCategoryMatch =
-            subCategory.length === 0 ||
-            subCategory.includes(item.subCategory);
-
-        const sorted = (category.length === 0 ||
-            category.includes(item.category)) &&
-            (subCategory.length === 0 ||
-                subCategory.includes(item.subCategory))
-
-        const searchMatch =
-            item.name.toLowerCase().includes(search.toLowerCase());
-
-
-        return categoryMatch && subCategoryMatch && sorted && searchMatch;
+        return categoryMatch && subCategoryMatch && searchMatch;
     });
 
     if (sortType === "low-high") {
@@ -67,11 +54,24 @@ const Collection = () => {
         filteredProducts.sort((a, b) => b.price - a.price);
     }
 
+    const handleCardHover = (itemId) => {
+        const randomColor = hoverColors[Math.floor(Math.random() * hoverColors.length)];
+        setHoverBg((prev) => ({ ...prev, [itemId]: randomColor }));
+    };
+
+    const handleCardLeave = (itemId) => {
+        setHoverBg((prev) => {
+            const nextState = { ...prev };
+            delete nextState[itemId];
+            return nextState;
+        });
+    };
+
     return (
         <div>
             <Navbar />
-            {searchBar
-                ? <div className="fade-in">
+            {searchBar ? (
+                <div className="fade-in">
                     <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[80vw] m-auto mt-20" />
                     <div className="w-[85vw] lg:w-[80vw] m-auto flex items-center justify-center gap-4 py-5 bg-gray-300/5">
                         <div className="w-fit relative">
@@ -82,7 +82,7 @@ const Collection = () => {
                     </div>
                     <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[80vw] m-auto" />
                 </div>
-                : ""}
+            ) : ""}
 
             <div className={`mb-20 ${searchBar ? "" : "mt-28"} fade-in`}>
                 <hr className="border-none bg-gray-300 h-[1] w-[85vw] lg:w-[80vw] m-auto" />
@@ -91,7 +91,7 @@ const Collection = () => {
                     <div>
                         <h1 className="uppercase text-xl">filters</h1>
 
-                        <div className="mt-6 flex items-center md:flex-row lg:flex-col gap-5">
+                        <div className="mt-6 flex items-start md:flex-row lg:flex-col gap-5">
                             <div className="p-4 w-60 border border-gray-300">
                                 <div onClick={() => setIsOpen(isOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
                                     <h3 className="uppercase text-[15px]">categories</h3>
@@ -133,7 +133,6 @@ const Collection = () => {
                                     </li>
                                 </ul>
                             </div>
-
                         </div>
                     </div>
 
@@ -148,10 +147,17 @@ const Collection = () => {
                             </select>
                         </div>
 
-                        <div className="md:mt-4 mt-10 grid lg:grid-cols-4 md:grid-cols-3 gap-4 space-y-5">
+                        <div className="md:mt-4 mt-10 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 space-y-5">
                             {filteredProducts.map((item, index) => {
+                                const quantity = cartItems[item._id] || 0;
                                 return (
-                                    <div key={index} className="w-fit hover:scale-[1.01] hover:bg-primary backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300">
+                                    <div
+                                        key={item._id || index}
+                                        onMouseEnter={() => handleCardHover(item._id)}
+                                        onMouseLeave={() => handleCardLeave(item._id)}
+                                        className="relative w-fit hover:scale-[1.01] backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300"
+                                        style={{ backgroundColor: hoverBg[item._id] || "transparent" }}
+                                    >
                                         <div className="overflow-hidden">
                                             <Image className="w-full transition ease-in-out cursor-pointer rounded-2xl" src={item.image[0]} alt="" loading="eager"></Image>
                                         </div>
@@ -159,33 +165,33 @@ const Collection = () => {
                                             <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-wrap">{item.name}</p>
                                             <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
                                         </div>
-                                        <div className="absolute right-5 bottom-14 flex items-center justify-center gap-3 bg-pink-50 px-2 py-2 rounded-full">
-                                            {cartItems.length === 0
-                                                ? <> <div className="p-1 bg-rose-200 rounded-full h-10 w-10 flex items-center justify-center">
-                                                    <i className="bx bx-minus"></i>
-                                                </div>
-                                                    <p className="font-semibold text-lg text-gray-400">1</p>
-                                                    <div className="p-1 bg-rose-200 rounded-full h-10 w-10 flex items-center justify-center">
+                                        <div className="absolute right-2 top-2 flex items-center justify-center gap-3 bg-pink-50 p-1 rounded-full">
+                                            {quantity > 0 ? (
+                                                <>
+                                                    <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
+                                                        <i className="bx bx-minus"></i>
+                                                    </button>
+                                                    <p className="font-semibold text-lg text-gray-400">{quantity}</p>
+                                                    <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
                                                         <i className="bx bx-plus"></i>
-                                                    </div>
+                                                    </button>
                                                 </>
-                                                : <div className="p-1 bg-rose-200 rounded-full h-10 w-10 flex items-center justify-center">
+                                            ) : (
+                                                <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
                                                     <i className="bx bx-plus"></i>
-                                                </div>
-                                            }
-
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
-                                )
+                                );
                             })}
                         </div>
-
                     </div>
                 </div>
             </div>
             <Footer />
         </div>
-    )
-}
+    );
+};
 
 export default Collection

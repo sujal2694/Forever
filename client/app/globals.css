@@ -4,10 +4,12 @@
 
 @theme {
     --font-prata: "Prata", serif;
-    --color-primary: #FFE9F2;
+    --color-primary: #ff0f7b;
     --color-shadow: #fbe8f0;
     --color-navbar: #FFF8FB;
     --color-button: #FFCCE1;
+    --color-dashboard: #98D2EB;
+    --color-add-button: #A9DEF9;
     --shadow-login-button: 0 0 5px #FFCCE1, 5px 5px 0px #FFCCE1;
     --shadow-button: 0 0 5px #FFCCE1, 5px 5px 0px #FFCCE1;
 }

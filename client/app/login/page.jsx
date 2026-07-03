@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 
 export default function LoginPage() {
 
+    const { setToken } = useContext(Context);
     const [currState, setCurrState] = useState("Login");
     const [data, setData] = useState({
         email: '',
@@ -17,7 +18,6 @@ export default function LoginPage() {
         name: '',
         number: ''
     });
-    const [token, setToken] = useState("")
     const { url } = useContext(Context);
     const router = useRouter();
 

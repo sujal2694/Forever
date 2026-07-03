@@ -46,6 +46,11 @@ const page = () => {
         window.location.href = "/login";
     }
 
+    const dashboardLinkHandler = (link) => {
+        localStorage.setItem("link", link);
+        setDashboardLink(link);
+    }
+
     const onChangeHandler = (e) => {
         const name = e.target.name;
         const value = e.target.value;
@@ -63,7 +68,7 @@ const page = () => {
                 // Add new address
                 response = await axios.post(`${url}/api/address/add-address`, addressData);
             }
-            
+
             if (response.data.success) {
                 setAddressData({
                     name: "",
@@ -104,7 +109,7 @@ const page = () => {
     const deleteAddress = async (addressId) => {
         const confirmed = window.confirm("Are you sure you want to delete this address?");
         if (!confirmed) return;
-        
+
         try {
             const response = await axios.delete(`${url}/api/address/delete-address/${addressId}`);
             if (response.data.success) {
@@ -176,6 +181,11 @@ const page = () => {
         return stored || "";
     }
 
+    const getLink = () => {
+        const stored = localStorage.getItem("link");
+        return stored;
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             await getUser();
@@ -184,6 +194,8 @@ const page = () => {
                 setLetter(storedLetter.toUpperCase());
             }
             await getAddress();
+            const storedLink = getLink();
+            if (storedLink) setDashboardLink(storedLink);
         };
         fetchData();
 
@@ -206,13 +218,13 @@ const page = () => {
             <Navbar />
             <div className="min-h-screen py-10 px-4 mt-20 fade-in">
                 <div className="max-w-6xl mx-auto bg-white rounded-lg">
-                    <div className="p-8 *:bg-gray-500/0 rounded-tl-lg rounded-tr-lg">
-                        <div className="flex items-center gap-5">
+                    <div className="py-8 *:bg-gray-500/0 rounded-tl-lg rounded-tr-lg">
+                        <div className="flex items-center gap-2">
                             {alphabetImage && alphabetImage.length > 0 && alphabetImage.find(item => item.letter === letter) ? (
                                 <img
                                     src={alphabetImage.find(item => item.letter === letter)?.image.src}
                                     alt="profile"
-                                    className="w-24 h-24 rounded-full border-4 border-white object-cover"
+                                    className="aspect-square w-20 rounded-full border-4 border-white object-cover"
                                     fetchPriority="high"
                                 />
                             ) : null}
@@ -228,11 +240,11 @@ const page = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-start gap-5">
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider bg-slate-200/40 backdrop-blur-2xl text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Dashboard" ? "text-white bg-zinc-800" : ""}`} onClick={() => setDashboardLink("Dashboard")}>Dashboard</div>
+                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Dashboard" ? "text-white bg-dashboard" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Dashboard")}>Dashboard</div>
 
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider bg-slate-200/40 backdrop-blur-2xl text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Orders" ? "text-white bg-zinc-800" : ""}`} onClick={() => setDashboardLink("Orders")}>Orders</div>
+                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Orders" ? "text-white bg-dashboard" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Orders")}>Orders</div>
 
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider bg-slate-200/40 backdrop-blur-2xl text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Addresses" ? "text-white bg-zinc-800" : ""}`} onClick={() => setDashboardLink("Addresses")}>Addresses</div>
+                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Addresses" ? "text-white bg-dashboard" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Addresses")}>Addresses</div>
                     </div>
                     <div className="grid md:grid-cols-3">
                         <div className="md:col-span-3 p-8">
@@ -289,7 +301,7 @@ const page = () => {
                                     </div>
 
                                     <div className="grid md:grid-cols-3 grid-cols-2 gap-4 mt-10">
-                                        <div className="bg-gray-800/60 backdrop-blur-3xl text-white p-5 rounded-xl">
+                                        <div className="bg-dashboard/60 backdrop-blur-3xl p-5 rounded-xl">
                                             <h3 className="text-3xl font-bold">
                                                 0
                                             </h3>
@@ -298,7 +310,7 @@ const page = () => {
                                             </p>
                                         </div>
 
-                                        <div className="bg-gray-800/60 backdrop-blur-3xl text-white p-5 rounded-xl">
+                                        <div className="bg-dashboard/60 backdrop-blur-3xl p-5 rounded-xl">
                                             <h3 className="text-3xl font-bold">
                                                 0
                                             </h3>
@@ -308,7 +320,7 @@ const page = () => {
                                         </div>
                                     </div>
                                     <div className="flex justify-end items-center gap-4 py-5 px-10">
-                                        <button onClick={() => logOut()} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-8 rounded" >
+                                        <button onClick={() => logOut()} className="bg-red-500/50 hover:bg-red-600 text-white font-bold py-2 px-8 rounded cursor-pointer" >
                                             Logout
                                         </button>
                                     </div>
@@ -354,7 +366,7 @@ const page = () => {
                                         <>
                                             {fetchAddress && fetchAddress.length === 0 ? (
                                                 <div onClick={() => setAddAddress(true)} className="flex items-center gap-5 border border-gray-600/20 rounded-lg px-5 py-3 cursor-pointer hover:bg-gray-50 transition-all">
-                                                    <p className="h-10 w-10 flex items-center justify-center bg-zinc-600/30 rounded-full">
+                                                    <p className="h-10 w-10 flex items-center justify-center bg-primary/40 rounded-full">
                                                         <i className="bx bx-plus"></i>
                                                     </p>
                                                     <p className="text-slate-700 tracking-wide text-lg">Add your first address</p>
