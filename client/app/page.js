@@ -1,6 +1,7 @@
 import { ToastContainer } from "react-toastify";
 import Navbar from "./components/Navbar";
-import HomePage from "./Pages/HomePage";
+import HomePage from "./pages/HomePage";
+
 
 export default function Home() {
   return (

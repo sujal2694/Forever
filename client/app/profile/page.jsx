@@ -243,11 +243,11 @@ const page = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-start gap-5">
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Dashboard" ? "text-white bg-dashboard" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Dashboard")}>Dashboard</div>
+                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Dashboard" ? "text-white bg-zinc-900" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Dashboard")}>Dashboard</div>
 
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Orders" ? "text-white bg-dashboard" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Orders")}>Orders</div>
+                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Orders" ? "text-white bg-zinc-800" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Orders")}>Orders</div>
 
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Addresses" ? "text-white bg-dashboard" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Addresses")}>Addresses</div>
+                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Addresses" ? "text-white bg-zinc-800" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Addresses")}>Addresses</div>
                     </div>
                     <div className="grid md:grid-cols-3">
                         <div className="md:col-span-3 p-8">
@@ -304,7 +304,7 @@ const page = () => {
                                     </div>
 
                                     <div className="grid md:grid-cols-3 grid-cols-2 gap-4 mt-10">
-                                        <div className="bg-dashboard/60 backdrop-blur-3xl p-5 rounded-xl">
+                                        <div className="bg-gray-800/10 backdrop-blur-3xl p-5 rounded-xl hover:shadow-button shadow-zinc-400 transition-all duration-300">
                                             <h3 className="text-3xl font-bold">
                                                 0
                                             </h3>
@@ -313,7 +313,7 @@ const page = () => {
                                             </p>
                                         </div>
 
-                                        <div className="bg-dashboard/60 backdrop-blur-3xl p-5 rounded-xl">
+                                        <div className="bg-gray-800/10 backdrop-blur-3xl p-5 rounded-xl hover:shadow-button shadow-zinc-400 transition-all duration-300">
                                             <h3 className="text-3xl font-bold">
                                                 0
                                             </h3>
