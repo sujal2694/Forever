@@ -25,7 +25,7 @@ export default function HomePage() {
             <div className="min-h-screen py-10 px-4 mt-20 fade-in">
                 <Navbar />
                 <div className="flex items-center justify-center max-h-screen">
-                    <div className="w-12 h-12 border-4 border-gray-200 border-t-pink-600 rounded-full animate-spin"></div>
+                    <div className="w-12 h-12 border-4 border-gray-200 border-t-add-button rounded-full animate-spin"></div>
                 </div>
                 <Footer />
             </div>

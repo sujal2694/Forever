@@ -10,13 +10,13 @@ export default function ProductPage() {
     const renderProductCard = (item) => {
         const quantity = cartItems[item._id] || 0;
         return (
-            <div key={item._id} className="relative w-fit hover:scale-[1.01] hover:bg-primary/40 backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group hover:ring hover:ring-rose-700/90 transition-all duration-300">
+            <div key={item._id} className="relative w-fit hover:scale-[1.01] hover:bg-primary/80 backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group hover:ring hover:ring-rose-700/90 transition-all duration-300">
                 <div className="overflow-hidden">
                     <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt="" loading="eager"></Image>
                 </div>
                 <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
                 <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
-                <div className="absolute right-2 top-2 flex items-center justify-center gap-2 bg-pink-50 px-1 py-1 rounded-full cursor-pointer">
+                <div className="absolute right-2 top-2 flex items-center justify-center gap-2 px-1 py-1 rounded-full cursor-pointer">
                     {quantity > 0 ? (
                         <>
                             <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">

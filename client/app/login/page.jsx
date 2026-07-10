@@ -57,7 +57,7 @@ export default function LoginPage() {
     return (
         <>
             <Navbar />
-            <div className="flex items-center justify-center h-[85vw] md:mt-20 lg:mt-20 mt-40">
+            <div className="flex items-center justify-center min-h-screen md:mt-20 lg:mt-20 mt-40">
                 <div>
                     <div className="flex items-center justify-center gap-3">
                         <h1 className="text-4xl font-prata">{currState}</h1>
