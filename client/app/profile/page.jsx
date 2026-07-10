@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 import { toast } from "react-toastify";
 import { alphabetImage, states } from "../assets/assets";
 import Footer from "../components/Footer";
+import Image from "next/image";
 
 const page = () => {
     const { url } = useContext(Context);
@@ -221,12 +222,14 @@ const page = () => {
                     <div className="py-8 *:bg-gray-500/0 rounded-tl-lg rounded-tr-lg">
                         <div className="flex items-center gap-2">
                             {alphabetImage && alphabetImage.length > 0 && alphabetImage.find(item => item.letter === letter) ? (
-                                <img
+                                <Image
                                     src={alphabetImage.find(item => item.letter === letter)?.image.src}
                                     alt="profile"
+                                    width={100}
+                                    height={100}
                                     className="aspect-square w-20 rounded-full border-4 border-white object-cover"
-                                    fetchPriority="high"
-                                />
+                                    loading="eager"
+                                ></Image>
                             ) : null}
 
                             <div>
@@ -366,7 +369,7 @@ const page = () => {
                                         <>
                                             {fetchAddress && fetchAddress.length === 0 ? (
                                                 <div onClick={() => setAddAddress(true)} className="flex items-center gap-5 border border-gray-600/20 rounded-lg px-5 py-3 cursor-pointer hover:bg-gray-50 transition-all">
-                                                    <p className="h-10 w-10 flex items-center justify-center bg-primary/40 rounded-full">
+                                                    <p className="h-10 w-10 flex items-center justify-center bg-dashboard/40 rounded-full">
                                                         <i className="bx bx-plus"></i>
                                                     </p>
                                                     <p className="text-slate-700 tracking-wide text-lg">Add your first address</p>

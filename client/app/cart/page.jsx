@@ -26,7 +26,7 @@ const Page = () => {
                 </div>
 
                 <div className="flex items-start justify-between lg:flex-row flex-col">
-                    <div className="border border-rose-500/30 md:m-10 mt-10 m-2 pb-5 w-full">
+                    <div className="w-full md:w-[85vw] mt-10 m-auto ring ring-pink-500">
                         <div>
                             <ul className="grid md:grid-cols-7 grid-cols-6 bg-primary/30 text-center border-b border-rose-500/70">
                                 <li className="border-r border-rose-500/70 py-2 md:block hidden">No.</li>
@@ -69,8 +69,8 @@ const Page = () => {
                         </div>
                     </div>
 
-                    <div className="flex justify-center lg:w-1/2 w-full">
-                        <div className="border border-gray-600/20 w-full rounded-sm md:m-10 mt-20 mb-20 m-2 p-6 shadow shadow-gray-500/30">
+                    <div className="flex justify-center md:w-[85vw] w-full">
+                        <div className="border border-gray-600/20 w-full rounded-sm md:m-10 mt-20 mb-20 p-6 shadow shadow-gray-500/30">
                             <h2 className="text-4xl py-2">Cart Total</h2>
                             <div className="w-full border-t border-slate-500/50 py-3">
                                 <ul className="text-xl font-light grid gap-4">
@@ -80,7 +80,7 @@ const Page = () => {
                                     <p className="w-full bg-gray-700/50 h-0.5"></p>
                                     <li className="flex items-center justify-between">Total price: <span>${subtotal}</span></li>
                                 </ul>
-                                <button className="my-3 text-center w-full bg-gray-600 py-3 text-white uppercase tracking-wider font-semibold rounded-sm focus:bg-gray-600/70 transition-all duration-300 cursor-pointer">proceed to pay</button>
+                                <button className="my-3 text-center w-full bg-black py-3 text-white uppercase tracking-wider font-semibold rounded-lg mt-5 hover:ring ring-black hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer">proceed to pay</button>
                             </div>
                         </div>
                     </div>

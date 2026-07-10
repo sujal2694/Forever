@@ -137,8 +137,8 @@ const Collection = () => {
                     </div>
 
                     <div className="w-full">
-                        <div className="flex md:items-center md:justify-between flex-col md:flex-row w-full">
-                            <h1 className="uppercase text-3xl md:text-2xl lg:text-3xl text-gray-400 flex items-center gap-2">all <span className="text-gray-600">collections</span> <hr className="border-none h-[2] bg-black rounded-4xl w-12" /></h1>
+                        <div className="flex md:items-center md:justify-between flex-col md:flex-row w-full gap-5">
+                            <h1 className="uppercase text-xl md:text-2xl lg:text-3xl text-gray-400 flex items-center flex-wrap gap-2">all <span className="text-gray-600">collections</span> <hr className="border-none h-[2] bg-black rounded-4xl w-12" /></h1>
 
                             <select className="border-2 border-gray-300 p-2 text-sm outline-none cursor-pointer" onChange={(e) => setSortType(e.target.value)}>
                                 <option value="relevant">Sort by: Relavent</option>
