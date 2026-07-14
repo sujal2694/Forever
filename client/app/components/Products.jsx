@@ -12,7 +12,7 @@ export default function ProductPage() {
         return (
             <div key={item._id} className="relative w-fit hover:scale-[1.01] hover:bg-primary/80 backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group hover:ring hover:ring-rose-700/90 transition-all duration-300">
                 <div className="overflow-hidden">
-                    <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image[0]} alt="" loading="eager"></Image>
+                    <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image} alt="" loading="eager"></Image>
                 </div>
                 <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
                 <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>

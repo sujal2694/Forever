@@ -41,7 +41,7 @@ const Collection = () => {
     const filteredProducts = products.filter((item) => {
         const categoryMatch = category.length === 0 || category.includes(item.category);
         const subCategoryMatch = subCategory.length === 0 || subCategory.includes(item.subCategory);
-        const searchMatch = item.name.toLowerCase().includes(search.toLowerCase());
+        const searchMatch = (item.name ?? "").toLowerCase().includes((search ?? "").toLowerCase());
 
         return categoryMatch && subCategoryMatch && searchMatch;
     });
@@ -159,7 +159,7 @@ const Collection = () => {
                                         style={{ backgroundColor: hoverBg[item._id] || "transparent" }}
                                     >
                                         <div className="overflow-hidden">
-                                            <Image className="w-full transition ease-in-out cursor-pointer rounded-2xl" src={item.image[0]} alt="" loading="eager"></Image>
+                                            <Image className="w-full transition ease-in-out cursor-pointer rounded-2xl" src={item.image} alt="" loading="eager"></Image>
                                         </div>
                                         <div className="pl-3">
                                             <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-wrap">{item.name}</p>
