@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { assets } from "../assets/assets"
 
+
 const Qualities = () => {
   return (
     <div className="w-full fade-in">
@@ -28,5 +29,4 @@ const Qualities = () => {
     </div>
   )
 }
-
 export default Qualities

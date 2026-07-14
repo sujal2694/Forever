@@ -79,7 +79,7 @@ export default function Navbar() {
 
                         <Link href="/cart"><li onClick={() => navMenuHandler("cart")} className="relative">
                             <Image className="w-5 cursor-pointer" src={assets.cart_icon} alt="cart icon"loading="eager" />
-                            <p className="bg-add-button h-4 w-4 rounded-full absolute bottom-[-5px] right-[-5px] text-gray-700 flex items-center justify-center text-[10px] font-semibold cursor-pointer">{Object.keys(cartItems).length}</p>
+                            <p className="bg-add-buttonher h-4 w-4 rounded-full absolute bottom-[-5px] right-[-5px] text-gray-700 flex items-center justify-center text-[10px] font-semibold cursor-pointer">{Object.keys(cartItems).length}</p>
                         </li></Link>
 
                         <li className="hidden max-sm:block">
