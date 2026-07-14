@@ -7,7 +7,8 @@ export const Context = createContext();
 export const ContextProvider = ({ children }) => {
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
-    const url = "http://localhost:4000";
+    // const url = "http://localhost:4000";
+    const url = "https://forever-backend-phi-three.vercel.app"
     const [cartItems, setCartItems] = useState({});
     const [productList, setProductList] = useState([]);
     const [token, setToken] = useState("");
