@@ -35,3 +35,20 @@ body::-webkit-scrollbar {
         opacity: 1;
     }
 }
+
+.marquee-track {
+  animation: scroll-marquee 10s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

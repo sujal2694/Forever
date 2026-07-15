@@ -2,7 +2,7 @@
 import Navbar from "../components/Navbar"
 import Image from "next/image"
 import { assets, products } from "../assets/assets"
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { Context } from "../context/Context"
 import Footer from "../components/Footer"
 
@@ -15,8 +15,20 @@ const Collection = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubOpen, setIsSubOpen] = useState(false);
     const [hoverBg, setHoverBg] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 9;
+    const maxVisiblePages = 3;
 
     const hoverColors = ["#FF85BC", "#FDBA68"];
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const toggleCategory = (e) => {
         const value = e.target.value;
@@ -54,6 +66,34 @@ const Collection = () => {
         filteredProducts.sort((a, b) => b.price - a.price);
     }
 
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
+
+    // Sliding window of page numbers (e.g. page 2 -> [1,2,3], page 5 -> [4,5,6])
+    const getVisiblePageNumbers = () => {
+        let start = Math.max(1, currentPage - 1);
+        let end = Math.min(start + maxVisiblePages - 1, totalPages);
+
+        if (end - start + 1 < maxVisiblePages) {
+            start = Math.max(1, end - maxVisiblePages + 1);
+        }
+
+        const pages = [];
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+        return pages;
+    };
+
+    const visiblePageNumbers = getVisiblePageNumbers();
+
+    const goToPage = (page) => {
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     const handleCardHover = (itemId) => {
         const randomColor = hoverColors[Math.floor(Math.random() * hoverColors.length)];
         setHoverBg((prev) => ({ ...prev, [itemId]: randomColor }));
@@ -66,6 +106,22 @@ const Collection = () => {
             return nextState;
         });
     };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [category, subCategory, search, sortType]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen py-10 px-4 mt-20 fade-in">
+                <Navbar />
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="w-12 h-12 border-4 border-gray-200 border-t-dashboard rounded-full animate-spin"></div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -148,7 +204,7 @@ const Collection = () => {
                         </div>
 
                         <div className="md:mt-4 mt-10 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 space-y-5">
-                            {filteredProducts.map((item, index) => {
+                            {paginatedProducts.map((item, index) => {
                                 const quantity = cartItems[item._id] || 0;
                                 return (
                                     <div
@@ -186,6 +242,68 @@ const Collection = () => {
                                 );
                             })}
                         </div>
+
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-center gap-2 mt-16">
+                                <button
+                                    onClick={() => goToPage(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-full disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white hover:border-black transition-all duration-150 cursor-pointer"
+                                >
+                                    <i className="bx bx-chevron-left text-lg"></i>
+                                </button>
+
+                                {visiblePageNumbers[0] > 1 && (
+                                    <>
+                                        <button
+                                            onClick={() => goToPage(1)}
+                                            className="w-9 h-9 flex items-center justify-center rounded-full text-sm border border-gray-300 hover:bg-black hover:text-white hover:border-black transition-all duration-150 cursor-pointer"
+                                        >
+                                            1
+                                        </button>
+                                        {visiblePageNumbers[0] > 2 && (
+                                            <span className="w-9 h-9 flex items-center justify-center text-sm text-gray-400">...</span>
+                                        )}
+                                    </>
+                                )}
+
+                                {visiblePageNumbers.map((page) => (
+                                    <button
+                                        key={page}
+                                        onClick={() => goToPage(page)}
+                                        className={`w-9 h-9 flex items-center justify-center rounded-full text-sm transition-all duration-150 cursor-pointer ${
+                                            currentPage === page
+                                                ? "bg-black text-white"
+                                                : "border border-gray-300 hover:bg-black hover:text-white hover:border-black"
+                                        }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+
+                                {visiblePageNumbers[visiblePageNumbers.length - 1] < totalPages && (
+                                    <>
+                                        {visiblePageNumbers[visiblePageNumbers.length - 1] < totalPages - 1 && (
+                                            <span className="w-9 h-9 flex items-center justify-center text-sm text-gray-400">...</span>
+                                        )}
+                                        <button
+                                            onClick={() => goToPage(totalPages)}
+                                            className="w-9 h-9 flex items-center justify-center rounded-full text-sm border border-gray-300 hover:bg-black hover:text-white hover:border-black transition-all duration-150 cursor-pointer"
+                                        >
+                                            {totalPages}
+                                        </button>
+                                    </>
+                                )}
+
+                                <button
+                                    onClick={() => goToPage(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-full disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white hover:border-black transition-all duration-150 cursor-pointer"
+                                >
+                                    <i className="bx bx-chevron-right text-lg"></i>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
