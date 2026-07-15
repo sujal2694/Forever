@@ -36,23 +36,41 @@ const Contact = () => {
                     <h1 className='flex items-center justify-center text-2xl lg:text-3xl uppercase my-7 text-gray-400 gap-2'>contact   <span className='text-gray-800'>us</span><hr className='w-12 h-[2] bg-black border-none rounded-4xl' /></h1>
                 </div>
 
-                <div className='grid grid-cols-1 md:flex gap-10 lg:gap-5'>
-                    <div className='w-fit'>
-                        <Image className='w-full lg:w-xl' src={assets.contact_img} alt='contact'></Image>
-                    </div>
-                    <div className='w-fit'>
-                        <div>
+                <div className='md:flex gap-10 lg:gap-5'>
+                    <div className='w-full lg:w-1/2'>
+                        <Image className='min-w-full lg:w-xl' src={assets.contact_img} alt='contact' loading='eager'></Image>
+                        <div className='leading-5 mt-4'>
                             <h2 className='text-2xl mb-5'>Our Store</h2>
-                            <p className='text-md text-gray-400 mb-5'>54709 Willms Station Suite 350, Washington, USA</p>
+                            <p className='text-md text-gray-400'>54709 Willms Station Suite 350, Washington, USA</p>
                             <p className='text-gray-400'>Tel: (415)555-0132</p>
-                            <p className='text-gray-400 mb-10'>Email: admin@forever.com</p>
+                            <p className='text-gray-400'>Email: admin@forever.com</p>
                         </div>
-
-                        <div>
-                            <h2 className='text-2xl mb-5'>Careers at Forever</h2>
-                            <p className='text-gray-400 mb-8'>Learn more about our teams and job openings.</p>
-                            <button className='px-8 py-3 border border-gray-700 text-sm hover:bg-black hover:text-white cursor-pointer'>Explore Jobs</button>
-                        </div>
+                    </div>
+                    <div className='bg-gray-500/40 min-h-full w-[1px]'></div>
+                    <div className='w-1/2 min-h-full flex items-center mt-20 lg:mt-0 pl-10'>
+                        <form className='flex items-start justify-start flex-col gap-8'>
+                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
+                                <label htmlFor="first-name">First name</label>
+                                <input type="text" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                            </div>
+                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
+                                <label htmlFor="last-name">Last name</label>
+                                <input type="text" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                            </div>
+                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
+                                <label htmlFor="phone">Phone</label>
+                                <input type="text" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                            </div>
+                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
+                                <label htmlFor="email">E-mail</label>
+                                <input type="email" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                            </div>
+                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide'>
+                                <label htmlFor="message">Message</label>
+                                <textarea rows={5} cols={40} placeholder='Type here' className='ring ring-gray-400 rounded-md px-3 py-1'></textarea>
+                            </div>
+                            <button type='submit' className='bg-black text-white px-5 py-2 hover:shadow-button shadow-zinc-900/80 hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer'>Send</button>
+                        </form>
                     </div>
                 </div>
                 <div className='mb-16 mt-30'>

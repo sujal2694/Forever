@@ -35,9 +35,9 @@ export default function HomePage() {
     return(
         <>
         <Hero/>
+        <Subscripation/>
         <ProductPage/>
         <Qualities/>
-        <Subscripation/>
         <Footer/>
         </>
     )

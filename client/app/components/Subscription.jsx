@@ -2,7 +2,7 @@
 const Subscripation = () => {
     return (
         <div className="w-full fade-in">
-            <div className="w-full mb-40">
+            <div className="w-full my-44">
                 <div className="flex items-center justify-center flex-col w-[85vw] lg:w-[80vw] m-auto ">
                     <h1 className="text-2xl font-semibold mb-3">Subscribe now & get 20% off</h1>
                     <p className="text-lg text-gray-400 text-center mb-4">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam.</p>
