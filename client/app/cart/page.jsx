@@ -5,6 +5,7 @@ import { products } from "../assets/assets"
 import Footer from "../components/Footer"
 import { useContext } from "react"
 import { Context } from "../context/Context"
+import Link from "next/link"
 
 const Page = () => {
     const { cartItems, addToCart, removeFromCart, productList, currency } = useContext(Context);
@@ -80,7 +81,7 @@ const Page = () => {
                                     <p className="w-full bg-gray-700/50 h-0.5"></p>
                                     <li className="flex items-center justify-between">Total price: <span>${subtotal}</span></li>
                                 </ul>
-                                <button className="my-3 text-center w-full bg-black py-3 text-white uppercase tracking-wider font-semibold rounded-lg mt-5 hover:ring ring-black hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer">proceed to pay</button>
+                                <Link href={subtotal > 0 ? "/placeOrder" : "/cart"}><button className="my-3 text-center w-full bg-black py-3 text-white uppercase tracking-wider font-semibold rounded-lg mt-5 hover:ring ring-black hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer">proceed to pay</button></Link>
                             </div>
                         </div>
                     </div>

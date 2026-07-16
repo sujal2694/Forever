@@ -13,6 +13,7 @@ export const ContextProvider = ({ children }) => {
     const [productList, setProductList] = useState([]);
     const [token, setToken] = useState("");
     const [isLogedin, setIsLogedin] = useState(false);
+    const [dashboardLink, setDashboardLink] = useState("Dashboard");
 
     const addToCart = async (itemid) => {
         const safeItemId = itemid;
@@ -126,6 +127,8 @@ export const ContextProvider = ({ children }) => {
         productList,
         token,
         setToken,
+        dashboardLink,
+        setDashboardLink,
     };
 
     return <Context.Provider value={ContextValue}>{children}</Context.Provider>;

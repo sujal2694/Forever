@@ -221,13 +221,13 @@ const Collection = () => {
                                             <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-wrap">{item.name}</p>
                                             <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
                                         </div>
-                                        <div className="absolute right-2 top-2 flex items-center justify-center gap-3 bg-pink-50 p-1 rounded-full">
+                                        <div className="absolute right-2 top-2 flex items-center justify-center gap-3 bg-dashboard/70 p-1 rounded-full">
                                             {quantity > 0 ? (
                                                 <>
                                                     <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
                                                         <i className="bx bx-minus"></i>
                                                     </button>
-                                                    <p className="font-semibold text-lg text-gray-400">{quantity}</p>
+                                                    <p className="font-semibold text-lg font-sans text-gray-800">{quantity}</p>
                                                     <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
                                                         <i className="bx bx-plus"></i>
                                                     </button>

@@ -10,8 +10,7 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 
 const page = () => {
-    const { url } = useContext(Context);
-    const [dashboardLink, setDashboardLink] = useState("Dashboard");
+    const { url, dashboardLink, setDashboardLink } = useContext(Context);
     const [addAddress, setAddAddress] = useState(false);
     const [user, setUser] = useState({
         name: "",
@@ -207,7 +206,7 @@ const page = () => {
             <div className="min-h-screen py-10 px-4 mt-20 fade-in">
                 <Navbar />
                 <div className="flex items-center justify-center max-h-screen">
-                    <div className="w-12 h-12 border-4 border-gray-200 border-t-pink-600 rounded-full animate-spin"></div>
+                    <div className="w-12 h-12 border-4 border-gray-200 border-t-dashboard rounded-full animate-spin"></div>
                 </div>
                 <Footer />
             </div>
