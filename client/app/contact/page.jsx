@@ -48,7 +48,7 @@ const Contact = () => {
                     </div>
                     <div className='bg-gray-500/40 min-h-full w-[1px]'></div>
                     <div className='w-1/2 min-h-full flex items-center mt-20 lg:mt-0 pl-10'>
-                        <form className='flex items-start justify-start flex-col gap-8'>
+                        <form className='flex items-start justify-start flex-col gap-8 w-72'>
                             <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
                                 <label htmlFor="first-name">First name</label>
                                 <input type="text" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
@@ -67,7 +67,7 @@ const Contact = () => {
                             </div>
                             <div className='flex flex-col gap-1 text-md font-serif tracking-wide'>
                                 <label htmlFor="message">Message</label>
-                                <textarea rows={5} cols={40} placeholder='Type here' className='ring ring-gray-400 rounded-md px-3 py-1'></textarea>
+                                <textarea rows={5} cols={30} placeholder='Type here' className='ring ring-gray-400 rounded-md px-3 py-1'></textarea>
                             </div>
                             <button type='submit' className='bg-black text-white px-5 py-2 hover:shadow-button shadow-zinc-900/80 hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer'>Send</button>
                         </form>
