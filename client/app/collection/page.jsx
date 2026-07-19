@@ -5,9 +5,10 @@ import { assets, products } from "../assets/assets"
 import { useContext, useState, useEffect } from "react"
 import { Context } from "../context/Context"
 import Footer from "../components/Footer"
+import Link from "next/link"
 
 const Collection = () => {
-    const { searchBar, setSearchBar, currency, cartItems, addToCart, removeFromCart } = useContext(Context);
+    const { searchBar, setSearchBar, currency, cartItems, addToCart, removeFromCart, setId, setDashboardLink } = useContext(Context);
     const [category, setCategory] = useState([]);
     const [subCategory, setSubCategory] = useState([]);
     const [sortType, setSortType] = useState("relevant");
@@ -207,38 +208,43 @@ const Collection = () => {
                             {paginatedProducts.map((item, index) => {
                                 const quantity = cartItems[item._id] || 0;
                                 return (
-                                    <div
-                                        key={item._id || index}
-                                        onMouseEnter={() => handleCardHover(item._id)}
-                                        onMouseLeave={() => handleCardLeave(item._id)}
-                                        className="relative w-fit hover:scale-[1.01] backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300"
-                                        style={{ backgroundColor: hoverBg[item._id] || "transparent" }}
+                                    <Link
+                                        href='/singleProduct'
+                                        key={item._id}
+                                        onClick={() => {setId(item._id); setDashboardLink("single-product")}}
                                     >
-                                        <div className="overflow-hidden">
-                                            <Image className="w-full transition ease-in-out cursor-pointer rounded-2xl" src={item.image} alt="" loading="eager"></Image>
-                                        </div>
-                                        <div className="pl-3">
-                                            <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-wrap">{item.name}</p>
-                                            <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
-                                        </div>
-                                        <div className="absolute right-2 top-2 flex items-center justify-center gap-3 bg-dashboard/70 p-1 rounded-full">
-                                            {quantity > 0 ? (
-                                                <>
-                                                    <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
-                                                        <i className="bx bx-minus"></i>
-                                                    </button>
-                                                    <p className="font-semibold text-lg font-sans text-gray-800">{quantity}</p>
+                                        <div
+                                            onMouseEnter={() => handleCardHover(item._id)}
+                                            onMouseLeave={() => handleCardLeave(item._id)}
+                                            className="relative hover:scale-[1.01] backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group transition-all duration-300"
+                                            style={{ backgroundColor: hoverBg[item._id] || "transparent" }}
+                                        >
+                                            <div className="overflow-hidden">
+                                                <Image className="w-full min-h-full transition ease-in-out cursor-pointer rounded-2xl" src={item.image} alt="" loading="eager"></Image>
+                                            </div>
+                                            <div className="pl-3">
+                                                <p className="text-sm text-gray-600 tracking-wide mt-2 overflow-hidden text-ellipsis whitespace-wrap">{item.name}</p>
+                                                <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
+                                            </div>
+                                            <div className="absolute right-2 top-2 flex items-center justify-center gap-3 bg-dashboard/70 p-1 rounded-full">
+                                                {quantity > 0 ? (
+                                                    <>
+                                                        <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
+                                                            <i className="bx bx-minus"></i>
+                                                        </button>
+                                                        <p className="font-semibold text-lg font-sans text-gray-800">{quantity}</p>
+                                                        <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
+                                                            <i className="bx bx-plus"></i>
+                                                        </button>
+                                                    </>
+                                                ) : (
                                                     <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
                                                         <i className="bx bx-plus"></i>
                                                     </button>
-                                                </>
-                                            ) : (
-                                                <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-7 w-7 flex items-center justify-center cursor-pointer">
-                                                    <i className="bx bx-plus"></i>
-                                                </button>
-                                            )}
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 );
                             })}
                         </div>
@@ -271,11 +277,10 @@ const Collection = () => {
                                     <button
                                         key={page}
                                         onClick={() => goToPage(page)}
-                                        className={`w-9 h-9 flex items-center justify-center rounded-full text-sm transition-all duration-150 cursor-pointer ${
-                                            currentPage === page
-                                                ? "bg-black text-white"
-                                                : "border border-gray-300 hover:bg-black hover:text-white hover:border-black"
-                                        }`}
+                                        className={`w-9 h-9 flex items-center justify-center rounded-full text-sm transition-all duration-150 cursor-pointer ${currentPage === page
+                                            ? "bg-black text-white"
+                                            : "border border-gray-300 hover:bg-black hover:text-white hover:border-black"
+                                            }`}
                                     >
                                         {page}
                                     </button>
@@ -311,5 +316,5 @@ const Collection = () => {
         </div>
     );
 };
- 
+
 export default Collection

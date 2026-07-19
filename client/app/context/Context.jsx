@@ -14,6 +14,8 @@ export const ContextProvider = ({ children }) => {
     const [token, setToken] = useState("");
     const [isLogedin, setIsLogedin] = useState(false);
     const [dashboardLink, setDashboardLink] = useState("Dashboard");
+    const [id, setId] = useState("");
+
 
     const addToCart = async (itemid) => {
         const safeItemId = itemid;
@@ -109,8 +111,6 @@ export const ContextProvider = ({ children }) => {
         if (token) {
             fetchCartData(token);
         }
-        console.log(cartItems);
-        
     }, [token]);
 
     const ContextValue = {
@@ -129,6 +129,8 @@ export const ContextProvider = ({ children }) => {
         setToken,
         dashboardLink,
         setDashboardLink,
+        id,
+        setId
     };
 
     return <Context.Provider value={ContextValue}>{children}</Context.Provider>;

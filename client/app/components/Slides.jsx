@@ -87,7 +87,7 @@ export default function HeroCarousel() {
                     <div key={index} className="min-w-full">
                         <div className="flex border border-gray-700 max-sm:flex-col">
                             {/* Left */}
-                            <div className="w-1/2 max-sm:w-full flex items-center justify-center">
+                            <div className="w-1/2 max-sm:w-full flex items-center justify-center py-12">
                                 <div>
                                     <div className="flex items-center gap-2.5">
                                         <hr className="w-12 h-[2px] bg-black border-none" />
@@ -108,7 +108,7 @@ export default function HeroCarousel() {
                                 <Image
                                     src={slide.image}
                                     alt={slide.title}
-                                    className="w-full h-[40vw] object-cover"
+                                    className="w-full h-[40vw] max-sm:h-[80vw] object-cover"
                                     priority
                                 />
                             </div>

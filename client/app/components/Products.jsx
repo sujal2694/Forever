@@ -3,9 +3,10 @@ import { useContext, useState } from "react";
 import { products } from "../assets/assets";
 import Image from "next/image";
 import { Context } from "../context/Context";
+import Link from "next/link";
 
 export default function ProductPage() {
-    const { currency, cartItems, addToCart, removeFromCart } = useContext(Context);
+    const { currency, cartItems, addToCart, removeFromCart, setId } = useContext(Context);
     const [hoverBg, setHoverBg] = useState({});
     const hoverColors = ["#FF85BC", "#FDBA68"];
 
@@ -25,30 +26,32 @@ export default function ProductPage() {
     const renderProductCard = (item) => {
         const quantity = cartItems[item._id] || 0;
         return (
-            <div key={item._id} onMouseEnter={() => handleCardHover(item._id)} onMouseLeave={() => handleCardLeave(item._id)} style={{ backgroundColor: hoverBg[item._id] || "transparent" }} className="relative w-fit hover:scale-[1.01] backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group hover:ring hover:ring-rose-700/90 transition-all duration-300">
-                <div className="overflow-hidden">
-                    <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image} alt="" loading="eager"></Image>
-                </div>
-                <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
-                <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
-                <div className="absolute right-2 top-2 flex items-center justify-center gap-2 px-1 py-1 rounded-full cursor-pointer">
-                    {quantity > 0 ? (
-                        <>
-                            <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">
-                                <i className="bx bx-minus"></i>
-                            </button>
-                            <p className="font-semibold text-sm text-gray-400">{quantity}</p>
+            <Link href='/singleProduct' key={item._id}>
+                <div onClick={() => setId(item._id)}  onMouseEnter={() => handleCardHover(item._id)} onMouseLeave={() => handleCardLeave(item._id)} style={{ backgroundColor: hoverBg[item._id] || "transparent" }} className="relative w-fit hover:scale-[1.01] backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group hover:ring hover:ring-rose-700/90 transition-all duration-300">
+                    <div className="overflow-hidden">
+                        <Image className="rounded-2xl transition ease-in-out cursor-pointer" src={item.image} alt="" loading="eager"></Image>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
+                    <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
+                    <div className="absolute right-2 top-2 flex items-center justify-center gap-2 px-1 py-1 rounded-full cursor-pointer">
+                        {quantity > 0 ? (
+                            <>
+                                <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">
+                                    <i className="bx bx-minus"></i>
+                                </button>
+                                <p className="font-semibold text-sm text-gray-400">{quantity}</p>
+                                <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">
+                                    <i className="bx bx-plus"></i>
+                                </button>
+                            </>
+                        ) : (
                             <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">
                                 <i className="bx bx-plus"></i>
                             </button>
-                        </>
-                    ) : (
-                        <button onClick={() => addToCart(item._id)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">
-                            <i className="bx bx-plus"></i>
-                        </button>
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
+            </Link>
         );
     };
 
