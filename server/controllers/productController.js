@@ -5,7 +5,11 @@ import fs from 'fs';
 
 export const addProduct = async (req, res) => {
     try {
-        let image_filename = `${req.file.filename}`;
+
+        if (!req.file) {
+            return res.json({ success: false, message: "Image is required" });
+        }
+        let image_filename = req.file.filename;
 
         const product = new productModel({
             id: req.body.id,

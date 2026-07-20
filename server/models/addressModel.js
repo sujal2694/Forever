@@ -10,4 +10,4 @@ export const addressSchema = mongoose.Schema({
     landmark: { type: String, required: false },
 })
 
-export const addressModel = mongoose.models.model || mongoose.model("address", addressSchema);
+export const addressModel = mongoose.models.address || mongoose.model("address", addressSchema);

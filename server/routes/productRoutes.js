@@ -6,7 +6,7 @@ export const productRouter = e.Router();
 
 //image storage engine
 
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage({
     destination:"uploads",
     filename:(req,file,cb)=>{
         return cb(null, `${Date.now()}${file.originalname}`)

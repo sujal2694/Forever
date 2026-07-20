@@ -9,26 +9,27 @@ import { productRouter } from './routes/productRoutes.js';
 
 const app = express();
 
-
 app.use(express.json())
 app.use(cors())
 
-//database connection
+// database connection
 connectDB();
 
-//api endpoints
+// api endpoints
 app.use("/api/product", productRouter);
-app.use("/images",express.static('uploads'));
+app.use("/images", express.static('uploads'));
 app.use('/api/user', userRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/cart', cartRouter);
 
-
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     res.send("server is live....")
 })
 
-const port = process.env.PORT || 4000
-app.listen(port,(req,res)=>{
-    console.log("server running on port 4000");
-})
+// Only listen locally — Vercel handles invocation itself
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 4000
+    app.listen(port, () => {
+        console.log(`server running on port ${port}`);
+    })
+}
