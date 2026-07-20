@@ -13,7 +13,9 @@ app.use(express.json())
 app.use(cors())
 
 // database connection
-connectDB();
+connectDB().catch((err) => {
+    console.error("Failed to connect to DB:", err.message);
+});
 
 // api endpoints
 app.use("/api/product", productRouter);
