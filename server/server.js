@@ -28,10 +28,9 @@ app.get('/', (req, res) => {
     res.send("server is live....")
 })
 
-// Only listen locally — Vercel handles invocation itself
-if (process.env.NODE_ENV !== 'production') {
-    const port = process.env.PORT || 4000
-    app.listen(port, () => {
-        console.log(`server running on port ${port}`);
-    })
-}
+
+const port = process.env.PORT || 4000
+app.listen(port, () => {
+    console.log(`server running on port ${port}`);
+})
+
