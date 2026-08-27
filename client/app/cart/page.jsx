@@ -1,0 +1,155 @@
+"use client"
+import Image from "next/image"
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
+import { useContext, useEffect, useState } from "react"
+import { Context } from "../context/Context"
+import Link from "next/link"
+import axios from "axios"
+
+const Page = () => {
+    const { cartItems, addToCart, removeFromCart, url, currency, isLogin } = useContext(Context);
+    const [availableProducts, setAvailableProducts] = useState([]);
+
+    const fetchAvailableProducts = async () => {
+        try {
+            const res = await axios.get(url + "/api/product/list-product");
+            if (res.data.success) {
+                setAvailableProducts(res.data.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchAvailableProducts();
+    }, []);
+
+    const cartEntries = Object.entries(cartItems || {}).filter(([, quantity]) => quantity > 0);
+
+    const totalProducts = cartEntries.reduce((sum, [, quantity]) => sum + quantity, 0);
+
+    // Use the same display-price convention as the per-row price shown below,
+    // so "MRP" / "Total price" actually match the sum of the line items.
+    const subtotal = cartEntries.reduce((total, [itemId, quantity]) => {
+        const itemInfo = availableProducts.find((product) => product._id === itemId);
+        if (!itemInfo) return total;
+        return total + itemInfo.price * quantity;
+    }, 0);
+
+    const handlePay = () => {
+        if (subtotal === 0) {
+            alert("Your cart is empty. Please add some products");
+        }
+    }
+
+    if (isLogin === "") {
+        return (
+            <div className="w-screen h-screen flex items-center justify-center">
+                <div>
+                    <Link href={'/login'}>
+                        <button className="border-none bg-zinc-300/20 px-5 py-2 rounded-2xl text-base text-zinc-800 cursor-pointer">
+                            <p>Login/Sign Up</p>
+                        </button>
+                    </Link>
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div>
+            <Navbar />
+            <div className="w-[95vw] m-auto mt-28 border-b border-gray-600/30 fade-in">
+                <div className="flex items-center justify-center">
+                    <h2 className="flex items-center gap-3 text-4xl uppercase text-gray-600"><span className="text-black">Your</span> Cart <p className="bg-black h-[2] w-20"></p></h2>
+                </div>
+
+                <div className="flex items-start justify-between lg:flex-row flex-col">
+                    <div className="w-full md:w-[85vw] mt-10 m-auto ring ring-pink-500">
+                        <div>
+                            <ul className="grid md:grid-cols-7 grid-cols-6 bg-primary/30 text-center border-b border-rose-500/70">
+                                <li className="border-r border-rose-500/70 py-2 md:block hidden">No.</li>
+                                <li className="border-r border-rose-500/70 py-2">Image</li>
+                                <li className="border-r border-rose-500/70 py-2 col-span-2">Product Name</li>
+                                <li className="border-r border-rose-500/70 py-2">Price</li>
+                                <li className="border-r border-rose-500/70 py-2">Quantity</li>
+                                <li className="py-2">Remove</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            {cartEntries.length === 0 ? (
+                                <div className="p-6 text-center text-gray-500">
+                                    <p>Your cart is empty.</p>
+                                    <Link href={'/collection'}>
+                                        <button className="border-none px-5 py-3 text-sm text-zinc-800 bg-zinc-300/20 rounded-2xl mt-5 cursor-pointer hover:scale-105 transition-all duration-300">
+                                            See Products
+                                        </button>
+                                    </Link>
+                                </div>
+                            ) : cartEntries.map(([itemId, quantity], index) => {
+                                const itemInfo = availableProducts.find((product) => product._id === itemId);
+                                if (!itemInfo) return null;
+                                const imageSrc = Array.isArray(itemInfo.images) ? itemInfo.images[0] : itemInfo.image;
+                                return (
+                                    <div key={itemId} className="grid md:grid-cols-7 grid-cols-6 p-2 transition-all duration-300">
+                                        <p className="text-xl text-center md:block hidden">{index + 1}</p>
+                                        <div className="flex justify-center">
+                                            {imageSrc ? (
+                                                <Image
+                                                    className="w-20"
+                                                    src={imageSrc.startsWith("http") ? imageSrc : `${url}/images/${imageSrc}`}
+                                                    alt={itemInfo.name || "Product image"}
+                                                    width={80}
+                                                    height={80}
+                                                    unoptimized
+                                                />
+                                            ) : (
+                                                <div className="w-20 h-20 bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                                                    No image
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="text-sm text-center col-span-2">{itemInfo.name}</p>
+                                        <p className="text-center">${itemInfo.price}</p>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <button onClick={() => removeFromCart(itemId)} className="p-1 bg-rose-200 rounded-full h-8 w-8 flex items-center justify-center">
+                                                <i className="bx bx-minus"></i>
+                                            </button>
+                                            <span>{quantity}</span>
+                                            <button onClick={() => addToCart(itemId)} className="p-1 bg-rose-200 rounded-full h-8 w-8 flex items-center justify-center">
+                                                <i className="bx bx-plus"></i>
+                                            </button>
+                                        </div>
+                                        <button onClick={() => removeFromCart(itemId)} className="text-red-600 text-center">X</button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-center md:w-[85vw] w-full">
+                        <div className="border border-gray-600/20 w-full rounded-sm md:m-10 mt-20 mb-20 p-6 shadow shadow-gray-500/30">
+                            <h2 className="text-4xl py-2">Cart Total</h2>
+                            <div className="w-full border-t border-slate-500/50 py-3">
+                                <ul className="text-xl font-light grid gap-4">
+                                    <li className="flex items-center justify-between">Total products:<span>{totalProducts}</span></li>
+                                    <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(2)}</span></li>
+                                    <li className="flex items-center justify-between">Discounts: <span>-${currency}0</span></li>
+                                    <p className="w-full bg-gray-700/50 h-0.5"></p>
+                                    <li className="flex items-center justify-between">Total price: <span>{currency}{subtotal.toFixed(2)}</span></li>
+                                </ul>
+                                <Link href={subtotal > 0 ? "/placeOrder" : "/cart"}><button onClick={handlePay} className="my-3 text-center w-full bg-black py-3 text-white uppercase tracking-wider font-semibold rounded-lg mt-5 hover:ring ring-black hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer">proceed to pay</button></Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <Footer />
+        </div>
+    );
+};
+
+export default Page

@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Prata&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+    --font-prata: "Prata", serif;
+    --color-primary: #ff0f7b;
+    --color-shadow: #fbe8f0;
+    --color-navbar: #FFF8FB;
+    --color-button: #a2d2ff;
+    --color-dashboard: #98D2EB;
+    --color-add-button: #A9DEF9;
+    --shadow-login-button: 0 0 5px #FFCCE1, 5px 5px 0px #FFCCE1;
+    --shadow-button: 0 0 5px #FFCCE1, 5px 5px 0px #FFCCE1;
+    --shadow-quality: 0 0 5px #FFCCE1, 0px 5px 0px #FFCCE1;
+}
+
+body {
+    font-family: 'outfit', sans-serif;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.fade-in{
+    animation: fade-in 1s linear normal;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.marquee-track {
+  animation: scroll-marquee 10s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
