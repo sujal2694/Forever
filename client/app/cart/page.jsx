@@ -6,9 +6,9 @@ import { useContext, useEffect, useState } from "react"
 import { Context } from "../context/Context"
 import Link from "next/link"
 import axios from "axios"
-
+ 
 const Page = () => {
-    const { cartItems, addToCart, removeFromCart, url, currency, isLogin } = useContext(Context);
+    const { cartItems, addToCart, removeFromCart, url, currency, isLogedin } = useContext(Context);
     const [availableProducts, setAvailableProducts] = useState([]);
 
     const fetchAvailableProducts = async () => {
@@ -44,13 +44,15 @@ const Page = () => {
         }
     }
 
-    if (isLogin === "") {
+    if (!isLogedin) {
         return (
             <div className="w-screen h-screen flex items-center justify-center">
-                <div>
+                <Navbar/>
+                <div className="text-center">
+                    <h1 className="mb-4 text-2xl font-mono">You are not loged in.</h1>
                     <Link href={'/login'}>
-                        <button className="border-none bg-zinc-300/20 px-5 py-2 rounded-2xl text-base text-zinc-800 cursor-pointer">
-                            <p>Login/Sign Up</p>
+                        <button className="border-none bg-zinc-300/20 px-5 py-2 rounded-2xl text-base text-zinc-800 cursor-pointer tracking-wider">
+                            <p>Login / Sign Up</p>
                         </button>
                     </Link>
                 </div>

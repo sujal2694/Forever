@@ -274,12 +274,11 @@ const page = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen py-10 px-4 mt-20 fade-in">
+            <div className="h-screen py-10 px-4 mt-20 fade-in">
                 <Navbar />
-                <div className="flex items-center justify-center max-h-screen">
+                <div className="flex items-center justify-center h-screen">
                     <div className="w-12 h-12 border-4 border-gray-200 border-t-dashboard rounded-full animate-spin"></div>
                 </div>
-                <Footer />
             </div>
         )
     }

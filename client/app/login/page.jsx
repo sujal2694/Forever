@@ -84,7 +84,7 @@ export default function LoginPage() {
                         <hr className="h-[2] w-12 border-none rounded-b-full bg-gray-800" />
                     </div>
 
-                    <form onSubmit={onLogin} className="text-center md:w-[45vw] lg:w-[20vw] my-8">
+                    <form onSubmit={onLogin} className="text-center md:w-[45vw] lg:w-[20vw] max-sm:w-90 my-8">
                         <div className="flex items-center justify-center flex-col gap-4">
                             {isSignUp && (
                                 <input onChange={onchangHandler} name="name" value={data.name} className="border border-gray-700 p-3 w-full outline-none focus:ring ring-zinc-600" type="text" placeholder="Name" required />
@@ -103,7 +103,7 @@ export default function LoginPage() {
                             )}
                         </div>
 
-                        <div className="flex items-start md:items-center lg:items-center justify-between lg:flex-row md:flex-row flex-col text-sm my-2">
+                        <div className="flex items-start md:items-center lg:items-center justify-between lg:flex-row md:flex-row text-sm my-2">
                             <p>Forgot Password?</p>
                             {isSignUp
                                 ? <p className="hover:underline cursor-pointer" onClick={() => setIsSignUp(false)}>Already have an account</p>

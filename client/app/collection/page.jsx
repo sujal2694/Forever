@@ -9,7 +9,7 @@ import Link from "next/link"
 import axios from "axios"
 
 const Collection = () => {
-    const { searchBar, setSearchBar, currency, cartItems, addToCart, removeFromCart, setId, setDashboardLink, url } = useContext(Context);
+    const { searchBar, setSearchBar, cartItems, addToCart, removeFromCart, setId, setDashboardLink, url } = useContext(Context);
     const [products, setProducts] = useState([]);
     const [category, setCategory] = useState([]);
     const [subCategory, setSubCategory] = useState([]);
@@ -68,7 +68,7 @@ const Collection = () => {
 
     const filteredProducts = products.filter((item) => {
         const categoryMatch = category.length === 0 || category.includes(item.category);
-        const subCategoryMatch = subCategory.length === 0 || subCategory.includes(item.subCategory);
+        const subCategoryMatch = subCategory.length === 0 || subCategory.includes(item.subcategory);
         const searchMatch = (item.name ?? "").toLowerCase().includes((search ?? "").toLowerCase());
 
         return categoryMatch && subCategoryMatch && searchMatch;
