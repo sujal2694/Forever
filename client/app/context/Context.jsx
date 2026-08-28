@@ -1,6 +1,7 @@
 "use client"
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
+import SizePopUp from "../components/SizePopUp";
 
 export const Context = createContext();
 
@@ -17,7 +18,7 @@ export const ContextProvider = ({ children }) => {
     const [id, setId] = useState("");
 
 
-    const addToCart = async (itemid) => {
+    const addToCart = async (itemid, size) => {
         const safeItemId = itemid;
         setCartItems((prev) => ({
             ...prev,
@@ -25,10 +26,18 @@ export const ContextProvider = ({ children }) => {
         }));
 
         if (token) {
+            if (!size) {
+                return (
+                    <SizePopUp/>
+                )
+            }
             try {
                 await axios.post(
                     `${url}/api/cart/add-to-cart`,
-                    { itemId: safeItemId },
+                    {
+                        itemId: safeItemId,
+                        size: size
+                    },
                     { headers: { token } }
                 );
             } catch (error) {

@@ -7,8 +7,6 @@ import Qualities from "../components/Qualities";
 import Subscripation from "../components/Subscription";
 import Navbar from "../components/Navbar";
 
-
-
 export default function HomePage() {
     const [loading, setLoading] = useState(true);
 
@@ -32,13 +30,13 @@ export default function HomePage() {
         )
     }
 
-    return(
+    return (
         <>
-        <Hero/>
-        <Subscripation/>
-        <ProductPage/>
-        <Qualities/>
-        <Footer/>
+            <Hero />
+            <Subscripation />
+            <ProductPage />
+            <Qualities />
+            <Footer />
         </>
     )
 }

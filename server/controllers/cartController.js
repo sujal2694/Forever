@@ -4,8 +4,9 @@ export const addToCart = async (req, res) => {
     try {
         const userId = req.userId || req.body.userId;
         const itemId = req.body.itemId || req.body.itemid;
+        const size = req.body.size;
 
-        if (!userId || !itemId) {
+        if (!userId || !itemId || !size) {
             return res.json({ success: false, message: "Invalid cart request" });
         }
 
@@ -15,7 +16,11 @@ export const addToCart = async (req, res) => {
         }
 
         const cartData = userData.cartData || {};
-        cartData[itemId] = (cartData[itemId] || 0) + 1;
+
+        if (!cartData[itemId]) {
+            cartData[itemId] = {};
+        }
+        cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
 
         await userModel.findByIdAndUpdate(userId, { cartData });
         res.json({ success: true, message: "Item added to cart successfully" });
