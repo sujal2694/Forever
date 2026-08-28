@@ -6,7 +6,7 @@ import Link from "next/link";
 import axios from "axios";
 
 export default function ProductPage() {
-    const { currency, cartItems, addToCart, removeFromCart, setId, url } = useContext(Context);
+    const { currency, cartItems, addToCart, removeFromCart, getItemTotalQty, setId, url } = useContext(Context);
     const [products, setProducts] = useState([]);
     const [hoverBg, setHoverBg] = useState({});
     const hoverColors = ["#FF85BC", "#FDBA68"];
@@ -41,7 +41,10 @@ export default function ProductPage() {
     };
 
     const renderProductCard = (item) => {
-        const quantity = cartItems[item._id] || 0;
+        const quantity = getItemTotalQty(item._id);
+        const itemSizesInCart = cartItems[item._id] || {};
+        const firstSizeInCart = Object.keys(itemSizesInCart)[0];
+
         return (
             <div key={item._id} onClick={() => setId(item._id)} onMouseEnter={() => handleCardHover(item._id)} onMouseLeave={() => handleCardLeave(item._id)} style={{ backgroundColor: hoverBg[item._id] || "transparent" }} className="relative w-fit hover:scale-[1.01] backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group hover:ring hover:ring-rose-700/90 transition-all duration-300">
                 <div className="overflow-hidden">
@@ -65,10 +68,10 @@ export default function ProductPage() {
                 </div>
                 <p className="text-sm text-gray-600 mt-2 tracking-wide">{item.name}</p>
                 <p className="text-sm text-gray-600 mt-1">${(item.price * currency) / 20}</p>
-                <div className="absolute right-2 top-2 flex items-center justify-center bg-dashboard/70 gap-2 px-1 py-1 rounded-full cursor-pointer">
+                <div onClick={(e) => e.stopPropagation()} className="absolute right-2 top-2 flex items-center justify-center bg-dashboard/70 gap-2 px-1 py-1 rounded-full cursor-pointer">
                     {quantity > 0 ? (
                         <>
-                            <button onClick={() => removeFromCart(item._id)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">
+                            <button onClick={() => removeFromCart(item._id, firstSizeInCart)} className="p-1 bg-add-button rounded-full h-8 w-8 flex items-center justify-center">
                                 <i className="bx bx-minus"></i>
                             </button>
                             <p className="font-semibold text-sm text-gray-800">{quantity}</p>

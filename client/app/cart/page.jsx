@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react"
 import { Context } from "../context/Context"
 import Link from "next/link"
 import axios from "axios"
- 
+
 const Page = () => {
     const { cartItems, addToCart, removeFromCart, url, currency, isLogedin } = useContext(Context);
     const [availableProducts, setAvailableProducts] = useState([]);
@@ -26,13 +26,17 @@ const Page = () => {
         fetchAvailableProducts();
     }, []);
 
-    const cartEntries = Object.entries(cartItems || {}).filter(([, quantity]) => quantity > 0);
+    // Flatten { itemId: { size: qty } } into a flat list of rows,
+    // one row per (itemId, size) pair.
+    const cartEntries = Object.entries(cartItems || {}).flatMap(([itemId, sizes]) =>
+        Object.entries(sizes || {})
+            .filter(([, quantity]) => quantity > 0)
+            .map(([size, quantity]) => ({ itemId, size, quantity }))
+    );
 
-    const totalProducts = cartEntries.reduce((sum, [, quantity]) => sum + quantity, 0);
+    const totalProducts = cartEntries.reduce((sum, { quantity }) => sum + quantity, 0);
 
-    // Use the same display-price convention as the per-row price shown below,
-    // so "MRP" / "Total price" actually match the sum of the line items.
-    const subtotal = cartEntries.reduce((total, [itemId, quantity]) => {
+    const subtotal = cartEntries.reduce((total, { itemId, quantity }) => {
         const itemInfo = availableProducts.find((product) => product._id === itemId);
         if (!itemInfo) return total;
         return total + itemInfo.price * quantity;
@@ -71,10 +75,11 @@ const Page = () => {
                 <div className="flex items-start justify-between lg:flex-row flex-col">
                     <div className="w-full md:w-[85vw] mt-10 m-auto ring ring-pink-500">
                         <div>
-                            <ul className="grid md:grid-cols-7 grid-cols-6 bg-primary/30 text-center border-b border-rose-500/70">
+                            <ul className="grid md:grid-cols-8 grid-cols-7 bg-primary/30 text-center border-b border-rose-500/70">
                                 <li className="border-r border-rose-500/70 py-2 md:block hidden">No.</li>
                                 <li className="border-r border-rose-500/70 py-2">Image</li>
                                 <li className="border-r border-rose-500/70 py-2 col-span-2">Product Name</li>
+                                <li className="border-r border-rose-500/70 py-2">Size</li>
                                 <li className="border-r border-rose-500/70 py-2">Price</li>
                                 <li className="border-r border-rose-500/70 py-2">Quantity</li>
                                 <li className="py-2">Remove</li>
@@ -91,12 +96,12 @@ const Page = () => {
                                         </button>
                                     </Link>
                                 </div>
-                            ) : cartEntries.map(([itemId, quantity], index) => {
+                            ) : cartEntries.map(({ itemId, size, quantity }, index) => {
                                 const itemInfo = availableProducts.find((product) => product._id === itemId);
                                 if (!itemInfo) return null;
                                 const imageSrc = Array.isArray(itemInfo.images) ? itemInfo.images[0] : itemInfo.image;
                                 return (
-                                    <div key={itemId} className="grid md:grid-cols-7 grid-cols-6 p-2 transition-all duration-300">
+                                    <div key={`${itemId}-${size}`} className="grid md:grid-cols-8 grid-cols-7 p-2 transition-all duration-300 items-center">
                                         <p className="text-xl text-center md:block hidden">{index + 1}</p>
                                         <div className="flex justify-center">
                                             {imageSrc ? (
@@ -116,17 +121,26 @@ const Page = () => {
                                             )}
                                         </div>
                                         <p className="text-sm text-center col-span-2">{itemInfo.name}</p>
+                                        <p className="text-sm text-center font-medium">{size}</p>
                                         <p className="text-center">${itemInfo.price}</p>
                                         <div className="flex items-center justify-center gap-2">
-                                            <button onClick={() => removeFromCart(itemId)} className="p-1 bg-rose-200 rounded-full h-8 w-8 flex items-center justify-center">
+                                            <button onClick={() => removeFromCart(itemId, size)} className="p-1 bg-rose-200 rounded-full h-8 w-8 flex items-center justify-center">
                                                 <i className="bx bx-minus"></i>
                                             </button>
                                             <span>{quantity}</span>
-                                            <button onClick={() => addToCart(itemId)} className="p-1 bg-rose-200 rounded-full h-8 w-8 flex items-center justify-center">
+                                            <button onClick={() => addToCart(itemId, size)} className="p-1 bg-rose-200 rounded-full h-8 w-8 flex items-center justify-center">
                                                 <i className="bx bx-plus"></i>
                                             </button>
                                         </div>
-                                        <button onClick={() => removeFromCart(itemId)} className="text-red-600 text-center">X</button>
+                                        <button
+                                            onClick={() => {
+                                                // remove this size's whole quantity in one go
+                                                for (let i = 0; i < quantity; i++) removeFromCart(itemId, size);
+                                            }}
+                                            className="text-red-600 text-center"
+                                        >
+                                            X
+                                        </button>
                                     </div>
                                 );
                             })}
@@ -142,7 +156,7 @@ const Page = () => {
                                     <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(2)}</span></li>
                                     <li className="flex items-center justify-between">Discounts: <span>-${currency}0</span></li>
                                     <p className="w-full bg-gray-700/50 h-0.5"></p>
-                                    <li className="flex items-center justify-between">Total price: <span>{currency}{subtotal.toFixed(2)}</span></li>
+                                    <li className="flex items-center justify-between">Total price: <span>${subtotal.toFixed(2)}</span></li>
                                 </ul>
                                 <Link href={subtotal > 0 ? "/placeOrder" : "/cart"}><button onClick={handlePay} className="my-3 text-center w-full bg-black py-3 text-white uppercase tracking-wider font-semibold rounded-lg mt-5 hover:ring ring-black hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer">proceed to pay</button></Link>
                             </div>

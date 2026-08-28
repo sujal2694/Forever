@@ -8,36 +8,38 @@ export const Context = createContext();
 export const ContextProvider = ({ children }) => {
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
-    // const url = "http://localhost:4000";
-    const url = "https://forever-r56t.onrender.com"
-    const [cartItems, setCartItems] = useState({});
+    const url = "http://localhost:4000";
+    const [cartItems, setCartItems] = useState({}); // { itemId: { size: qty } }
     const [productList, setProductList] = useState([]);
     const [token, setToken] = useState("");
     const [isLogedin, setIsLogedin] = useState(false);
     const [dashboardLink, setDashboardLink] = useState("Dashboard");
     const [id, setId] = useState("");
+    const [sizePopupItemId, setSizePopupItemId] = useState(null); // controls the popup
 
+    const openSizePopup = (itemId) => setSizePopupItemId(itemId);
+    const closeSizePopup = () => setSizePopupItemId(null);
 
-    const addToCart = async (itemid, size) => {
-        const safeItemId = itemid;
-        setCartItems((prev) => ({
-            ...prev,
-            [safeItemId]: (prev[safeItemId] || 0) + 1,
-        }));
+    const addToCart = async (itemId, size) => {
+        // No size given -> open the popup and stop, don't add yet
+        if (!size) {
+            openSizePopup(itemId);
+            return;
+        }
+
+        setCartItems((prev) => {
+            const sizes = { ...(prev[itemId] || {}) };
+            sizes[size] = (sizes[size] || 0) + 1;
+            return { ...prev, [itemId]: sizes };
+        });
+
+        closeSizePopup();
 
         if (token) {
-            if (!size) {
-                return (
-                    <SizePopUp/>
-                )
-            }
             try {
                 await axios.post(
                     `${url}/api/cart/add-to-cart`,
-                    {
-                        itemId: safeItemId,
-                        size: size
-                    },
+                    { itemId, size },
                     { headers: { token } }
                 );
             } catch (error) {
@@ -46,20 +48,28 @@ export const ContextProvider = ({ children }) => {
         }
     };
 
-    const removeFromCart = async (itemid) => {
+    const removeFromCart = async (itemId, size) => {
         setCartItems((prev) => {
-            const nextCart = { ...prev };
-            if (!nextCart[itemid]) return nextCart;
-            nextCart[itemid] = Math.max(0, nextCart[itemid] - 1);
-            if (nextCart[itemid] === 0) delete nextCart[itemid];
-            return nextCart;
+            const sizes = { ...(prev[itemId] || {}) };
+            if (!sizes[size]) return prev;
+
+            sizes[size] = Math.max(0, sizes[size] - 1);
+            if (sizes[size] === 0) delete sizes[size];
+
+            const next = { ...prev };
+            if (Object.keys(sizes).length === 0) {
+                delete next[itemId];
+            } else {
+                next[itemId] = sizes;
+            }
+            return next;
         });
 
         if (token) {
             try {
                 await axios.post(
                     `${url}/api/cart/remove-from-cart`,
-                    { itemId: itemid },
+                    { itemId, size },
                     { headers: { token } }
                 );
             } catch (error) {
@@ -68,14 +78,21 @@ export const ContextProvider = ({ children }) => {
         }
     };
 
+    // total quantity for an item across all its sizes (for the card badge)
+    const getItemTotalQty = (itemId) => {
+        const sizes = cartItems[itemId];
+        if (!sizes) return 0;
+        return Object.values(sizes).reduce((sum, qty) => sum + qty, 0);
+    };
+
     const getTotalCartAmt = () => {
         let totalAmt = 0;
-        Object.entries(cartItems).forEach(([itemId, quantity]) => {
-            if (quantity <= 0) return;
+        Object.entries(cartItems).forEach(([itemId, sizes]) => {
             const itemInfo = productList.find((product) => product._id === itemId);
-            if (itemInfo) {
-                totalAmt += itemInfo.price * quantity;
-            }
+            if (!itemInfo) return;
+            Object.values(sizes).forEach((qty) => {
+                if (qty > 0) totalAmt += itemInfo.price * qty;
+            });
         });
         return totalAmt;
     };
@@ -111,29 +128,19 @@ export const ContextProvider = ({ children }) => {
     };
 
     const fetchUserId = async () => {
-        const userEmails = []
+        const userEmails = [];
         try {
             const users = await axios.get(url + '/api/user/list-users');
-            users.data.users.map((user) => {
-                userEmails.push(user.email)
-            })
+            users.data.users.forEach((user) => userEmails.push(user.email));
             const currentToken = localStorage.getItem("token");
             const currentUser = await axios.get(url + '/api/user/profile', { headers: { token: currentToken } });
-            if (
-                userEmails.map((email) => {
-                    if (email === currentUser.data.user.email) {
-                        return true
-                    } else {
-                        return false
-                    }
-                })
-            ) {
-                return currentUser.data.user._id
+            if (userEmails.includes(currentUser.data.user.email)) {
+                return currentUser.data.user._id;
             }
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -142,7 +149,6 @@ export const ContextProvider = ({ children }) => {
             localStorage.setItem("token", storedToken);
             setIsLogedin(Boolean(storedToken));
         }
-
         fetchProductList();
     }, []);
 
@@ -153,6 +159,8 @@ export const ContextProvider = ({ children }) => {
             fetchCartData(token);
         }
     }, [token]);
+
+    const sizePopupProduct = productList.find((p) => p._id === sizePopupItemId);
 
     const ContextValue = {
         searchBar,
@@ -165,6 +173,7 @@ export const ContextProvider = ({ children }) => {
         removeFromCart,
         addToCart,
         getTotalCartAmt,
+        getItemTotalQty,
         productList,
         token,
         setToken,
@@ -173,7 +182,20 @@ export const ContextProvider = ({ children }) => {
         id,
         setId,
         fetchUserId,
+        openSizePopup,
+        closeSizePopup,
     };
 
-    return <Context.Provider value={ContextValue}>{children}</Context.Provider>;
+    return (
+        <Context.Provider value={ContextValue}>
+            {children}
+            {sizePopupProduct && (
+                <SizePopUp
+                    product={sizePopupProduct}
+                    onSelect={(size) => addToCart(sizePopupProduct._id, size)}
+                    onClose={closeSizePopup}
+                />
+            )}
+        </Context.Provider>
+    );
 };
