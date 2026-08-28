@@ -106,6 +106,7 @@ const Page = () => {
                                                     alt={itemInfo.name || "Product image"}
                                                     width={80}
                                                     height={80}
+                                                    loading="eager"
                                                     unoptimized
                                                 />
                                             ) : (

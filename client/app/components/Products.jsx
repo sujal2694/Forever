@@ -45,7 +45,7 @@ export default function ProductPage() {
         return (
             <div key={item._id} onClick={() => setId(item._id)} onMouseEnter={() => handleCardHover(item._id)} onMouseLeave={() => handleCardLeave(item._id)} style={{ backgroundColor: hoverBg[item._id] || "transparent" }} className="relative w-fit hover:scale-[1.01] backdrop-blur-2xl hover:rounded-2xl hover:shadow-2xl hover:shadow-shadow hover:p-2 lg:hover:p-3 group hover:ring hover:ring-rose-700/90 transition-all duration-300">
                 <div className="overflow-hidden">
-                    <Link href='/singleProduct'>
+                    <Link href='/singleProduct' className="aspect-square">
                         {item.images?.[0] ? (
                             <Image
                                 className="rounded-2xl transition ease-in-out cursor-pointer"
@@ -53,6 +53,7 @@ export default function ProductPage() {
                                 alt={item.name || "Product image"}
                                 width={300}
                                 height={300}
+                                loading="eager"
                                 unoptimized
                             />
                         ) : (

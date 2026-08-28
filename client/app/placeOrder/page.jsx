@@ -189,7 +189,7 @@ export default function PlaceOrder() {
                                     <div key={idx} className="flex justify-between p-3 text-sm text-gray-700">
                                         <div className="flex items-center gap-2">
                                             {item.image && (
-                                                <Image className="w-14 h-14 object-cover" src={item.image} alt={item.name} width={56} height={56} />
+                                                <Image className="w-14 h-14 object-cover" src={url+"/images/"+item.image} alt={item.name} width={56} height={56} />
                                             )}
                                             <span>{item.name} × {item.quantity}</span>
                                         </div>

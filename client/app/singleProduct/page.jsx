@@ -8,7 +8,7 @@ import Footer from '../components/Footer'
 import { Context } from '../context/Context'
 
 const Page = () => {
-    const { id } = useContext(Context);
+    const { id, addToCart } = useContext(Context);
     const router = useRouter();
 
     const [loading, setLoading] = useState(true);
@@ -64,7 +64,7 @@ const Page = () => {
                         return (
                             <div key={product._id} className='flex items-start md:flex-row lg:flex-row flex-col gap-10 w-full'>
                                 <div className='w-full md:w-4/5 lg:w-1/2'>
-                                    <Image className='w-full' src={product.image} alt={product.name} />
+                                    <Image className='w-full' src={product.image} alt={product.name} loading='eager' />
                                 </div>
                                 <div className='w-full md:w-2/4 pt-10'>
                                     <span className='text-sm text-gray-900/40'>{product.category} | {product.subCategory}</span>
@@ -92,7 +92,7 @@ const Page = () => {
                                             </p>
                                         ))}
                                     </div>
-                                    <button className='mt-10 hover:bg-transparent hover:ring ring-zinc-900 px-10 hover:text-black cursor-pointer bg-zinc-900 text-white py-2 rounded-md'>Add to Bag</button>
+                                    <button onClick={()=>addToCart(productId)} className='mt-10 hover:bg-transparent hover:ring ring-zinc-900 px-10 hover:text-black cursor-pointer bg-zinc-900 text-white py-2 rounded-md'>Add to Bag</button>
                                 </div>
                             </div>
                         )
