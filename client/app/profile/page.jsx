@@ -439,7 +439,7 @@ const page = () => {
                                                     <div className="mt-4 space-y-2">
                                                         {order.items?.map((item, itemIndex) => (
                                                             <div key={`${order._id || index}-${itemIndex}`} className="flex items-center justify-between text-sm text-gray-700">
-                                                                <span>{item.name} × {item.quantity}</span>
+                                                                <span>{item.name} × {item.quantity} {item.size}</span>
                                                                 <span>${item.price * item.quantity}</span>
                                                             </div>
                                                         ))}

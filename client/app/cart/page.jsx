@@ -26,8 +26,6 @@ const Page = () => {
         fetchAvailableProducts();
     }, []);
 
-    // Flatten { itemId: { size: qty } } into a flat list of rows,
-    // one row per (itemId, size) pair.
     const cartEntries = Object.entries(cartItems || {}).flatMap(([itemId, sizes]) =>
         Object.entries(sizes || {})
             .filter(([, quantity]) => quantity > 0)

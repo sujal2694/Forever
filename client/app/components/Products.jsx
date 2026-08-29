@@ -19,7 +19,6 @@ export default function ProductPage() {
             }
         } catch (error) {
             console.log(error);
-            alert("products not fetched.")
         }
     }
 
