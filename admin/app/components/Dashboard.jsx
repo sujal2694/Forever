@@ -26,7 +26,6 @@ const Dashboard = () => {
             }
             if (ordersRes.data.success) {
                 setOrders(ordersRes.data.orders)
-
             }
             if (usersRes.data.success) {
                 setUsers(usersRes.data.users)
@@ -76,8 +75,6 @@ const Dashboard = () => {
         if (adminToken) {
             fetchOrders();
         }
-        console.log(bestSellers);
-
     }, [])
 
     if (loading) {
@@ -109,7 +106,7 @@ const Dashboard = () => {
                         <span className='uppercase tracking-widest text-[13px]'>orders</span>
                         <i className='bx bx-shopping-bag-alt text-xl'></i>
                     </div>
-                    <p className='text-4xl mt-3 font-serif'>{completedOrders > 0 ? 0 : orders.length}</p>
+                    <p className='text-4xl mt-3 font-serif'>{(completedOrders > 0) ? (orders.length === 0) ? 0 : (orders.length - completedOrders) : orders.length}</p>
                 </div>
                 <div className='flex-1 p-5 border border-gray-300'>
                     <div className='w-full flex items-center justify-between text-gray-500'>

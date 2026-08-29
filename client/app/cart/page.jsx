@@ -153,10 +153,10 @@ const Page = () => {
                             <div className="w-full border-t border-slate-500/50 py-3">
                                 <ul className="text-xl font-light grid gap-4">
                                     <li className="flex items-center justify-between">Total products:<span>{totalProducts}</span></li>
-                                    <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(2)}</span></li>
+                                    <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(1)}</span></li>
                                     <li className="flex items-center justify-between">Discounts: <span>-${currency}0</span></li>
                                     <p className="w-full bg-gray-700/50 h-0.5"></p>
-                                    <li className="flex items-center justify-between">Total price: <span>${subtotal.toFixed(2)}</span></li>
+                                    <li className="flex items-center justify-between">Total price: <span>${subtotal.toFixed(1)}</span></li>
                                 </ul>
                                 <Link href={subtotal > 0 ? "/placeOrder" : "/cart"}><button onClick={handlePay} className="my-3 text-center w-full bg-black py-3 text-white uppercase tracking-wider font-semibold rounded-lg mt-5 hover:ring ring-black hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer">proceed to pay</button></Link>
                             </div>

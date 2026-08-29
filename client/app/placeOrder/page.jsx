@@ -21,24 +21,28 @@ export default function PlaceOrder() {
     const [placing, setPlacing] = useState(false);
     const [error, setError] = useState("");
 
-    // cartItems is flat: { [itemId]: quantity } — same shape the cart page reads
+    // cartItems is now nested: { [itemId]: { [size]: quantity } }
     const orderItems = useMemo(() => {
         const flat = [];
         for (const itemId in cartItems || {}) {
-            const quantity = cartItems[itemId];
-            if (quantity > 0) {
-                const itemInfo = availableProducts.find((p) => p._id === itemId);
-                if (itemInfo) {
-                    const image = Array.isArray(itemInfo.image) ? itemInfo.image[0] : itemInfo.image;
-                    flat.push({
-                        product: itemInfo._id,
-                        image,
-                        name: itemInfo.name,
-                        price: itemInfo.price,
-                        displayPrice: (itemInfo.price * currency) / 20,
-                        quantity,
-                        deliveryFee: quantity * (itemInfo.price * currency * 0.001),
-                    });
+            const sizes = cartItems[itemId] || {};
+            for (const size in sizes) {
+                const quantity = sizes[size];
+                if (quantity > 0) {
+                    const itemInfo = availableProducts.find((p) => p._id === itemId);
+                    if (itemInfo) {
+                        const image = Array.isArray(itemInfo.image) ? itemInfo.image[0] : itemInfo.image;
+                        flat.push({
+                            product: itemInfo._id,
+                            image,
+                            name: itemInfo.name,
+                            price: itemInfo.price,
+                            displayPrice: (itemInfo.price * currency) / 20,
+                            size,
+                            quantity,
+                            deliveryFee: quantity * (itemInfo.price * currency * 0.001),
+                        });
+                    }
                 }
             }
         }
@@ -83,7 +87,13 @@ export default function PlaceOrder() {
                 url + "/api/order/place-order",
                 {
                     addressId,
-                    items: orderItems.map(({ product, name, price, quantity }) => ({ product, name, price, quantity })),
+                    items: orderItems.map(({ product, name, price, size, quantity }) => ({
+                        product,
+                        name,
+                        price,
+                        size,
+                        quantity,
+                    })),
                     paymentMethod,
                     deliveryFee: totalDeliveryFee,
                     origin: window.location.origin,
@@ -189,9 +199,9 @@ export default function PlaceOrder() {
                                     <div key={idx} className="flex justify-between p-3 text-sm text-gray-700">
                                         <div className="flex items-center gap-2">
                                             {item.image && (
-                                                <Image className="w-14 h-14 object-cover" src={url+"/images/"+item.image} alt={item.name} width={56} height={56} />
+                                                <Image className="w-14 h-14 object-cover" src={url+"/images/"+item.image} alt={item.name} width={56} height={56} loading="eager" />
                                             )}
-                                            <span>{item.name} × {item.quantity}</span>
+                                            <span>{item.name} ({item.size}) × {item.quantity}</span>
                                         </div>
                                         <span>${(item.displayPrice * item.quantity).toFixed(2)}</span>
                                     </div>

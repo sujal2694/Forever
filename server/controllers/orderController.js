@@ -16,6 +16,14 @@ export const placeOrder = async (req, res) => {
             return res.json({ success: false, message: "Invalid order data" });
         }
 
+        // Every item must have a size, or the order line is meaningless for clothes.
+        const invalidItem = items.find(
+            (item) => !item.product || !item.size || !item.quantity || item.quantity <= 0
+        );
+        if (invalidItem) {
+            return res.json({ success: false, message: "Each item must include a valid product, size, and quantity" });
+        }
+
         const user = await userModel.findById(userId);
         if (!user) {
             return res.json({ success: false, message: "User not found" });
@@ -68,7 +76,9 @@ export const placeOrder = async (req, res) => {
             price_data: {
                 currency: "usd",
                 product_data: {
-                    name: item.name,
+                    // Size baked into the product name so it shows on Stripe's
+                    // checkout page and the customer's receipt/email.
+                    name: `${item.name} (Size: ${item.size})`,
                 },
                 unit_amount: Math.round(item.price * 100),
             },
@@ -247,4 +257,3 @@ export const updateStatus = async (req, res) => {
         res.json({ success: false, message: "Error updating order status" });
     }
 };
-

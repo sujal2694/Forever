@@ -167,7 +167,7 @@ const Orders = () => {
                                         <div>
                                             <div className="leading-5 text-sm">
                                                 {order.items.map((item, idx) => (
-                                                    <p key={item._id || idx}>{item.name} x {item.quantity}</p>
+                                                    <p key={item._id || idx}>{item.name} x {item.quantity} {item.size}</p>
                                                 ))}
                                             </div>
 

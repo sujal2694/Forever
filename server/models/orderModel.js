@@ -11,10 +11,12 @@ export const orderSchema = mongoose.Schema({
             name: { type: String, required: true },
             price: { type: Number, required: true },
             quantity: { type: Number, required: true },
+            size: { type: String, required: true }
         },
     ],
     totalAmount: { type: Number, required: true },
-    status: { type: String, default: "pending" },
+    status: { type: String, default: "placed" },
+    paymentStatus: { type: String, default: "pending" },
     createdAt: { type: Date, default: Date.now },
 });
 
