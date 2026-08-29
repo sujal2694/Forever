@@ -8,7 +8,7 @@ export const Context = createContext();
 export const ContextProvider = ({ children }) => {
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
-    const url = "http://localhost:4000";
+    const url = "https://forever-r56t.onrender.com";
     const [cartItems, setCartItems] = useState({}); // { itemId: { size: qty } }
     const [productList, setProductList] = useState([]);
     const [token, setToken] = useState("");
