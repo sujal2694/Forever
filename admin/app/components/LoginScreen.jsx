@@ -52,7 +52,7 @@ function LoginScreen() {
                     password: ""
                 });
                 setIsLogin(true);
-                toast.success(response.data.message)
+                toast.success("Login successful")
             } else {
                 toast.error(response.data.message)
             }
@@ -78,7 +78,7 @@ function LoginScreen() {
         <div className='w-screen min-h-screen flex items-center justify-center'>
             <div className='border border-gray-700/30 rounded-2xl p-8 shadow-login max-sm:w-[95vw]'>
             <div className='mb-8'>
-                <Image src={assets.logo} alt='logo' className='w-40'></Image>
+                <Image src={assets.logo} alt='logo' loading='eager' className='w-40'></Image>
             </div>
                 <div className='flex items-center justify-center gap-5'>
                     <div

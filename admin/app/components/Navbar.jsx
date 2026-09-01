@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
 import { assets } from '../assets/assets'
-import { useRouter } from 'next/router'
 
 const Navbar = () => {
   const logout = () => {
@@ -15,9 +14,8 @@ const Navbar = () => {
         <p className='uppercase text-sm tracking-widest text-gray-500'>admin</p>
       </div>
 
-      <button onClick={logout} className='flex items-center justify-center gap-3 cursor-pointer bg-black/20 px-4 py-2 rounded-full'>
-        <Image src={assets.profile_icon} alt='profile' className='w-4' />
-        <p className='text-sm font-semibold uppercase tracking-wide'>Logout</p>
+      <button onClick={logout} className='flex items-center justify-center gap-3 cursor-pointer ring ring-black hover:bg-gray-400/10 px-4 py-2 rounded-full'>
+        <p className='text-sm font-semibold  uppercase tracking-wide'>Logout</p>
       </button>
     </div>
   )
