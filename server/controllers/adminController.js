@@ -87,3 +87,17 @@ export const loginAdmin = async (req, res) => {
         res.json({ success: false, message: "Error" })
     }
 }
+
+export const getAdminDetails = async (req, res) => {
+    try {
+        const adminId = req.user?._id || req.adminId;
+        const admin = await adminModel.findById(adminId).select('-password');
+        if (!admin) {
+            return res.json({ success: false, message: "Admin not found" });
+        }
+        res.json({ success: true, admin });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: "Error fetching admin details" });
+    }
+}

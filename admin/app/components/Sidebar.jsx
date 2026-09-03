@@ -22,6 +22,10 @@ const Sidebar = () => {
                     <i className='bx bx-package text-2xl'></i>
                     <p className='max-sm:hidden block'>Orders</p>
                 </li>
+                <li onClick={() => setLink('profile')} className={`flex items-center justify-center gap-2 w-full py-2 cursor-pointer border transition-all duration-300 hover:bg-gray-300/30 ${link === 'profile' ? "text-black bg-gray-300/30 border-black" : " text-black border-gray-400"}`}>
+                    <i className='bx bx-user text-2xl'></i>
+                    <p className='max-sm:hidden block'>Profile</p>
+                </li>
             </ul>
         </div>
     )

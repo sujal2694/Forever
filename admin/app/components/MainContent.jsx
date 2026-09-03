@@ -6,6 +6,7 @@ import { Context } from '../context/Context'
 import AddProduct from './AddProduct';
 import ProductList from './ProductList';
 import Orders from './Orders';
+import Profile from './Profile';
 
 function MainContent() {
     const { link } = useContext(Context);
@@ -15,6 +16,7 @@ function MainContent() {
             {link === "add" ? <AddProduct /> : ""}
             {link === "product-list" ? <ProductList /> : ""}
             {link === "orders" ? <Orders /> : ""}
+            {link === "profile" ? <Profile /> : ""}
         </div>
     )
 }
