@@ -46,18 +46,18 @@ const Dashboard = () => {
     }, [users]);
 
     // Derived stats — computed from real data instead of hardcoded
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0).toFixed(1);
+    const totalRevenue = orders.filter(order => order.status !== 'cancelled').reduce((sum, order) => sum + (order.totalAmount || 0), 0).toFixed(1);
     const completedOrders = orders.filter(order => order.status === 'delivered').length;
 
     // Most recent 5 orders, newest first
     const latestOrders = [...orders]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 5);
 
     // Best sellers by total quantity sold across all orders
     const bestSellers = (() => {
         const salesCount = {};
-        orders.forEach(order => {
+        orders.filter(order => order.status !== 'cancelled').forEach(order => {
             (order.items || []).forEach(item => {
                 salesCount[item.name] = (salesCount[item.name] || 0) + (item.quantity || 1);
             });

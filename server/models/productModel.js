@@ -42,8 +42,18 @@ const productSchema = new mongoose.Schema(
         sizes: {
             type: [
                 {
-                    type: String,
-                    enum: VALID_SIZES,
+                    _id: false,
+                    size: {
+                        type: String,
+                        enum: VALID_SIZES,
+                        required: true,
+                    },
+                    stock: {
+                        type: Number,
+                        min: 0,
+                        required: true,
+                        default: 0,
+                    },
                 },
             ],
             required: true,

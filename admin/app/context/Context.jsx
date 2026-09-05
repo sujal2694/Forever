@@ -6,8 +6,8 @@ export const Context = createContext(null);
 export const ContextProvider = ({ children }) => {
     const [token, setToken] = useState("");
     const [link, setLink] = useState('dashboard');
-    // const url = "http://localhost:4000";
-    const url = "https://forever-r56t.onrender.com"
+    const url = "http://localhost:4000";
+    // const url = "https://forever-r56t.onrender.com"
 
 
     useEffect(() => {

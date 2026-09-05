@@ -1,4 +1,5 @@
 import { userModel } from "../models/userModel.js";
+import { productModel } from "../models/productModel.js";
 
 export const addToCart = async (req, res) => {
     try {
@@ -15,12 +16,20 @@ export const addToCart = async (req, res) => {
             return res.json({ success: false, message: "User not found" });
         }
 
+        const product = await productModel.findById(itemId);
+        const normalizedSize = String(size).toUpperCase();
+        const sizeRecord = product?.sizes?.find((entry) => (entry.size || entry) === normalizedSize);
+        const currentQuantity = userData.cartData?.[itemId]?.[size] || 0;
+        if (!sizeRecord || currentQuantity >= Number(sizeRecord.stock || 0)) {
+            return res.json({ success: false, message: "This size is out of stock." });
+        }
+
         const cartData = userData.cartData || {};
 
         if (!cartData[itemId]) {
             cartData[itemId] = {};
         }
-        cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
+        cartData[itemId][size] = currentQuantity + 1;
 
         await userModel.findByIdAndUpdate(userId, { cartData });
         res.json({ success: true, message: "Item added to cart successfully" });

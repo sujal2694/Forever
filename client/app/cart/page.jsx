@@ -8,7 +8,7 @@ import Link from "next/link"
 import axios from "axios"
 
 const Page = () => {
-    const { cartItems, addToCart, removeFromCart, url, currency, isLogedin } = useContext(Context);
+    const { cartItems, addToCart, removeFromCart, url,  isLogedin } = useContext(Context);
     const [availableProducts, setAvailableProducts] = useState([]);
 
     const fetchAvailableProducts = async () => {
@@ -104,7 +104,7 @@ const Page = () => {
                                         <div className="flex justify-center">
                                             {imageSrc ? (
                                                 <Image
-                                                    className="w-20"
+                                                    className="w-20 h-auto"
                                                     src={imageSrc.startsWith("http") ? imageSrc : `${url}/images/${imageSrc}`}
                                                     alt={itemInfo.name || "Product image"}
                                                     width={80}
@@ -152,7 +152,7 @@ const Page = () => {
                                 <ul className="text-xl font-light grid gap-4">
                                     <li className="flex items-center justify-between">Total products:<span>{totalProducts}</span></li>
                                     <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(1)}</span></li>
-                                    <li className="flex items-center justify-between">Discounts: <span>-${currency}0</span></li>
+                                    <li className="flex items-center justify-between">Discounts: <span>-${(subtotal.toFixed(1)/totalProducts).toFixed(1)}</span></li>
                                     <p className="w-full bg-gray-700/50 h-0.5"></p>
                                     <li className="flex items-center justify-between">Total price: <span>${subtotal.toFixed(1)}</span></li>
                                 </ul>

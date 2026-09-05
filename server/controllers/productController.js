@@ -4,6 +4,25 @@ import path from "path";
 
 const VALID_SIZES = ["S", "M", "L", "XL", "XXL"];
 
+const parseSizes = (sizes) => {
+    const parsed = typeof sizes === "string" ? JSON.parse(sizes) : sizes;
+    if (!Array.isArray(parsed) || parsed.length === 0) return null;
+    return parsed.map((entry) => ({
+        size: String(typeof entry === "string" ? entry : entry?.size || "").toUpperCase(),
+        stock: typeof entry === "string" ? 0 : Number(entry?.stock),
+    }));
+};
+
+const validateSizes = (sizes) => {
+    if (!sizes) return "At least one size is required.";
+    const invalid = sizes.find(
+        (entry) => !VALID_SIZES.includes(entry.size) || !Number.isInteger(entry.stock) || entry.stock < 0
+    );
+    if (invalid) return `Invalid stock or size: ${invalid.size}`;
+    if (new Set(sizes.map((entry) => entry.size)).size !== sizes.length) return "Each size can only be listed once.";
+    return null;
+};
+
 export const addProduct = async (req, res) => {
     const uploadedFiles = req.files || [];
 
@@ -57,40 +76,17 @@ export const addProduct = async (req, res) => {
 
         // Parse sizes
         let parsedSizes;
-
         try {
-            parsedSizes =
-                typeof sizes === "string"
-                    ? JSON.parse(sizes)
-                    : sizes;
+            parsedSizes = parseSizes(sizes);
         } catch (error) {
             parsedSizes = null;
         }
 
-        if (
-            !Array.isArray(parsedSizes) ||
-            parsedSizes.length === 0
-        ) {
+        const sizeError = validateSizes(parsedSizes);
+        if (sizeError) {
             return res.json({
                 success: false,
-                message: "At least one size is required.",
-            });
-        }
-
-        // Normalize sizes
-        const normalizedSizes = parsedSizes.map((size) =>
-            String(size).toUpperCase()
-        );
-
-        // Check valid sizes
-        const invalidSize = normalizedSizes.find(
-            (size) => !VALID_SIZES.includes(size)
-        );
-
-        if (invalidSize) {
-            return res.json({
-                success: false,
-                message: `Invalid size: ${invalidSize}`,
+                message: sizeError,
             });
         }
 
@@ -107,7 +103,7 @@ export const addProduct = async (req, res) => {
             subcategory: subcategory.trim(),
             description: description.trim(),
             price: parsedPrice,
-            sizes: normalizedSizes,
+            sizes: parsedSizes,
             images,
             bestseller:
                 bestseller === "true" ||
@@ -158,6 +154,31 @@ export const listProduct = async (req, res) => {
     }
 };
 
+export const getProduct = async (req, res) => {
+    try {
+        const product = await productModel.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found.",
+            });
+        }
+
+        return res.json({
+            success: true,
+            product,
+        });
+    } catch (error) {
+        console.log("GET PRODUCT ERROR:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to fetch product.",
+        });
+    }
+};
+
 export const removeProduct = async (req, res) => {
     try {
         const { id } = req.body;
@@ -201,5 +222,38 @@ export const removeProduct = async (req, res) => {
             success: false,
             message: "Unable to remove this product.",
         });
+    }
+};
+
+export const updateProduct = async (req, res) => {
+    const uploadedFiles = req.files || [];
+    try {
+        const { id, name, category, subcategory, description, price, sizes, bestseller } = req.body;
+        const product = id ? await productModel.findById(id) : null;
+        if (!product) return res.json({ success: false, message: "Product not found." });
+
+        const parsedPrice = Number(price);
+        let parsedSizes;
+        try {
+            parsedSizes = parseSizes(sizes);
+        } catch (error) {
+            parsedSizes = null;
+        }
+        const sizeError = validateSizes(parsedSizes);
+        if (!name || !category || !subcategory || !description || !Number.isFinite(parsedPrice) || parsedPrice < 0 || sizeError) {
+            return res.json({ success: false, message: sizeError || "Please provide valid product details." });
+        }
+
+        Object.assign(product, {
+            name: name.trim(), category: category.trim(), subcategory: subcategory.trim(),
+            description: description.trim(), price: parsedPrice, sizes: parsedSizes,
+            bestseller: bestseller === "true" || bestseller === true,
+        });
+        if (uploadedFiles.length > 0) product.images = uploadedFiles.map((file) => file.filename);
+        await product.save();
+        return res.json({ success: true, message: "Product updated successfully.", product });
+    } catch (error) {
+        await Promise.all(uploadedFiles.map((file) => fs.unlink(file.path).catch(() => {})));
+        return res.status(500).json({ success: false, message: error.message || "Unable to update product." });
     }
 };

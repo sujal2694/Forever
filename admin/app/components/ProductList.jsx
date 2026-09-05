@@ -41,6 +41,8 @@ const ProductList = () => {
     }, [products, category]);
 
     const handleDelete = async (productId) => {
+        if (!productId || deletingId) return;
+
         const adminToken = localStorage.getItem("adminToken");
 
         if (!adminToken) {
@@ -65,7 +67,7 @@ const ProductList = () => {
             }
         } catch (error) {
             console.log(error);
-            toast.error("Failed to remove product");
+            toast.error(error.response?.data?.message || "Failed to remove product");
         } finally {
             setDeletingId(null);
         }
@@ -104,14 +106,13 @@ const ProductList = () => {
                 <div className='mt-5 flex flex-col gap-3'>
                     {filterProducts.map((p) => (
                         <div key={p._id} className='flex items-center justify-between px-5 py-3 border border-gray-300'>
-                            <div className={`bg-gray-400/30 ${p.images?.length > 0 ? "" : "p-2"} flex items-center justify-center shrink-0 w-[76px] h-[76px] overflow-hidden`}>
+                            <div className={`relative bg-gray-400/30 ${p.images?.length > 0 ? "" : "p-2"} flex items-center justify-center shrink-0 w-[76px] h-[76px] overflow-hidden`}>
                                 {p.images?.[0] ? (
                                     <Image
                                         src={`${url}/images/${p.images[0]}`}
-                                        width={60}
-                                        height={60}
+                                        fill
                                         alt={p.name}
-                                        className='object-cover w-full h-full'
+                                        className='object-cover'
                                         unoptimized
                                     />
                                 ) : (
@@ -124,7 +125,7 @@ const ProductList = () => {
                                 <div className='text-xs tracking-wide text-gray-500 flex items-center gap-1 flex-wrap'>
                                     <span className='capitalize'>{p.subcategory}</span>
                                     <hr className='bg-gray-400/60 border-none h-1 w-1 rounded-full' />
-                                    <span>{p.sizes?.join(', ')}</span>
+                                    <span>{p.sizes?.map((item) => `${item.size || item}: ${item.stock ?? 0}`).join(', ')}</span>
                                     {p.bestseller && (
                                         <>
                                             <hr className='bg-gray-400/60 border-none h-1 w-1 rounded-full' />
@@ -139,6 +140,7 @@ const ProductList = () => {
                             </div>
 
                             <button
+                                type='button'
                                 onClick={() => handleDelete(p._id)}
                                 disabled={deletingId === p._id}
                                 className='m-3 p-2 flex items-center justify-center border border-red-500 rounded-sm bg-red-50 cursor-pointer disabled:opacity-50'

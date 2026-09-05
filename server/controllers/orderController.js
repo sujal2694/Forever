@@ -2,10 +2,30 @@ import Stripe from "stripe";
 import { orderModel } from "../models/orderModel.js";
 import { addressModel } from "../models/addressModel.js";
 import { userModel } from "../models/userModel.js";
+import { productModel } from "../models/productModel.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2024-06-20",
 });
+
+const adjustStock = async (items, multiplier) => {
+    const adjustedItems = [];
+    for (const item of items) {
+        const result = await productModel.updateOne(
+            {
+                _id: item.product,
+                sizes: { $elemMatch: { size: item.size.toUpperCase(), stock: { $gte: multiplier < 0 ? item.quantity : 0 } } },
+            },
+            { $inc: { "sizes.$.stock": item.quantity * multiplier } }
+        );
+        if (multiplier < 0 && result.modifiedCount !== 1) {
+            await adjustStock(adjustedItems, 1);
+            return false;
+        }
+        adjustedItems.push(item);
+    }
+    return true;
+};
 
 export const placeOrder = async (req, res) => {
     try {
@@ -46,6 +66,8 @@ export const placeOrder = async (req, res) => {
                 totalAmount,
             });
 
+            const stockReserved = await adjustStock(items, -1);
+            if (!stockReserved) return res.json({ success: false, message: "One or more items are out of stock." });
             const savedOrder = await newOrder.save();
             await userModel.findByIdAndUpdate(userId, { cartData: {} });
             return res.json({ success: true, order: savedOrder });
@@ -63,6 +85,8 @@ export const placeOrder = async (req, res) => {
             paymentStatus: "pending",
         });
 
+        const stockReserved = await adjustStock(items, -1);
+        if (!stockReserved) return res.json({ success: false, message: "One or more items are out of stock." });
         const savedOrder = await pendingOrder.save();
 
         if (!origin) {
@@ -158,14 +182,19 @@ export const cancelStripePayment = async (req, res) => {
         const orderId = session?.metadata?.orderId;
 
         if (orderId) {
-            await orderModel.findByIdAndDelete(orderId);
+            const cancelledOrder = await orderModel.findOneAndUpdate(
+                { _id: orderId, status: "pending" },
+                { status: "cancelled", paymentStatus: "cancelled" },
+                { new: true }
+            );
+            if (cancelledOrder) await adjustStock(cancelledOrder.items, 1);
         }
 
         if (userId) {
             await userModel.findByIdAndUpdate(userId, { cartData: {} });
         }
 
-        return res.json({ success: true, message: "Stripe payment cancelled and order removed" });
+        return res.json({ success: true, message: "Stripe payment cancelled" });
     } catch (error) {
         console.error("Error cancelling Stripe payment:", error);
         return res.json({ success: false, message: "Failed to cancel Stripe payment" });
@@ -186,9 +215,15 @@ export const cancelOrder = async (req, res) => {
             return res.json({ success: false, message: "Order not found or unauthorized" });
         }
 
-        await orderModel.findByIdAndDelete(orderId);
+        if (["delivered", "shipped", "out-for-delivery"].includes(order.status)) {
+            return res.json({ success: false, message: "This order can no longer be cancelled." });
+        }
 
-        return res.json({ success: true, message: "Order cancelled and removed successfully" });
+        order.status = "cancelled";
+        order.paymentStatus = "cancelled";
+        await order.save();
+
+        return res.json({ success: true, message: "Order cancelled successfully", order });
     } catch (error) {
         console.error("Error cancelling order:", error);
         return res.json({ success: false, message: "Failed to cancel order" });

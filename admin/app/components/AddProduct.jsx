@@ -45,15 +45,13 @@ const AddProduct = () => {
 
     const handleSizeToggle = (size) => {
         setProductData((prev) => {
-            const hasSize = prev.sizes.includes(size);
+            const hasSize = prev.sizes.some((item) => item.size === size);
 
             return {
                 ...prev,
                 sizes: hasSize
-                    ? prev.sizes.filter(
-                        (item) => item !== size
-                    )
-                    : [...prev.sizes, size],
+                    ? prev.sizes.filter((item) => item.size !== size)
+                    : [...prev.sizes, { size, stock: 0 }],
             };
         });
     };
@@ -430,27 +428,27 @@ const AddProduct = () => {
                     <div className="flex items-center gap-3">
                         {["S", "M", "L", "XL", "XXL"].map(
                             (size) => {
-                                const selected =
-                                    productData.sizes.includes(
-                                        size
-                                    );
+                                const selected = productData.sizes.some((item) => item.size === size);
 
                                 return (
-                                    <button
-                                        key={size}
-                                        type="button"
-                                        onClick={() =>
-                                            handleSizeToggle(
-                                                size
-                                            )
-                                        }
-                                        className={`px-4 py-2 cursor-pointer transition-all duration-300 ${selected
-                                            ? "bg-red-100 text-red-800"
-                                            : "bg-gray-400/20 text-gray-500"
-                                            }`}
-                                    >
-                                        {size}
-                                    </button>
+                                    <div key={size} className="flex items-center gap-2">
+                                        <button type="button" onClick={() => handleSizeToggle(size)} className={`px-4 py-2 cursor-pointer transition-all duration-300 ${selected ? "bg-red-100 text-red-800" : "bg-gray-400/20 text-gray-500"}`}>
+                                            {size}
+                                        </button>
+                                        {selected && (
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                value={productData.sizes.find((item) => item.size === size)?.stock ?? 0}
+                                                onChange={(e) => setProductData((prev) => ({
+                                                    ...prev,
+                                                    sizes: prev.sizes.map((item) => item.size === size ? { ...item, stock: Number(e.target.value) } : item),
+                                                }))}
+                                                className="w-16 border border-gray-300 px-2 py-2 text-sm"
+                                                aria-label={`${size} stock`}
+                                            />
+                                        )}
+                                    </div>
                                 );
                             }
                         )}

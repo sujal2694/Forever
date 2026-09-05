@@ -23,7 +23,7 @@ export const registerUser = async (req, res) => {
         }
 
         if (password.length < 8) {
-            return res.json({ success: false, message: 'Paaword is weak, Make strong & use atleast 8 charachters.' })
+            return res.json({ success: false, message: 'Password is weak, make it at least 8 characters.' })
         }
 
         //number validation

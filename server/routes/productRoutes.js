@@ -5,8 +5,10 @@ import { fileURLToPath } from "url";
 
 import {
     addProduct,
+    getProduct,
     listProduct,
     removeProduct,
+    updateProduct,
 } from "../controllers/productController.js";
 
 export const productRouter = express.Router();
@@ -57,7 +59,14 @@ productRouter.get(
     listProduct
 );
 
+productRouter.get(
+    "/:id",
+    getProduct
+);
+
 productRouter.post(
     "/remove-product",
     removeProduct
 );
+
+productRouter.post("/update-product", upload.array("images", 5), updateProduct);

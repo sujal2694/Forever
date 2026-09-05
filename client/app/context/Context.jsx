@@ -1,18 +1,47 @@
 "use client"
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useSyncExternalStore } from "react";
 import SizePopUp from "../components/SizePopUp";
+import { toast } from "react-toastify";
 
 export const Context = createContext();
+
+const subscribeToToken = (onStoreChange) => {
+    if (typeof window === "undefined") return () => {};
+
+    window.addEventListener("storage", onStoreChange);
+    window.addEventListener("tokenchange", onStoreChange);
+    return () => {
+        window.removeEventListener("storage", onStoreChange);
+        window.removeEventListener("tokenchange", onStoreChange);
+    };
+};
+
+const getTokenSnapshot = () => (
+    typeof window === "undefined" ? "" : localStorage.getItem("token") || ""
+);
+
+const getServerTokenSnapshot = () => "";
 
 export const ContextProvider = ({ children }) => {
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
-    const url = "https://forever-r56t.onrender.com";
+    // const url = "https://forever-r56t.onrender.com";
+    const url = "http://localhost:4000";
     const [cartItems, setCartItems] = useState({}); // { itemId: { size: qty } }
     const [productList, setProductList] = useState([]);
-    const [token, setToken] = useState("");
-    const [isLogedin, setIsLogedin] = useState(false);
+    const token = useSyncExternalStore(subscribeToToken, getTokenSnapshot, getServerTokenSnapshot);
+    const setToken = (nextToken) => {
+        if (typeof window === "undefined") return;
+
+        const resolvedToken = typeof nextToken === "function" ? nextToken(token) : nextToken;
+        if (resolvedToken) {
+            localStorage.setItem("token", resolvedToken);
+        } else {
+            localStorage.removeItem("token");
+        }
+        window.dispatchEvent(new Event("tokenchange"));
+    };
     const [dashboardLink, setDashboardLink] = useState("Dashboard");
     const [id, setId] = useState("");
     const [sizePopupItemId, setSizePopupItemId] = useState(null); // controls the popup
@@ -42,6 +71,7 @@ export const ContextProvider = ({ children }) => {
                     { itemId, size },
                     { headers: { token } }
                 );
+                toast.success("Item added to cart");
             } catch (error) {
                 console.error("Add to cart failed", error);
             }
@@ -72,6 +102,7 @@ export const ContextProvider = ({ children }) => {
                     { itemId, size },
                     { headers: { token } }
                 );
+                toast.success("Item removed from cart");
             } catch (error) {
                 console.error("Remove from cart failed", error);
             }
@@ -97,15 +128,6 @@ export const ContextProvider = ({ children }) => {
         return totalAmt;
     };
 
-    const fetchProductList = async () => {
-        try {
-            const response = await axios.get(`${url}/api/product/list-product`);
-            setProductList(response.data.data || []);
-        } catch (error) {
-            console.error("Product list fetch failed", error);
-        }
-    };
-
     const fetchCartData = async (userToken = token) => {
         if (!userToken) return;
         try {
@@ -122,7 +144,6 @@ export const ContextProvider = ({ children }) => {
             if (error.response?.status === 401) {
                 localStorage.removeItem("token");
                 setToken("");
-                setIsLogedin(false);
             }
         }
     };
@@ -143,24 +164,55 @@ export const ContextProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token") || "";
-            setToken(storedToken);
-            localStorage.setItem("token", storedToken);
-            setIsLogedin(Boolean(storedToken));
-        }
-        fetchProductList();
-    }, []);
+        let cancelled = false;
+
+        const loadProducts = async () => {
+            try {
+                const response = await axios.get(`${url}/api/product/list-product`);
+                if (!cancelled) {
+                    setProductList(response.data.data || []);
+                }
+            } catch (error) {
+                console.error("Product list fetch failed", error);
+            }
+        };
+
+        loadProducts();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [url]);
 
     useEffect(() => {
-        setIsLogedin(Boolean(token));
-        if (token) {
-            fetchUserId();
-            fetchCartData(token);
-        }
-    }, [token]);
+        if (!token) return;
+
+        fetchUserId();
+
+        const loadCartData = async () => {
+            try {
+                const response = await axios.post(
+                    `${url}/api/cart/get-cart`,
+                    {},
+                    { headers: { token } }
+                );
+                if (response.data?.success) {
+                    setCartItems(response.data.cartData || {});
+                }
+            } catch (error) {
+                console.error("Cart fetch failed", error);
+                if (error.response?.status === 401) {
+                    localStorage.removeItem("token");
+                    window.dispatchEvent(new Event("tokenchange"));
+                }
+            }
+        };
+
+        loadCartData();
+    }, [token, url]);
 
     const sizePopupProduct = productList.find((p) => p._id === sizePopupItemId);
+    const isLogedin = Boolean(token);
 
     const ContextValue = {
         searchBar,

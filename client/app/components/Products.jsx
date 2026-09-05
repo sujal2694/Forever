@@ -11,24 +11,30 @@ export default function ProductPage() {
     const [hoverBg, setHoverBg] = useState({});
     const hoverColors = ["#FF85BC", "#FDBA68"];
 
-    const fetchProducts = async () => {
-        try {
-            const res = await axios.get(url + "/api/product/list-product");
-            if (res.data.success) {
-                setProducts(res.data.data)
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     useEffect(() => {
-        fetchProducts()
-    }, [])
+        let cancelled = false;
+
+        const loadProducts = async () => {
+            try {
+                const res = await axios.get(url + "/api/product/list-product");
+                if (res.data.success && !cancelled) {
+                    setProducts(res.data.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        loadProducts();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [url])
 
     const handleCardHover = (itemId) => {
-        const randomColor = hoverColors[Math.floor(Math.random() * hoverColors.length)];
-        setHoverBg((prev) => ({ ...prev, [itemId]: randomColor }));
+        const hoverColor = hoverColors[itemId.length % hoverColors.length];
+        setHoverBg((prev) => ({ ...prev, [itemId]: hoverColor }));
     };
 
     const handleCardLeave = (itemId) => {
@@ -50,7 +56,7 @@ export default function ProductPage() {
                     <Link href='/singleProduct' className="aspect-square">
                         {item.images?.[0] ? (
                             <Image
-                                className="rounded-2xl transition ease-in-out cursor-pointer"
+                                className="w-[300px] h-auto rounded-2xl transition ease-in-out cursor-pointer"
                                 src={`${url}/images/${item.images[0]}`}
                                 alt={item.name || "Product image"}
                                 width={300}
