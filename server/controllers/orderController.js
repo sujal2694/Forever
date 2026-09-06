@@ -3,6 +3,7 @@ import { orderModel } from "../models/orderModel.js";
 import { addressModel } from "../models/addressModel.js";
 import { userModel } from "../models/userModel.js";
 import { productModel } from "../models/productModel.js";
+import { subscriptionModel } from "../models/subscriptionModel.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2024-06-20",
@@ -54,7 +55,13 @@ export const placeOrder = async (req, res) => {
             return res.json({ success: false, message: "Delivery address not found" });
         }
 
-        const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0) + Number(deliveryFee || 0);
+        const itemsSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const subscription = await subscriptionModel.findOne({
+            email: String(user.email || "").trim().toLowerCase(),
+            status: "active",
+        });
+        const discountAmount = subscription ? Number((itemsSubtotal * 0.2).toFixed(2)) : 0;
+        const totalAmount = itemsSubtotal - discountAmount + Number(deliveryFee || 0);
 
         if (paymentMethod !== "STRIPE") {
             const newOrder = new orderModel({
@@ -64,6 +71,7 @@ export const placeOrder = async (req, res) => {
                 deliveryFee,
                 items,
                 totalAmount,
+                discountAmount,
             });
 
             const stockReserved = await adjustStock(items, -1);
@@ -81,6 +89,7 @@ export const placeOrder = async (req, res) => {
             deliveryFee,
             items,
             totalAmount,
+            discountAmount,
             status: "pending",
             paymentStatus: "pending",
         });
@@ -104,7 +113,7 @@ export const placeOrder = async (req, res) => {
                     // checkout page and the customer's receipt/email.
                     name: `${item.name} (Size: ${item.size})`,
                 },
-                unit_amount: Math.round(item.price * 100),
+                    unit_amount: Math.round(item.price * (subscription ? 0.8 : 1) * 100),
             },
             quantity: item.quantity,
         }));

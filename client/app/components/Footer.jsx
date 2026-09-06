@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="grid grid-cols-1 md:flex md:justify-between gap-5 w-[85vw] max-sm:w-full max-sm:px-3 m-auto mb-10 mt-16 border-t border-gray-400/40 pt-10">
                 <div className="w-95">
                     <Image className="w-30" src={assets.logo} alt="logo" loading="eager" ></Image>
-                    <p className="mt-4 text-sm text-gray-500">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                    <p className="mt-4 text-sm text-gray-500">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
                 </div>
 
                 <div className="flex items-start gap-10">

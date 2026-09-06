@@ -62,7 +62,7 @@ export default function LoginPage() {
                 router.push("/");
                 toast.success("Login successful")
             } else {
-                toast.error(response.data.message || "Something went wrong")
+                toast.error(response.data.message)
             }
         } catch (err) {
             const message = err?.response?.data?.message || "Unable to reach the server. Please try again.";

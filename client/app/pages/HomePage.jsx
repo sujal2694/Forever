@@ -1,13 +1,15 @@
 "use client"
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Hero from "../components/Hero";
 import ProductPage from "../components/Products";
 import Qualities from "../components/Qualities";
 import Subscripation from "../components/Subscription";
 import Navbar from "../components/Navbar";
+import { Context } from "../context/Context";
 
 export default function HomePage() {
+    const {fetchSubscriptionStatus} = useContext(Context);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -33,7 +35,7 @@ export default function HomePage() {
     return (
         <>
             <Hero />
-            <Subscripation />
+            {fetchSubscriptionStatus() === "active" && <Subscripation />}
             <ProductPage />
             <Qualities />
             <Footer />

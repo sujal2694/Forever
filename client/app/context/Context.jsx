@@ -163,6 +163,18 @@ export const ContextProvider = ({ children }) => {
         }
     };
 
+    const fetchSubscriptionStatus = async () => {
+        try {
+            const currentToken = localStorage.getItem("token");
+            const response = await axios.get(url + '/api/subscription/status', { headers: { token: currentToken } });
+            if (response.data.success) {
+                return response.data.status;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
         let cancelled = false;
 
@@ -234,6 +246,7 @@ export const ContextProvider = ({ children }) => {
         id,
         setId,
         fetchUserId,
+        fetchSubscriptionStatus,
         openSizePopup,
         closeSizePopup,
     };

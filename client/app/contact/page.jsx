@@ -1,12 +1,14 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Image from 'next/image'
 import { assets } from '../assets/assets'
 import Subscription from '../components/Subscription'
 import Footer from '../components/Footer'
+import { Context } from '../context/Context'
 
 const Contact = () => {
+    const { fetchSubscriptionStatus } = useContext(Context);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -74,7 +76,7 @@ const Contact = () => {
                     </div>
                 </div>
                 <div className='mb-16 mt-30'>
-                    <Subscription />
+                    {fetchSubscriptionStatus() === "active" && <Subscription />}
                 </div>
                 <Footer />
 

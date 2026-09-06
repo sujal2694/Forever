@@ -31,7 +31,10 @@ const ProductList = () => {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         handleFetchProducts();
+        // handleFetchProducts owns the async state updates and is intentionally invoked when the API URL is ready.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [url])
 
     const filterProducts = useMemo(() => {

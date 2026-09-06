@@ -15,6 +15,8 @@ function VerifyContent() {
     const sessionId = searchParams.get("session_id");
 
     if (!sessionId) {
+      // The status must change after the query string has been inspected.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus("Payment session is missing.");
       return;
     }

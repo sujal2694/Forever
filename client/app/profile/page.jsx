@@ -8,7 +8,7 @@ import { alphabetImage, states } from "../assets/assets";
 import Footer from "../components/Footer";
 import Image from "next/image";
 
-const page = () => {
+const Profile = () => {
     const { url, dashboardLink, setDashboardLink, token, fetchUserId } = useContext(Context);
     const [addAddress, setAddAddress] = useState(false);
     const [user, setUser] = useState({
@@ -270,6 +270,8 @@ const page = () => {
             }
         };
         fetchData();
+        // These data helpers intentionally run together when authentication changes.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token])
 
     if (loading) {
@@ -582,4 +584,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Profile

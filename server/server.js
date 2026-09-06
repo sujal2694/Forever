@@ -8,6 +8,7 @@ import { cartRouter } from './routes/cartRoutes.js';
 import { productRouter } from './routes/productRoutes.js';
 import { orderRouter } from './routes/orderRoutes.js';
 import { adminRouter } from './routes/adminRoutes.js';
+import { subscriptionRouter } from './routes/subscriptionRoutes.js';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/api/address', addressRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/subscription', subscriptionRouter);
 
 app.get('/', (req, res) => {
     res.send("server is live....")

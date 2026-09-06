@@ -15,6 +15,7 @@ export const orderSchema = mongoose.Schema({
         },
     ],
     totalAmount: { type: Number, required: true },
+    discountAmount: { type: Number, default: 0 },
     status: { type: String, default: "placed" },
     paymentStatus: { type: String, default: "pending" },
     createdAt: { type: Date, default: Date.now },

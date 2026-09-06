@@ -5,13 +5,11 @@ import { Spinner } from '@/components/ui/spinner';
 
 const Dashboard = () => {
 
-    const { url } = useContext(Context);
+    const { url, token: adminToken } = useContext(Context);
     const [products, setProducts] = useState([]);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState([])
-
-    const adminToken = localStorage.getItem("adminToken")
 
     const fetchOrders = async () => {
         try {
@@ -73,9 +71,12 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (adminToken) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchOrders();
         }
-    }, [])
+        // fetchOrders owns the async state updates and is intentionally invoked when the token changes.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [adminToken])
 
     if (loading) {
         return (

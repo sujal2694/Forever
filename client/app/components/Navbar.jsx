@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
     const { setSearchBar, isLogedin, cartItems } = useContext(Context);
-    const [menu, setMenu] = useState("home");
+    const [menu, setMenu] = useState(() => (
+        typeof window === "undefined" ? "home" : localStorage.getItem("menu") || "home"
+    ));
     const [openSidebar, setOpenSidebar] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const router = useRouter();
@@ -21,9 +23,6 @@ export default function Navbar() {
     useEffect(() => {
         if (typeof window === "undefined") return;
 
-        const saved = localStorage.getItem("menu");
-        if (saved) setMenu(saved);
-
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
         };
@@ -35,10 +34,12 @@ export default function Navbar() {
     }, [])
 
     return (
-        <div className={`w-full py-3 fixed top-0 left-0 z-10 pt-5 ${isScrolled ? "backdrop-blur-lg shadow-sm" : ""} transition-all duration-500`}>
+        <header className={`w-full py-3 fixed top-0 left-0 z-40 pt-5 ${isScrolled ? "bg-white/85 backdrop-blur-xl shadow-sm" : "bg-transparent"} transition-all duration-500`}>
             <div className="w-[85vw] max-sm:w-full max-sm:px-3 lg:w-[80vw] m-auto flex items-center justify-between">
                 <div>
-                    <Image onClick={()=> {navMenuHandler("home"); router.push("/")}} className="w-40 cursor-pointer" src={assets.logo} alt="logo" loading="eager" />
+                    <button type="button" aria-label="Go to homepage" onClick={()=> {navMenuHandler("home"); router.push("/")}} className="rounded-md focus:outline-none focus:ring-2 focus:ring-black/30">
+                        <Image className="w-40 cursor-pointer" src={assets.logo} alt="Forever homepage" loading="eager" />
+                    </button>
                 </div>
                 <div className={`flex items-center sm:gap-6 gap-4 max-sm:hidden ${isScrolled ? "" : "px-7 py-3 rounded-full backdrop-blur-lg shadow-sm"} transition-all duration-500`}>
                     <ul className="flex items-center sm:gap-4 gap-2.5">
@@ -67,33 +68,35 @@ export default function Navbar() {
                 <div>
                     <ul className="flex items-center gap-7 max-sm:gap-4">
                         <Link href='/collection'><li onClick={() => { navMenuHandler("search"); setSearchBar(true) }}>
-                            <Image className="w-5 cursor-pointer" src={assets.search_icon} alt="search icon" loading="eager" />
+                            <Image className="w-5 cursor-pointer transition-transform hover:scale-110" src={assets.search_icon} alt="Search products" loading="eager" />
                         </li></Link>
 
                         {isLogedin 
-                            ? <Link href='/profile'><Image onClick={() => navMenuHandler("login")} className="w-5 cursor-pointer" src={assets.profile_icon} alt="profile-image" loading="eager" /></Link>
+                            ? <Link href='/profile'><Image onClick={() => navMenuHandler("login")} className="w-5 cursor-pointer transition-transform hover:scale-110" src={assets.profile_icon} alt="Profile" loading="eager" /></Link>
                             : <Link href='/login'><li onClick={() => navMenuHandler("login")}>
                                 <button className="bg-add-button text-gray-700 hover:bg-transparent px-5 py-1 rounded-2xl text-sm hover:shadow-2xs hover:shadow-add-button cursor-pointer hover:scale-[1.1] transition-all duration-300">Log In</button>
                             </li></Link>
                         }
 
                         <Link href="/cart"><li onClick={() => navMenuHandler("cart")} className="relative">
-                            <Image className="w-5 cursor-pointer" src={assets.cart_icon} alt="cart icon"loading="eager" />
-                            <p className="bg-add-buttonher h-4 w-4 rounded-full absolute bottom-[-5px] right-[-5px] text-gray-700 flex items-center justify-center text-[10px] font-semibold cursor-pointer bg-add-button">{Object.keys(cartItems).length}</p>
+                            <Image className="w-5 cursor-pointer transition-transform hover:scale-110" src={assets.cart_icon} alt="Shopping cart" loading="eager" />
+                            <span className="h-4 w-4 rounded-full absolute bottom-[-5px] right-[-5px] text-gray-700 flex items-center justify-center text-[10px] font-semibold cursor-pointer bg-add-button">{Object.keys(cartItems).length}</span>
                         </li></Link>
 
                         <li className="hidden max-sm:block ml-5">
-                            <Image className="w-5 max-sm:w-6 cursor-pointer" onClick={() => setOpenSidebar(true)} src={assets.menu_icon} alt="menu" />
+                            <button type="button" aria-label="Open navigation menu" aria-expanded={openSidebar} onClick={() => setOpenSidebar(true)} className="rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-black/30">
+                                <Image className="w-5 max-sm:w-6 cursor-pointer" src={assets.menu_icon} alt="" />
+                            </button>
                         </li>
                     </ul>
                 </div>
 
                 {/* Mobile Sidebar */}
                 <div className={openSidebar ? "bg-white absolute top-0 left-0 h-screen w-full transition-all duration-300 cursor-pointer z-50" : "bg-white absolute top-0 -left-full h-screen w-full transition-all duration-300 cursor-pointer z-50"}>
-                    <div onClick={() => setOpenSidebar(false)} className="flex items-center gap-2.5 px-3 py-1 my-2">
+                    <button type="button" aria-label="Close navigation menu" onClick={() => setOpenSidebar(false)} className="flex items-center gap-2.5 px-3 py-3 my-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black/30">
                         <Image src={assets.dropdown_icon} className="rotate-180 w-2" alt="back-btn" loading="eager" />
                         <p className="text-gray-700">Back</p>
-                    </div>
+                    </button>
                     <hr className="border-none h-0.5 bg-gray-200" />
 
                     <Link href='/'><p onClick={() => { navMenuHandler("home"); setOpenSidebar(false) }} className={`flex items-center gap-4 ${menu === "home" ? "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer bg-primary/70 text-white" : "uppercase px-4 py-2 border-b-2 border-gray-200 cursor-pointer"}`}><i className="bx bx-home"></i> Home</p></Link>
@@ -106,6 +109,6 @@ export default function Navbar() {
 
                 </div>
             </div>
-        </div>
+        </header>
     )
 }

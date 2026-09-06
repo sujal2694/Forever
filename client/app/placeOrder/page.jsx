@@ -1,6 +1,6 @@
 "use client"
 import axios from "axios";
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Context } from "../context/Context";
 import Navbar from "../components/Navbar";
@@ -20,6 +20,30 @@ export default function PlaceOrder() {
     const [paymentMethod, setPaymentMethod] = useState("COD");
     const [placing, setPlacing] = useState(false);
     const [error, setError] = useState("");
+    const [subscriptionActive, setSubscriptionActive] = useState(false);
+
+    useEffect(() => {
+        if (!token) {
+            // Clear a previous account's discount when the user logs out.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setSubscriptionActive(false);
+            return undefined;
+        }
+
+        const fetchSubscriptionStatus = async () => {
+            try {
+                const response = await axios.get(`${url}/api/subscription/status`, {
+                    headers: { token },
+                });
+                setSubscriptionActive(response.data?.success && response.data.active === true);
+            } catch (statusError) {
+                console.error("Subscription status check failed:", statusError);
+                setSubscriptionActive(false);
+            }
+        };
+
+        fetchSubscriptionStatus();
+    }, [token, url]);
 
     // cartItems is now nested: { [itemId]: { [size]: quantity } }
     const orderItems = useMemo(() => {
@@ -61,7 +85,8 @@ export default function PlaceOrder() {
         () => orderItems.reduce((sum, item) => sum + item.deliveryFee, 0),
         [orderItems]
     );
-    const grandTotal = displayItemsTotal + totalDeliveryFee;
+    const subscriptionDiscount = subscriptionActive ? displayItemsTotal * 0.2 : 0;
+    const grandTotal = displayItemsTotal - subscriptionDiscount + totalDeliveryFee;
     const isStripePayment = paymentMethod === "STRIPE";
 
     const handleDeliverHere = (id) => {
@@ -218,6 +243,12 @@ export default function PlaceOrder() {
                                 <span>Delivery Fee</span>
                                 <span>${totalDeliveryFee.toFixed(2)}</span>
                             </div>
+                            {subscriptionActive && (
+                                <div className="flex justify-between py-1 text-green-700">
+                                    <span>Subscription discount (20%)</span>
+                                    <span>-${subscriptionDiscount.toFixed(2)}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between py-2 border-t border-gray-300 mt-2 font-medium text-black">
                                 <span>Total</span>
                                 <span>${grandTotal.toFixed(2)}</span>

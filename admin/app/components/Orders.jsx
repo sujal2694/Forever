@@ -55,8 +55,11 @@ const Orders = () => {
 
     useEffect(() => {
         if (url) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchOrders();
         }
+        // fetchOrders owns the async state updates and is intentionally invoked when the API URL is ready.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [url]);
 
     const usersById = useMemo(() => {

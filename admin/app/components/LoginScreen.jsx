@@ -103,11 +103,11 @@ function LoginScreen() {
                                 <>
                                     <div className='flex flex-col items-start justify-center mb-3'>
                                         <label htmlFor="org-name" className='text-sm font-semibold tracking-wide'>Organization name</label>
-                                        <input name='orgname' value={adminData.orgname} onChange={handleOnchange} type="text" id='org-name' className="border border-gray-400 rounded-md mt-1 w-full py-3 px-5 text-sm font-semibold" placeholder="E.g. Jame's house rental" required />
+                                        <input name='orgname' value={adminData.orgname} onChange={handleOnchange} type="text" id='org-name' className="border border-gray-400 rounded-md mt-1 w-full py-3 px-5 text-sm font-semibold" placeholder="E.g. Jame&apos;s house rental" required />
                                     </div>
                                     <div className='flex flex-col items-start justify-center mb-3'>
-                                        <label htmlFor="own-name" className='text-sm font-semibold tracking-wide'>Owner's name</label>
-                                        <input name='ownname' value={adminData.ownname} onChange={handleOnchange} type="text" id='own-name' className="border border-gray-400 rounded-md mt-1 w-full py-3 px-5 text-sm font-semibold" placeholder="E.g. Jame's" required />
+                                        <label htmlFor="own-name" className='text-sm font-semibold tracking-wide'>Owner&apos;s name</label>
+                                        <input name='ownname' value={adminData.ownname} onChange={handleOnchange} type="text" id='own-name' className="border border-gray-400 rounded-md mt-1 w-full py-3 px-5 text-sm font-semibold" placeholder="E.g. Jame&apos;s" required />
                                     </div>
                                     <div className='flex flex-col items-start justify-center mb-3'>
                                         <label htmlFor="number" className='text-sm font-semibold tracking-wide'>Number</label>

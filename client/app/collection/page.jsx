@@ -8,6 +8,73 @@ import Footer from "../components/Footer"
 import Link from "next/link"
 import axios from "axios"
 
+const normalizeSearchText = (value = "") => value
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+const getSearchTokens = (value) => normalizeSearchText(value).split(/\s+/).filter(Boolean);
+
+const isCloseMatch = (queryToken, fieldText) => {
+    if (fieldText.includes(queryToken)) return true;
+
+    return fieldText.split(" ").some((fieldToken) => {
+        if (queryToken.length < 4 || fieldToken.length < 4) return false;
+        if (Math.abs(queryToken.length - fieldToken.length) > 1) return false;
+
+        let differences = 0;
+        let queryIndex = 0;
+        let fieldIndex = 0;
+
+        while (queryIndex < queryToken.length && fieldIndex < fieldToken.length) {
+            if (queryToken[queryIndex] !== fieldToken[fieldIndex]) {
+                differences += 1;
+                if (differences > 1) return false;
+
+                if (queryToken.length > fieldToken.length) queryIndex += 1;
+                else if (fieldToken.length > queryToken.length) fieldIndex += 1;
+                else {
+                    queryIndex += 1;
+                    fieldIndex += 1;
+                }
+            } else {
+                queryIndex += 1;
+                fieldIndex += 1;
+            }
+        }
+
+        return differences + (queryToken.length - queryIndex) + (fieldToken.length - fieldIndex) <= 1;
+    });
+};
+
+const getSearchScore = (product, searchValue) => {
+    const queryTokens = getSearchTokens(searchValue);
+    if (queryTokens.length === 0) return 0;
+
+    const fields = [
+        { value: normalizeSearchText(product.name), weight: 8 },
+        { value: normalizeSearchText(product.subcategory), weight: 4 },
+        { value: normalizeSearchText(product.category), weight: 3 },
+        { value: normalizeSearchText(product.description), weight: 1 },
+    ];
+
+    if (!queryTokens.every((token) => fields.some(({ value }) => isCloseMatch(token, value)))) {
+        return -1;
+    }
+
+    return queryTokens.reduce((score, token) => {
+        const matchingField = fields.find(({ value }) => isCloseMatch(token, value));
+        if (!matchingField) return score;
+
+        const exactNameMatch = fields[0].value === token;
+        const startsNameMatch = fields[0].value.startsWith(token);
+        return score + matchingField.weight + (exactNameMatch ? 5 : startsNameMatch ? 2 : 0);
+    }, 0);
+};
+
 const Collection = () => {
     const { searchBar, setSearchBar, cartItems, addToCart, removeFromCart, setId, setDashboardLink, url } = useContext(Context);
     const [products, setProducts] = useState([]);
@@ -41,9 +108,12 @@ const Collection = () => {
         const timer = setTimeout(() => {
             setLoading(false);
         }, 2000);
+        // Product loading owns the async state updates and runs once on mount.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchProducts();
 
         return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const toggleCategory = (e) => {
@@ -66,13 +136,16 @@ const Collection = () => {
         }
     };
 
-    const filteredProducts = products.filter((item) => {
+    const filteredProducts = products.map((item) => ({
+        item,
+        searchScore: getSearchScore(item, search),
+    })).filter(({ item, searchScore }) => {
         const categoryMatch = category.length === 0 || category.includes(item.category);
         const subCategoryMatch = subCategory.length === 0 || subCategory.includes(item.subcategory);
-        const searchMatch = (item.name ?? "").toLowerCase().includes((search ?? "").toLowerCase());
+        const searchMatch = searchScore >= 0;
 
         return categoryMatch && subCategoryMatch && searchMatch;
-    });
+    }).sort((a, b) => b.searchScore - a.searchScore).map(({ item }) => item);
 
     if (sortType === "low-high") {
         filteredProducts.sort((a, b) => a.price - b.price);
@@ -110,8 +183,8 @@ const Collection = () => {
     };
 
     const handleCardHover = (itemId) => {
-        const randomColor = hoverColors[Math.floor(Math.random() * hoverColors.length)];
-        setHoverBg((prev) => ({ ...prev, [itemId]: randomColor }));
+        const colorIndex = itemId.split("").reduce((total, character) => total + character.charCodeAt(0), 0) % hoverColors.length;
+        setHoverBg((prev) => ({ ...prev, [itemId]: hoverColors[colorIndex] }));
     };
 
     const handleCardLeave = (itemId) => {
@@ -123,6 +196,8 @@ const Collection = () => {
     };
 
     useEffect(() => {
+        // Filtering changes intentionally return the user to the first result page.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentPage(1);
     }, [category, subCategory, search, sortType]);
 

@@ -8,7 +8,7 @@ import Link from "next/link"
 import axios from "axios"
 
 const Page = () => {
-    const { cartItems, addToCart, removeFromCart, url,  isLogedin } = useContext(Context);
+    const { cartItems, addToCart, removeFromCart, url, isLogedin } = useContext(Context);
     const [availableProducts, setAvailableProducts] = useState([]);
 
     const fetchAvailableProducts = async () => {
@@ -23,8 +23,11 @@ const Page = () => {
     }
 
     useEffect(() => {
+        // Product loading owns the async state updates and runs when the API URL is available.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchAvailableProducts();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [url]);
 
     const cartEntries = Object.entries(cartItems || {}).flatMap(([itemId, sizes]) =>
         Object.entries(sizes || {})
@@ -49,7 +52,7 @@ const Page = () => {
     if (!isLogedin) {
         return (
             <div className="w-screen h-screen flex items-center justify-center">
-                <Navbar/>
+                <Navbar />
                 <div className="text-center">
                     <h1 className="mb-4 text-2xl font-mono">You are not loged in.</h1>
                     <Link href={'/login'}>
@@ -65,7 +68,7 @@ const Page = () => {
     return (
         <div>
             <Navbar />
-            <div className="w-[95vw] m-auto mt-28 border-b border-gray-600/30 fade-in">
+            <div className="w-[95vw] m-auto mt-28 fade-in">
                 <div className="flex items-center justify-center">
                     <h2 className="flex items-center gap-3 text-4xl uppercase text-gray-600"><span className="text-black">Your</span> Cart <p className="bg-black h-[2] w-20"></p></h2>
                 </div>
@@ -152,7 +155,7 @@ const Page = () => {
                                 <ul className="text-xl font-light grid gap-4">
                                     <li className="flex items-center justify-between">Total products:<span>{totalProducts}</span></li>
                                     <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(1)}</span></li>
-                                    <li className="flex items-center justify-between">Discounts: <span>-${(subtotal.toFixed(1)/totalProducts).toFixed(1)}</span></li>
+                                    <li className="flex items-center justify-between">Discounts: <span>-${(`${subtotal > 0 ? subtotal : 0}` / `${totalProducts > 0 ? totalProducts : 1}`).toFixed(1)}</span></li>
                                     <p className="w-full bg-gray-700/50 h-0.5"></p>
                                     <li className="flex items-center justify-between">Total price: <span>${subtotal.toFixed(1)}</span></li>
                                 </ul>
