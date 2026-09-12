@@ -18,10 +18,24 @@ export const addToCart = async (req, res) => {
         }
 
         const product = await productModel.findById(itemId);
-        const normalizedSize = String(size).toUpperCase();
-        const sizeRecord = product?.sizes?.find((entry) => (entry.size || entry) === normalizedSize);
-        const currentQuantity = userData.cartData?.[itemId]?.[normalizedSize] || 0;
-        if (!sizeRecord || currentQuantity >= Number(sizeRecord.stock || 0)) {
+        const requestedSize = typeof size === "object" ? size?.size : size;
+        const normalizedSize = String(requestedSize || "").trim().toUpperCase();
+        if (!normalizedSize) {
+            return sendError(res, "A product size is required", 400);
+        }
+        if (!product) {
+            return sendError(res, "Product not found", 404);
+        }
+
+        const sizeRecord = product?.sizes?.find((entry) => String(typeof entry === "string" ? entry : entry?.size || "").trim().toUpperCase() === normalizedSize);
+        if (!sizeRecord) {
+            return sendError(res, "Selected size is not available for this product", 400);
+        }
+
+        const savedSizes = userData.cartData?.[itemId] || {};
+        const savedSizeKey = Object.keys(savedSizes).find((key) => key.toUpperCase() === normalizedSize);
+        const currentQuantity = savedSizeKey ? Number(savedSizes[savedSizeKey]) || 0 : 0;
+        if (currentQuantity >= Number(sizeRecord.stock || 0)) {
             return sendError(res, "This size is out of stock.", 409);
         }
 
@@ -29,6 +43,9 @@ export const addToCart = async (req, res) => {
 
         if (!cartData[itemId]) {
             cartData[itemId] = {};
+        }
+        if (savedSizeKey && savedSizeKey !== normalizedSize) {
+            delete cartData[itemId][savedSizeKey];
         }
         cartData[itemId][normalizedSize] = currentQuantity + 1;
 

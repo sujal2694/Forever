@@ -288,10 +288,10 @@ const Profile = () => {
     return (
         <div>
             <Navbar />
-            <div className="min-h-screen py-10 px-4 mt-20 fade-in">
-                <div className="max-w-6xl mx-auto bg-white rounded-lg">
-                    <div className="py-8 *:bg-gray-500/0 rounded-tl-lg rounded-tr-lg">
-                        <div className="flex items-center gap-2">
+            <div className="min-h-screen px-4 pb-12 pt-28 fade-in sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-6xl bg-white">
+                    <div className="flex flex-col gap-5 border-b border-gray-200 py-6 sm:flex-row sm:items-center sm:justify-between sm:py-8">
+                        <div className="flex min-w-0 items-center gap-3">
                             {alphabetImage && alphabetImage.length > 0 && alphabetImage.find(item => item.letter === letter) ? (
                                 <Image
                                     src={alphabetImage.find(item => item.letter === letter)?.image.src}
@@ -304,7 +304,7 @@ const Profile = () => {
                             ) : null}
 
                             <div>
-                                <h1 className="text-3xl font-bold">
+                                <h1 className="truncate text-2xl font-semibold sm:text-3xl">
                                     {user.name}
                                 </h1>
                                 <p className="text-gray-800">
@@ -313,15 +313,15 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center justify-start gap-5">
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Dashboard" ? "text-white bg-zinc-900" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Dashboard")}>Dashboard</div>
+                    <nav className="grid grid-cols-3 gap-1 border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-start sm:gap-2" aria-label="Profile sections">
+                        <button type="button" className={`rounded-md px-2 py-2 text-sm font-semibold tracking-wide transition-all duration-300 sm:px-4 sm:text-base ${dashboardLink === "Dashboard" ? "bg-zinc-900 text-white" : "text-black hover:bg-slate-100"}`} onClick={() => dashboardLinkHandler("Dashboard")}>Dashboard</button>
 
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Orders" ? "text-white bg-zinc-800" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Orders")}>Orders</div>
+                        <button type="button" className={`rounded-md px-2 py-2 text-sm font-semibold tracking-wide transition-all duration-300 sm:px-4 sm:text-base ${dashboardLink === "Orders" ? "bg-zinc-800 text-white" : "text-black hover:bg-slate-100"}`} onClick={() => dashboardLinkHandler("Orders")}>Orders</button>
 
-                        <div className={`w-fit px-4 py-2 rounded-md font-semibold text-lg tracking-wider text-black cursor-pointer transition-all duration-300 ${dashboardLink === "Addresses" ? "text-white bg-zinc-800" : "bg-slate-200/40"}`} onClick={() => dashboardLinkHandler("Addresses")}>Addresses</div>
-                    </div>
+                        <button type="button" className={`rounded-md px-2 py-2 text-sm font-semibold tracking-wide transition-all duration-300 sm:px-4 sm:text-base ${dashboardLink === "Addresses" ? "bg-zinc-800 text-white" : "text-black hover:bg-slate-100"}`} onClick={() => dashboardLinkHandler("Addresses")}>Addresses</button>
+                    </nav>
                     <div className="grid md:grid-cols-3">
-                        <div className="md:col-span-3 p-8">
+                        <div className="p-1 py-6 sm:p-8 md:col-span-3">
                             {dashboardLink === "Dashboard"
                                 ? <>
                                     <div>
@@ -331,7 +331,7 @@ const Profile = () => {
                                             </h2>
                                         </div>
 
-                                        <div className="grid md:grid-cols-2 gap-6 mt-6">
+                                        <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-4">
                                             <div className="bg-zinc-500/10 backdrop-blur-3xl rounded-lg px-5 py-3">
                                                 <label className="text-gray-500 text-sm">
                                                     Full Name
@@ -374,7 +374,7 @@ const Profile = () => {
                                         </div>
                                     </div>
 
-                                    <div className="grid md:grid-cols-3 grid-cols-2 gap-4 mt-10">
+                                    <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
                                         <div className="bg-gray-800/10 backdrop-blur-3xl p-5 rounded-xl hover:shadow-button shadow-zinc-400 transition-all duration-300">
                                             <h3 className="text-3xl font-bold">
                                                 {ordersQuantity}
@@ -393,8 +393,8 @@ const Profile = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex justify-end items-center gap-4 py-5 px-10">
-                                        <button onClick={() => logOut()} className="bg-red-500/50 hover:bg-red-600 text-white font-bold py-2 px-8 rounded cursor-pointer" >
+                                    <div className="flex items-center justify-end gap-4 px-0 py-5 sm:px-10">
+                                        <button onClick={() => logOut()} className="cursor-pointer rounded border border-red-200 px-6 py-2 font-semibold text-red-600 transition hover:bg-red-50" >
                                             Logout
                                         </button>
                                     </div>
@@ -415,7 +415,7 @@ const Profile = () => {
                                             </div>
                                         ) : (
                                             orders.map((order, index) => (
-                                                <div key={order._id || index} className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+                                                    <div key={order._id || index} className="rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-5">
                                                     <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                                                         <div>
                                                             <p className="font-semibold">Order #{(order._id || "").slice(-6).toUpperCase()}</p>
@@ -485,15 +485,15 @@ const Profile = () => {
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <div className="flex items-center justify-between mb-5">
+                                                    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                                         <h3 className="text-xl font-semibold">Your Addresses</h3>
-                                                        <button onClick={() => setAddAddress(true)} className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all">
+                                                        <button onClick={() => setAddAddress(true)} className="w-full rounded-lg bg-black px-4 py-2 text-white transition-all hover:bg-gray-800 sm:w-auto">
                                                             <i className="bx bx-plus"></i> Add New Address
                                                         </button>
                                                     </div>
                                                     <div className="space-y-4">
                                                         {fetchAddress && fetchAddress.length > 0 && fetchAddress.map((addr, index) => (
-                                                            <div key={addr._id || index} className="flex flex-col md:flex-row items-start md:items-center justify-between border border-zinc-600/30 px-5 py-5 rounded-lg gap-5 hover:bg-gray-50 transition-all">
+                                                            <div key={addr._id || index} className="flex flex-col items-start justify-between gap-5 rounded-lg border border-zinc-600/30 px-4 py-5 transition-all hover:bg-gray-50 sm:px-5 md:flex-row md:items-center">
                                                                 <div className="w-full flex items-start flex-col gap-2">
                                                                     <div className="flex items-center gap-3">
                                                                         <p className="text-2xl w-14 h-14 bg-zinc-800/80 flex items-center justify-center rounded-full text-white"><i className="bx bx-home"></i></p>
@@ -504,9 +504,9 @@ const Profile = () => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div className="w-full md:w-auto flex items-center gap-3">
-                                                                    <button onClick={() => editAddress(addr)} className="flex items-center gap-2 border border-zinc-600/30 rounded-lg p-2 px-3 cursor-pointer hover:bg-gray-400/20 transition-all"><i className="bx bx-pencil"></i> Edit</button>
-                                                                    <button onClick={() => deleteAddress(addr._id)} className="flex items-center gap-2 border border-red-300 text-red-600 rounded-lg p-2 px-3 cursor-pointer hover:bg-red-50 transition-all"><i className="bx bx-trash"></i> Delete</button>
+                                                                <div className="flex w-full items-center gap-3 md:w-auto">
+                                                                    <button onClick={() => editAddress(addr)} className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-zinc-600/30 p-2 px-3 transition-all hover:bg-gray-400/20 md:flex-none"><i className="bx bx-pencil"></i> Edit</button>
+                                                                    <button onClick={() => deleteAddress(addr._id)} className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-red-300 p-2 px-3 text-red-600 transition-all hover:bg-red-50 md:flex-none"><i className="bx bx-trash"></i> Delete</button>
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -561,11 +561,11 @@ const Profile = () => {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center justify-end gap-4 mt-8">
-                                                    <button type="button" onClick={cancelAddAddress} className="px-6 py-2 border border-zinc-600 text-black rounded-lg hover:bg-gray-100 transition-all">
+                                                <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-4">
+                                                    <button type="button" onClick={cancelAddAddress} className="rounded-lg border border-zinc-600 px-6 py-2 text-black transition-all hover:bg-gray-100">
                                                         Cancel
                                                     </button>
-                                                    <button type="submit" className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-all">
+                                                    <button type="submit" className="rounded-lg bg-black px-6 py-2 text-white transition-all hover:bg-gray-800">
                                                         {editingAddressId ? "Update Address" : "Add Address"}
                                                     </button>
                                                 </div>

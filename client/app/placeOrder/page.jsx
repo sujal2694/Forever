@@ -96,7 +96,7 @@ export default function PlaceOrder() {
 
     const placeOrder = async () => {
         if (orderItems.length === 0) {
-            setError("Your cart is empty");
+            setError(productList.length === 0 ? "Product details are still loading. Please try again in a moment." : "Your cart is empty or contains unavailable products.");
             return;
         }
         if (!addressId) {
@@ -156,7 +156,15 @@ export default function PlaceOrder() {
     return (
         <>
             <Navbar />
-            <div className="max-w-3xl mx-auto bg-white border border-gray-200 p-6 mt-32 font-[Outfit]">
+            <main className="mx-auto mt-28 w-full max-w-3xl px-4 pb-12 sm:px-6 lg:mt-36">
+            <div className="bg-white p-5 font-[Outfit] sm:border sm:border-gray-200 sm:p-8">
+                <div className="mb-8 flex items-center justify-between border-b border-gray-200 pb-5">
+                    <div>
+                        <p className="text-xs font-medium uppercase tracking-[0.24em] text-gray-400">Forever checkout</p>
+                        <p className="mt-1 text-sm text-gray-500">Secure and simple</p>
+                    </div>
+                    <span className="text-sm text-gray-400">{step === "payment" ? "2 of 3" : "3 of 3"}</span>
+                </div>
                 {error && (
                     <div className="mb-4 border border-red-300 bg-red-50 text-red-700 text-sm p-3">
                         {error}
@@ -166,7 +174,7 @@ export default function PlaceOrder() {
                 {step === "payment" && (
                     <>
                         <Title text1="PAYMENT" text2="METHOD" />
-                        <div className="space-y-3 mt-4">
+                        <div className="mt-4 space-y-3">
                             {[
                                 { key: "STRIPE", label: "Stripe" },
                                 { key: "COD", label: "Cash on Delivery" },
@@ -192,14 +200,14 @@ export default function PlaceOrder() {
                             <button
                                 type="button"
                                 onClick={() => setStep("address")}
-                                className="text-sm text-gray-600 hover:text-black hover:underline"
+                                className="text-left text-sm text-gray-600 hover:text-black hover:underline"
                             >
                                 Change address
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setStep("review")}
-                                className="bg-black text-white text-sm px-8 py-3 tracking-wide active:bg-gray-800"
+                                className="w-full bg-black px-8 py-3 text-sm tracking-wide text-white active:bg-gray-800 sm:w-auto"
                             >
                                 {isStripePayment ? "CONTINUE TO STRIPE" : "USE THIS PAYMENT METHOD"}
                             </button>
@@ -255,11 +263,11 @@ export default function PlaceOrder() {
                             </div>
                         </div>
 
-                        <div className="flex gap-4 mt-6">
+                        <div className="mt-6 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <button
                                 type="button"
                                 onClick={() => setStep("payment")}
-                                className="text-sm text-gray-600 hover:text-black hover:underline"
+                                className="text-left text-sm text-gray-600 hover:text-black hover:underline"
                             >
                                 Change payment method
                             </button>
@@ -267,7 +275,7 @@ export default function PlaceOrder() {
                                 type="button"
                                 disabled={placing || orderItems.length === 0}
                                 onClick={placeOrder}
-                                className="bg-black text-white text-sm px-8 py-3 tracking-wide active:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed"
+                                className="w-full bg-black px-8 py-3 text-sm tracking-wide text-white active:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
                             >
                                 {placing ? "PROCESSING..." : isStripePayment ? "PAY WITH STRIPE" : "PLACE ORDER"}
                             </button>
@@ -275,6 +283,7 @@ export default function PlaceOrder() {
                     </>
                 )}
             </div>
+            </main>
         </>
     );
 }

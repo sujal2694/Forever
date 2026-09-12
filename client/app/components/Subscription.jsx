@@ -50,7 +50,7 @@ const Subscripation = () => {
                     <p className="mb-7 max-w-xl text-sm leading-6 text-gray-500 sm:text-base">Get first access to new arrivals, thoughtful style notes, and an exclusive welcome offer.</p>
                     <form className="flex w-full max-w-xl flex-col gap-3 sm:flex-row" onSubmit={handleSubscription} noValidate>
                         <input
-                            className="h-12 min-w-0 flex-1 border border-gray-300 bg-white px-4 text-sm outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:cursor-not-allowed disabled:bg-gray-100"
+                            className="h-12 min-w-0 flex-1 border border-gray-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:cursor-not-allowed disabled:bg-gray-100"
                             type="email"
                             name="email"
                             autoComplete="email"

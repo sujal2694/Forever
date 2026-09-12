@@ -35,7 +35,7 @@ export default function SizePopUp({ product, onSelect, onClose }) {
                         return (
                             <button
                                 key={size}
-                                onClick={() => onSelect(size)}
+                                onClick={() => onSelect(String(size).trim())}
                                 disabled={isOutOfStock}
                                 className="border rounded-md py-2 text-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
                             >

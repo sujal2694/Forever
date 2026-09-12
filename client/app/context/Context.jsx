@@ -23,6 +23,27 @@ const getTokenSnapshot = () => (
 
 const getServerTokenSnapshot = () => "";
 
+const normalizeProductSizes = (value) => {
+    let parsed = value;
+
+    if (typeof value === "string") {
+        try {
+            parsed = JSON.parse(value);
+        } catch {
+            parsed = [value];
+        }
+    }
+
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+        .map((entry) => ({
+            size: String(typeof entry === "string" ? entry : entry?.size || "").trim().toUpperCase(),
+            stock: typeof entry === "string" || entry?.stock === undefined ? null : Number(entry.stock),
+        }))
+        .filter((entry) => entry.size);
+};
+
 export const ContextProvider = ({ children }) => {
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
@@ -56,56 +77,97 @@ export const ContextProvider = ({ children }) => {
             return;
         }
 
-        setCartItems((prev) => {
-            const sizes = { ...(prev[itemId] || {}) };
-            sizes[size] = (sizes[size] || 0) + 1;
-            return { ...prev, [itemId]: sizes };
-        });
+        const normalizedSize = String(typeof size === "object" ? size?.size : size).trim().toUpperCase();
+        if (!normalizedSize) {
+            toast.error("Please select a size.");
+            return;
+        }
+        let product = productList.find((item) => String(item._id) === String(itemId));
+        if (!product) {
+            try {
+                const response = await axios.get(`${url}/api/product/list-product`);
+                product = (response.data?.data || []).find((item) => String(item._id) === String(itemId));
+                if (product) setProductList((currentProducts) => {
+                    const existingIndex = currentProducts.findIndex((item) => String(item._id) === String(itemId));
+                    if (existingIndex === -1) return [...currentProducts, product];
+                    const nextProducts = [...currentProducts];
+                    nextProducts[existingIndex] = product;
+                    return nextProducts;
+                });
+            } catch {
+                toast.error("Products are still loading. Please try again.");
+                return;
+            }
+        }
+
+        const sizeRecord = normalizeProductSizes(product?.sizes).find((entry) => entry.size === normalizedSize);
+        if (!sizeRecord) {
+            toast.error("That size is not available for this product.");
+            return;
+        }
+
+        const localSizes = cartItems[itemId] || {};
+        const localSizeKey = Object.keys(localSizes).find((key) => key.toUpperCase() === normalizedSize);
+        const currentQuantity = localSizeKey ? Number(localSizes[localSizeKey]) || 0 : 0;
+        if (sizeRecord.stock !== null && currentQuantity >= Number(sizeRecord.stock || 0)) {
+            toast.error("This size is out of stock.");
+            return;
+        }
 
         closeSizePopup();
 
-        if (token) {
-            try {
+        try {
+            if (token) {
                 await axios.post(
                     `${url}/api/cart/add-to-cart`,
-                    { itemId, size },
+                    { itemId, size: normalizedSize },
                     { headers: { token } }
                 );
-                toast.success("Item added to cart");
-            } catch (error) {
+            }
+
+            setCartItems((prev) => {
+                const sizes = { ...(prev[itemId] || {}) };
+                sizes[normalizedSize] = (sizes[normalizedSize] || 0) + 1;
+                return { ...prev, [itemId]: sizes };
+            });
+            toast.success("Item added to cart");
+        } catch (error) {
+            if (![400, 409].includes(error.response?.status)) {
                 console.error("Add to cart failed", error);
             }
+            if (token) await fetchCartData(token);
+            toast.error(error.response?.data?.message || "Unable to add this item to your cart.");
         }
     };
 
     const removeFromCart = async (itemId, size) => {
-        setCartItems((prev) => {
-            const sizes = { ...(prev[itemId] || {}) };
-            if (!sizes[size]) return prev;
-
-            sizes[size] = Math.max(0, sizes[size] - 1);
-            if (sizes[size] === 0) delete sizes[size];
-
-            const next = { ...prev };
-            if (Object.keys(sizes).length === 0) {
-                delete next[itemId];
-            } else {
-                next[itemId] = sizes;
-            }
-            return next;
-        });
-
-        if (token) {
-            try {
+        try {
+            if (token) {
                 await axios.post(
                     `${url}/api/cart/remove-from-cart`,
                     { itemId, size },
                     { headers: { token } }
                 );
-                toast.success("Item removed from cart");
-            } catch (error) {
-                console.error("Remove from cart failed", error);
             }
+
+            setCartItems((prev) => {
+                const sizes = { ...(prev[itemId] || {}) };
+                const normalizedSize = String(size).toUpperCase();
+                if (!sizes[normalizedSize]) return prev;
+
+                sizes[normalizedSize] = Math.max(0, sizes[normalizedSize] - 1);
+                if (sizes[normalizedSize] === 0) delete sizes[normalizedSize];
+
+                const next = { ...prev };
+                if (Object.keys(sizes).length === 0) delete next[itemId];
+                else next[itemId] = sizes;
+                return next;
+            });
+            toast.success("Item removed from cart");
+        } catch (error) {
+            console.error("Remove from cart failed", error);
+            if (token) await fetchCartData(token);
+            toast.error(error.response?.data?.message || "Unable to remove this item from your cart.");
         }
     };
 

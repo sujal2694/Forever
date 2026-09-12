@@ -96,7 +96,7 @@ const Page = () => {
     return (
         <div>
             <Navbar />
-            <div className='mt-32 w-[85vw] max-sm:w-full max-sm:px-3 md:w-[95vw] lg:w-[85vw] m-auto'>
+            <main className='mx-auto mt-28 w-full max-w-7xl px-4 pb-12 sm:px-6 lg:px-8'>
                 <button
                     onClick={() => router.back()}
                     className='flex items-center gap-2 mb-6 text-md font-semibold text-zinc-700 hover:text-zinc-900 transition-colors'
@@ -106,20 +106,23 @@ const Page = () => {
                 </button>
 
                 {error ? (
-                    <p className='py-20 text-center text-gray-600'>{error}</p>
+                    <div className='mx-auto max-w-xl py-20 text-center'>
+                        <p className='text-lg font-medium text-gray-900'>{error}</p>
+                        <button type='button' onClick={() => router.back()} className='mt-5 border border-gray-300 px-5 py-2 text-sm hover:border-black'>Return to collection</button>
+                    </div>
                 ) : product ? (
-                            <div key={product._id} className='flex items-start md:flex-row lg:flex-row flex-col gap-10 w-full'>
-                                <div className='max-w-full md:w-4/5 lg:w-1/2'>
-                                    <Image className='max-w-full h-auto' src={`${url}/images/${product.images?.[0]}`} alt={product.name} width={500} height={500} loading='eager' />
+                            <div key={product._id} className='grid w-full gap-10 lg:grid-cols-2 lg:gap-20'>
+                                <div className='aspect-square w-full overflow-hidden bg-gray-100'>
+                                    <Image className='h-full w-full object-cover' src={`${url}/images/${product.images?.[0]}`} alt={product.name} width={700} height={700} loading='eager' unoptimized />
                                 </div>
-                                <div className='w-full md:w-2/4 pt-10'>
+                                <div className='flex w-full flex-col justify-center'>
                                     <span className='text-sm text-gray-900/40'>{product.category} | {product.subcategory}</span>
                                     <div className='my-5'>
                                         <h1 className='text-2xl mb-1 font-semibold'>{product.name}</h1>
                                         <h3 className='font-semibold text-lg'>${product.price}</h3>
                                     </div>
                                     <p className='text-md text-gray-600'>{product.description}</p>
-                                    <div className='mt-5 flex items-center justify-between'>
+                                    <div className='mt-8 flex items-center justify-between gap-4'>
                                         <p className='text-md font-semibold'>Product sizes</p>
                                         <p className='text-md font-semibold underline underline-offset-2'>Size chart</p>
                                     </div>
@@ -154,19 +157,19 @@ const Page = () => {
                                             );
                                         })}
                                     </div>
-                                    <button onClick={()=>addToCart(productId, selectedSize)} disabled={!selectedSize} className='mt-10 hover:bg-transparent hover:ring ring-zinc-900 px-10 hover:text-black cursor-pointer bg-zinc-900 text-white py-2 rounded-md disabled:opacity-40'>Add to Bag</button>
+                                    <button onClick={()=>addToCart(productId, selectedSize)} disabled={!selectedSize} className='mt-10 w-full cursor-pointer bg-zinc-900 px-10 py-3 text-sm font-medium uppercase tracking-wider text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40 sm:w-fit'>Add to Bag</button>
                                 </div>
                             </div>
                 ) : (
                     <p className='py-20 text-center text-gray-600'>Product not found.</p>
                 )}
 
-                <div className='md:w-[95vw] lg:w-[85vw] m-auto mt-34 mb-40'>
+                <div className='mx-auto mb-24 mt-24 w-full max-w-7xl'>
                     <h1 className='w-full text-center text-3xl uppercase font-semibold text-gray-500 tracking-wide flex items-center gap-3 justify-center'>
                         Other <span className='text-gray-900'>products</span>
                         <div className='w-24 h-0.5 rounded-full bg-black'></div>
                     </h1>
-                    <div className='grid md:grid-cols-2 lg:grid-cols-5 grid-cols-2 gap-5 mt-5 lg:space-y-10 md:space-y-5 space-y-5 w-full pt-10'>
+                    <div className='grid w-full grid-cols-2 gap-4 pt-8 sm:grid-cols-3 lg:grid-cols-5'>
                         {products.slice(21, 31).map((product) => (
                             <div key={product._id}>
                                 <div className='p-2 rounded-2xl hover:shadow-2xl shadow-shadow/30 hover:ring ring-zinc-500/20 hover:scale-105 transition-all duration-300'>
@@ -178,7 +181,7 @@ const Page = () => {
                         ))}
                     </div>
                 </div>
-            </div>
+            </main>
             <Footer />
         </div>
     )

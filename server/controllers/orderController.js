@@ -37,7 +37,15 @@ export const placeOrder = async (req, res) => {
         const { addressId, paymentMethod, deliveryFee, items, origin } = req.body;
 
         if (!userId || !addressId || !paymentMethod || !Array.isArray(items) || items.length === 0) {
-            return sendError(res, "Invalid order data", 400);
+            return sendError(res, "Address, payment method, and at least one item are required", 400);
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(addressId)) {
+            return sendError(res, "Invalid delivery address", 400);
+        }
+
+        if (!["COD", "STRIPE"].includes(paymentMethod)) {
+            return sendError(res, "Invalid payment method", 400);
         }
 
         // Every item must have a size, or the order line is meaningless for clothes.
@@ -62,7 +70,7 @@ export const placeOrder = async (req, res) => {
             const product = productsById.get(String(item.product));
             const size = String(item.size).toUpperCase();
             const quantity = Number(item.quantity);
-            const hasSize = product?.sizes?.some((entry) => entry.size === size);
+            const hasSize = product?.sizes?.some((entry) => String(entry.size).toUpperCase() === size);
 
             if (!product || !hasSize) {
                 return sendError(res, "One or more products or sizes are invalid", 400);
@@ -82,9 +90,9 @@ export const placeOrder = async (req, res) => {
             return sendError(res, "User not found", 404);
         }
 
-        const address = await addressModel.findById(addressId);
+        const address = await addressModel.findOne({ _id: addressId, userId });
         if (!address) {
-            return sendError(res, "Delivery address not found", 404);
+            return sendError(res, "Delivery address not found for this account", 404);
         }
 
         const itemsSubtotal = normalizedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);

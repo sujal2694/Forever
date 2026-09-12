@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Image from 'next/image'
 import { assets } from '../assets/assets'
@@ -9,78 +9,92 @@ import { Context } from '../context/Context'
 
 const Contact = () => {
     const { fetchSubscriptionStatus } = useContext(Context);
-    const [loading, setLoading] = useState(true);
+    const [form, setForm] = useState({ firstName: "", lastName: "", phone: "", email: "", message: "" });
+    const [formState, setFormState] = useState("idle");
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 2000);
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setForm((currentForm) => ({ ...currentForm, [name]: value }));
+        if (formState !== "idle") setFormState("idle");
+    };
 
-        return () => clearTimeout(timer);
-    }, []);
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        setFormState("success");
+        setForm({ firstName: "", lastName: "", phone: "", email: "", message: "" });
+    };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen py-10 px-4 mt-20 fade-in">
-                <Navbar />
-                <div className="flex items-center justify-center min-h-screen">
-                    <div className="w-12 h-12 border-4 border-gray-200 border-t-dashboard rounded-full animate-spin"></div>
-                </div>
-                <Footer />
-            </div>
-        );
-    }
     return (
-        <div>
+        <div className="min-h-screen bg-white">
             <Navbar />
-            <div className='w-[85vw] max-sm:w-full lg:w-[80vw] m-auto  mt-28 fade-in'>
-                <div className='text-center my-12 max-sm:px-3'>
-                    <h1 className='flex items-center justify-center text-2xl lg:text-3xl uppercase my-7 text-gray-400 gap-2'>contact   <span className='text-gray-800'>us</span><hr className='w-12 h-[2] bg-black border-none rounded-4xl' /></h1>
+            <main className="mx-auto w-full max-w-7xl px-4 pb-8 pt-28 sm:px-6 lg:px-8 lg:pt-36 fade-in">
+                <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
+                    <p className="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-gray-400">We are here to help</p>
+                    <h1 className="text-4xl font-medium tracking-tight text-gray-900 sm:text-5xl">Let&apos;s talk.</h1>
+                    <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-gray-500 sm:text-base">Have a question about an order, a product, or our stores? Send us a note and our team will get back to you within one business day.</p>
                 </div>
 
-                <div className='md:flex gap-10 lg:gap-5 max-sm:px-3'>
-                    <div className='w-full lg:w-1/2'>
-                        <Image className='min-w-full lg:w-xl' src={assets.contact_img} alt='contact' loading='eager'></Image>
-                        <div className='leading-5 mt-4'>
-                            <h2 className='text-2xl mb-5'>Our Store</h2>
-                            <p className='text-md text-gray-400'>54709 Willms Station Suite 350, Washington, USA</p>
-                            <p className='text-gray-400'>Tel: (415)555-0132</p>
-                            <p className='text-gray-400'>Email: admin@forever.com</p>
+                <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
+                    <section className="flex flex-col justify-between" aria-labelledby="store-title">
+                        <div>
+                            <div className="aspect-4/3 overflow-hidden bg-gray-100 sm:aspect-16/10 lg:aspect-4/3">
+                                <Image className="h-full w-full object-cover" src={assets.contact_img} alt="A detail from the Forever store" loading="eager" />
+                            </div>
+                            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
+                                <div>
+                                    <h2 id="store-title" className="text-xl font-medium text-gray-900">Visit our store</h2>
+                                    <p className="mt-2 text-sm leading-6 text-gray-500">54709 Willms Station Suite 350<br />Washington, USA</p>
+                                </div>
+                                <div className="text-sm leading-7 text-gray-500">
+                                    <a className="block transition hover:text-black" href="tel:+14155550132">Tel: (415) 555-0132</a>
+                                    <a className="block transition hover:text-black" href="mailto:admin@forever.com">admin@forever.com</a>
+                                    <p>Mon - Sat, 9:00 - 18:00</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className='bg-gray-500/40 min-h-full w-[1px]'></div>
-                    <div className='w-1/2 min-h-full flex items-center mt-20 lg:mt-0 pl-10 max-sm:pl-3 max-sm:w-full'>
-                        <form className='flex items-start justify-start flex-col gap-8 w-72'>
-                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
-                                <label htmlFor="first-name">First name</label>
-                                <input type="text" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                    </section>
+
+                    <section className="border-t border-gray-200 pt-8 lg:border-l lg:border-t-0 lg:pl-16 lg:pt-0" aria-labelledby="form-title">
+                        <h2 id="form-title" className="text-2xl font-medium text-gray-900">Send us a message</h2>
+                        <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <div className="space-y-2">
+                                    <label htmlFor="firstName" className="text-sm font-medium text-gray-700">First name</label>
+                                    <input id="firstName" name="firstName" type="text" autoComplete="given-name" required value={form.firstName} onChange={handleChange} placeholder="Your first name" className="h-12 w-full border border-gray-300 px-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-2 focus:ring-black/10" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last name</label>
+                                    <input id="lastName" name="lastName" type="text" autoComplete="family-name" required value={form.lastName} onChange={handleChange} placeholder="Your last name" className="h-12 w-full border border-gray-300 px-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-2 focus:ring-black/10" />
+                                </div>
                             </div>
-                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
-                                <label htmlFor="last-name">Last name</label>
-                                <input type="text" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <div className="space-y-2">
+                                    <label htmlFor="email" className="text-sm font-medium text-gray-700">Email address</label>
+                                    <input id="email" name="email" type="email" autoComplete="email" required value={form.email} onChange={handleChange} placeholder="you@example.com" className="h-12 w-full border border-gray-300 px-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-2 focus:ring-black/10" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone <span className="font-normal text-gray-400">(optional)</span></label>
+                                    <input id="phone" name="phone" type="tel" autoComplete="tel" value={form.phone} onChange={handleChange} placeholder="(415) 555-0132" className="h-12 w-full border border-gray-300 px-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-2 focus:ring-black/10" />
+                                </div>
                             </div>
-                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
-                                <label htmlFor="phone">Phone</label>
-                                <input type="text" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                            <div className="space-y-2">
+                                <label htmlFor="message" className="text-sm font-medium text-gray-700">How can we help?</label>
+                                <textarea id="message" name="message" rows={6} required value={form.message} onChange={handleChange} placeholder="Tell us a little about your question..." className="w-full resize-y border border-gray-300 px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-2 focus:ring-black/10" />
                             </div>
-                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide w-full'>
-                                <label htmlFor="email">E-mail</label>
-                                <input type="email" placeholder='Type here' className='ring ring-gray-400 h-10 w-full rounded-md px-3 py-1' />
+                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <p role="status" aria-live="polite" className={`min-h-5 text-sm ${formState === "success" ? "text-green-700" : "text-gray-500"}`}>
+                                    {formState === "success" ? "Thanks. Your message is ready for our team." : "We usually reply within one business day."}
+                                </p>
+                                <button type="submit" className="h-12 shrink-0 bg-black px-8 text-xs font-medium uppercase tracking-wider text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">Send message</button>
                             </div>
-                            <div className='flex flex-col gap-1 text-md font-serif tracking-wide'>
-                                <label htmlFor="message">Message</label>
-                                <textarea rows={5} cols={30} placeholder='Type here' className='ring ring-gray-400 rounded-md px-3 py-1'></textarea>
-                            </div>
-                            <button type='submit' className='bg-black text-white px-5 py-2 hover:shadow-button shadow-zinc-900/80 hover:bg-transparent hover:text-black transition-all duration-300 cursor-pointer'>Send</button>
                         </form>
-                    </div>
+                    </section>
                 </div>
-                <div className='mb-16 mt-30'>
+                <div className="mb-8 mt-20 sm:mt-28">
                     {fetchSubscriptionStatus() === "active" && <Subscription />}
                 </div>
                 <Footer />
-
-            </div>
+            </main>
         </div>
     )
 }

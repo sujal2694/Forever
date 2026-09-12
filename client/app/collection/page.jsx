@@ -105,14 +105,11 @@ const Collection = () => {
     }
 
     useEffect(() => {
-        const timer = setTimeout(() => {
+        const loadProducts = async () => {
+            await fetchProducts();
             setLoading(false);
-        }, 2000);
-        // Product loading owns the async state updates and runs once on mount.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        fetchProducts();
-
-        return () => clearTimeout(timer);
+        };
+        loadProducts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -221,7 +218,7 @@ const Collection = () => {
                     <hr className="border-none bg-gray-400 h-[1] w-[85vw] lg:w-[80vw] max-sm:w-full m-auto mt-20" />
                     <div className="w-[85vw] max-sm:w-full lg:w-[80vw] m-auto flex items-center justify-center gap-4 py-5 bg-gray-300/5">
                         <div className="w-fit relative">
-                            <input className="w-90 border border-gray-400 rounded-4xl p-2 pl-5" type="text" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                            <input className="h-11 w-full max-w-xl rounded-full border border-gray-300 p-2 pl-5 pr-12 text-sm outline-none focus:border-black" type="search" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
                             <Image className="w-4 absolute right-5 top-3" src={assets.search_icon} alt="search" loading="eager"></Image>
                         </div>
                         <Image onClick={() => setSearchBar(false)} className="w-3 cursor-pointer" src={assets.cross_icon} alt="remove" loading="eager"></Image>
@@ -231,48 +228,48 @@ const Collection = () => {
             ) : ""}
 
             <div className={`mb-20 ${searchBar ? "" : "mt-28"} fade-in`}>
-                <div className="w-[85vw] max-sm:w-full max-sm:px-3 lg:w-[80vw] m-auto mt-12 grid grid-cols-1 md:flex gap-8 md:flex-col lg:flex-row">
+                <div className="mx-auto mt-10 grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:px-8">
                     <div>
                         <h1 className="uppercase text-xl">filters</h1>
 
-                        <div className="mt-6 flex items-start md:flex-row lg:flex-col gap-5">
-                            <div className="p-4 w-60 border border-gray-300">
-                                <div onClick={() => setIsOpen(isOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
+                        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                            <div className="w-full border border-gray-300 p-4">
+                                <button type="button" onClick={() => setIsOpen(!isOpen)} className="flex w-full items-center justify-between text-left">
                                     <h3 className="uppercase text-[15px]">categories</h3>
                                     {isOpen ? <i className="bx bx-caret-up"></i> : <i className="bx bx-caret-down"></i>}
-                                </div>
+                                </button>
                                 <ul className={`mt-3 text-sm text-gray-400 font-light tracking-wider ${isOpen ? "block" : "hidden"}`}>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="men" checked={category.includes("men")} onChange={toggleCategory} />
+                                        <input className="w-3" type="checkbox" value="Men" checked={category.includes("Men")} onChange={toggleCategory} />
                                         <p>Men</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="women" checked={category.includes("women")} onChange={toggleCategory} />
+                                        <input className="w-3" type="checkbox" value="Women" checked={category.includes("Women")} onChange={toggleCategory} />
                                         <p>Women</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="kids" checked={category.includes("kids")} onChange={toggleCategory} />
+                                        <input className="w-3" type="checkbox" value="Kids" checked={category.includes("Kids")} onChange={toggleCategory} />
                                         <p>Kids</p>
                                     </li>
                                 </ul>
                             </div>
 
-                            <div className="p-4 w-60 border border-gray-300">
-                                <div onClick={() => setIsSubOpen(isSubOpen ? false : true)} className="flex items-center justify-between cursor-pointer">
+                            <div className="w-full border border-gray-300 p-4">
+                                <button type="button" onClick={() => setIsSubOpen(!isSubOpen)} className="flex w-full items-center justify-between text-left">
                                     <h3 className="uppercase text-[15px]">type</h3>
                                     {isSubOpen ? <i className="bx bx-caret-up"></i> : <i className="bx bx-caret-down"></i>}
-                                </div>
+                                </button>
                                 <ul className={`mt-3 text-sm text-gray-400 font-light tracking-wider ${isSubOpen ? "block" : "hidden"}`}>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="topwear" checked={subCategory.includes("topwear")} onChange={toggleSubCategory} />
+                                        <input className="w-3" type="checkbox" value="Topwear" checked={subCategory.includes("Topwear")} onChange={toggleSubCategory} />
                                         <p>Topwear</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="bottomwear" checked={subCategory.includes("bottomwear")} onChange={toggleSubCategory} />
+                                        <input className="w-3" type="checkbox" value="Bottomwear" checked={subCategory.includes("Bottomwear")} onChange={toggleSubCategory} />
                                         <p>Bottomwear</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="winterwear" checked={subCategory.includes("winterwear")} onChange={toggleSubCategory} />
+                                        <input className="w-3" type="checkbox" value="Winterwear" checked={subCategory.includes("Winterwear")} onChange={toggleSubCategory} />
                                         <p>Winterwear</p>
                                     </li>
                                 </ul>
@@ -280,11 +277,11 @@ const Collection = () => {
                         </div>
                     </div>
 
-                    <div className="w-full">
+                    <div className="w-full min-w-0">
                         <div className="flex md:items-center md:justify-between flex-col md:flex-row w-full gap-5">
                             <h1 className="uppercase text-xl md:text-2xl lg:text-3xl text-gray-400 flex items-center flex-wrap gap-2">all <span className="text-gray-600">collections</span> <hr className="border-none h-[2] bg-black rounded-4xl w-12" /></h1>
 
-                            <select className="border-2 border-gray-300 p-2 text-sm outline-none cursor-pointer" value={sortType} onChange={(e) => setSortType(e.target.value)}>
+                            <select aria-label="Sort products" className="w-full cursor-pointer border border-gray-300 p-2 text-sm outline-none sm:w-auto" value={sortType} onChange={(e) => setSortType(e.target.value)}>
                                 <option value="relevant">Sort by: Relavent</option>
                                 <option value="high-low">Sort by: High to Low</option>
                                 <option value="low-high">Sort by: Low to High</option>
@@ -296,7 +293,7 @@ const Collection = () => {
                                 No products match your filters.
                             </div>
                         ) : (
-                            <div className="md:mt-4 mt-10 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 space-y-5">
+                            <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
                                 {paginatedProducts.map((item, index) => {
                                     const quantity = cartItems[item._id] || 0;
                                     const imageSrc = item.images?.[0];
@@ -326,7 +323,7 @@ const Collection = () => {
                                                             />
                                                         </div>
                                                     ) : (
-                                                        <div className="rounded-2xl bg-gray-100 w-full h-[300px] flex items-center justify-center text-gray-400 text-sm">
+                                                        <div className="flex h-75 w-full items-center justify-center rounded-2xl bg-gray-100 text-sm text-gray-400">
                                                             No image
                                                         </div>
                                                     )}
