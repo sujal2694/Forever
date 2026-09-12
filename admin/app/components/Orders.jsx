@@ -291,8 +291,8 @@ const Orders = () => {
                 </CardHeader>
                 <CardContent className="space-y-5 p-5">
                   <div className="flex items-start gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-gray-50 text-gray-400">
-                      <Package className="size-4" />
+                    <span className="flex size-14 shrink-0 items-center justify-center rounded-md bg-gray-50 text-gray-400">
+                      <Package className="size-8" />
                     </span>
                     <div className="min-w-0 flex-1 space-y-1">
                       {(order.items || []).map((item, index) => (
