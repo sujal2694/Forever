@@ -13,7 +13,20 @@ import { subscriptionRouter } from './routes/subscriptionRoutes.js';
 const app = express();
 
 app.use(express.json())
-app.use(cors())
+const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:3000,http://localhost:3001")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error("Origin is not allowed by CORS"));
+    },
+}));
 
 // database connection
 connectDB().catch((err) => {

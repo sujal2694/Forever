@@ -10,6 +10,7 @@ import {
     removeProduct,
     updateProduct,
 } from "../controllers/productController.js";
+import { adminAuthMiddleware } from "../middleware/adminMiddleware.js";
 
 export const productRouter = express.Router();
 
@@ -50,6 +51,7 @@ const upload = multer({
 
 productRouter.post(
     "/add-product",
+    adminAuthMiddleware,
     upload.array("images", 5),
     addProduct
 );
@@ -66,7 +68,8 @@ productRouter.get(
 
 productRouter.post(
     "/remove-product",
+    adminAuthMiddleware,
     removeProduct
 );
 
-productRouter.post("/update-product", upload.array("images", 5), updateProduct);
+productRouter.post("/update-product", adminAuthMiddleware, upload.array("images", 5), updateProduct);

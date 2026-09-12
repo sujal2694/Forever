@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { addressModel } from "../models/addressModel.js";
+import { sendError, sendSuccess } from "../utils/response.js";
 import { userModel } from "../models/userModel.js";
 
 // All routes using these controllers must run behind auth middleware
@@ -9,40 +10,40 @@ import { userModel } from "../models/userModel.js";
 export const addAddress = async (req, res) => {
     const userId = req.userId;
     if (!userId) {
-        return res.status(401).json({ success: false, message: "Unauthorized" });
+        return sendError(res, "Unauthorized", 401);
     }
 
     const { name, number, landmark, address, city, state, pincode } = req.body;
 
     const user = await userModel.findById(userId);
     if (!user) {
-        return res.status(404).json({ success: false, message: "User not found" });
+        return sendError(res, "User not found", 404);
     }
 
     if (typeof name !== 'string' || name.trim().length < 2 || name.length > 50) {
-        return res.status(400).json({ success: false, message: "Invalid name" });
+        return sendError(res, "Invalid name", 400);
     }
 
     const numberStr = String(number).trim();
     if (!/^[1-9][0-9]{9}$/.test(numberStr)) {
-        return res.status(400).json({ success: false, message: "Invalid number" });
+        return sendError(res, "Invalid number", 400);
     }
 
     if (typeof address !== 'string' || address.trim().length < 5 || address.length > 200) {
-        return res.status(400).json({ success: false, message: "Invalid address" });
+        return sendError(res, "Invalid address", 400);
     }
 
     if (typeof city !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(city.trim())) {
-        return res.status(400).json({ success: false, message: "Invalid city" });
+        return sendError(res, "Invalid city", 400);
     }
 
     if (typeof state !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(state.trim())) {
-        return res.status(400).json({ success: false, message: "Invalid state" });
+        return sendError(res, "Invalid state", 400);
     }
 
     const pincodeStr = String(pincode).trim();
     if (!/^[1-9][0-9]{5}$/.test(pincodeStr)) {
-        return res.status(400).json({ success: false, message: "Invalid pincode" });
+        return sendError(res, "Invalid pincode", 400);
     }
 
     try {
@@ -50,59 +51,59 @@ export const addAddress = async (req, res) => {
             userId, name, number, landmark, address, city, state, pincode
         });
         const savedAddress = await newAddress.save();
-        res.status(201).json({ success: true, data: savedAddress });
+        sendSuccess(res, { data: savedAddress }, 201);
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        sendError(res, error.message, 500);
     }
 };
 
 export const listAddresses = async (req, res) => {
     const userId = req.userId;
     if (!userId) {
-        return res.status(401).json({ success: false, message: "Unauthorized" });
+        return sendError(res, "Unauthorized", 401);
     }
 
     try {
         const addresses = await addressModel.find({ userId }).sort({ createdAt: -1 });
-        res.status(200).json({ success: true, data: addresses });
+        sendSuccess(res, { data: addresses });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        sendError(res, error.message, 500);
     }
 };
 
 export const editAddress = async (req, res) => {
     const userId = req.userId;
     if (!userId) {
-        return res.status(401).json({ success: false, message: "Unauthorized" });
+        return sendError(res, "Unauthorized", 401);
     }
 
     const { id } = req.params;
     const { name, number, landmark, address, city, state, pincode } = req.body;
 
     if (typeof name !== 'string' || name.trim().length < 2 || name.length > 50) {
-        return res.status(400).json({ success: false, message: "Invalid name" });
+        return sendError(res, "Invalid name", 400);
     }
 
     const numberStr = String(number).trim();
     if (!/^[1-9][0-9]{9}$/.test(numberStr)) {
-        return res.status(400).json({ success: false, message: "Invalid number" });
+        return sendError(res, "Invalid number", 400);
     }
 
     if (typeof address !== 'string' || address.trim().length < 5 || address.length > 200) {
-        return res.status(400).json({ success: false, message: "Invalid address" });
+        return sendError(res, "Invalid address", 400);
     }
 
     if (typeof city !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(city.trim())) {
-        return res.status(400).json({ success: false, message: "Invalid city" });
+        return sendError(res, "Invalid city", 400);
     }
 
     if (typeof state !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(state.trim())) {
-        return res.status(400).json({ success: false, message: "Invalid state" });
+        return sendError(res, "Invalid state", 400);
     }
 
     const pincodeStr = String(pincode).trim();
     if (!/^[1-9][0-9]{5}$/.test(pincodeStr)) {
-        return res.status(400).json({ success: false, message: "Invalid pincode" });
+        return sendError(res, "Invalid pincode", 400);
     }
 
     try {
@@ -114,19 +115,19 @@ export const editAddress = async (req, res) => {
         );
 
         if (!updatedAddress) {
-            return res.status(404).json({ success: false, message: "Address not found" });
+            return sendError(res, "Address not found", 404);
         }
 
-        res.status(200).json({ success: true, data: updatedAddress });
+        sendSuccess(res, { data: updatedAddress });
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        sendError(res, error.message, 500);
     }
 };
 
 export const deleteAddress = async (req, res) => {
     const userId = req.userId;
     if (!userId) {
-        return res.status(401).json({ success: false, message: "Unauthorized" });
+        return sendError(res, "Unauthorized", 401);
     }
 
     const { id } = req.params;
@@ -136,21 +137,21 @@ export const deleteAddress = async (req, res) => {
         const deletedAddress = await addressModel.findOneAndDelete({ _id: id, userId });
 
         if (!deletedAddress) {
-            return res.status(404).json({ success: false, message: "Address not found" });
+            return sendError(res, "Address not found", 404);
         }
 
-        res.status(200).json({ success: true, message: "Address deleted successfully" });
+        sendSuccess(res, { message: "Address deleted successfully" });
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        sendError(res, error.message, 500);
     }
 };
 
 export const getAllAddresses = async (req, res) => {
     try {
         const addresses = await addressModel.find({});
-        res.json({ success: true, addresses })
+        sendSuccess(res, { addresses })
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Unable to fetch addresses." })
+        sendError(res, "Unable to fetch addresses.")
     }
 }

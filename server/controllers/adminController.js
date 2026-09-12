@@ -2,36 +2,37 @@ import jwt from 'jsonwebtoken'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import { adminModel } from '../models/adminModel.js';
+import { sendError, sendSuccess } from '../utils/response.js';
 
 export const registerAdmin = async (req, res) => {
     const { email, password, orgname, ownname, number } = req.body;
     try {
 
         if (typeof email !== 'string' || !validator.isEmail(email)) {
-            return res.json({ success: false, message: "Email is incorrect." })
+            return sendError(res, "Email is incorrect.", 400)
         }
 
         if (typeof orgname !== 'string' || orgname.trim().length === 0) {
-            return res.json({ success: false, message: "Organization name is required." })
+            return sendError(res, "Organization name is required.", 400)
         }
 
         if (typeof ownname !== 'string' || ownname.trim().length === 0) {
-            return res.json({ success: false, message: "Owner name is required." })
+            return sendError(res, "Owner name is required.", 400)
         }
 
         if (typeof password !== 'string' || password.length < 8) {
-            return res.json({ success: false, message: 'Password is weak. Make it strong & use atleast 8 characters.' })
+            return sendError(res, 'Password is weak. Make it strong & use atleast 8 characters.', 400)
         }
 
         if (!validator.isMobilePhone(number, 'en-IN')) {
-            return res.json({ success: false, message: "Phone number is invalid." })
+            return sendError(res, "Phone number is invalid.", 400)
         }
 
         const normalizedEmail = validator.normalizeEmail(email) || email;
 
         const exists = await adminModel.findOne({ email: { $eq: normalizedEmail } });
         if (exists) {
-            return res.json({ success: false, message: "User already exists." })
+            return sendError(res, "User already exists.", 409)
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -47,11 +48,11 @@ export const registerAdmin = async (req, res) => {
 
         const admin = await newAdmin.save();
         const token = createToken(admin._id)
-        res.json({ success: true, token, message: "Registration successful" })
+        sendSuccess(res, { token, message: "Registration successful" })
 
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "error" })
+        sendError(res, "Unable to register admin")
     }
 }
 
@@ -63,28 +64,28 @@ export const loginAdmin = async (req, res) => {
     const { email, password } = req.body;
     try {
         if (typeof email !== 'string' || typeof password !== 'string') {
-            return res.json({ success: false, message: "Invalid credentials" })
+            return sendError(res, "Invalid credentials", 401)
         }
 
         const normalizedEmail = validator.normalizeEmail(email) || email;
         const admin = await adminModel.findOne({ email: { $eq: normalizedEmail } })
 
         if (!admin) {
-            return res.json({ success: false, message: "Invalid credentials" })
+            return sendError(res, "Invalid credentials", 401)
         }
 
         const isMatch = await bcrypt.compare(password, admin.password)
 
         if (!isMatch) {
-            return res.json({ success: false, message: "Invalid credentials" })
+            return sendError(res, "Invalid credentials", 401)
         }
 
         const token = createToken(admin._id)
-        res.json({ success: true, token, message: "Login successful" })
+        sendSuccess(res, { token, message: "Login successful" })
 
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Error" })
+        sendError(res, "Unable to log in")
     }
 }
 
@@ -93,11 +94,11 @@ export const getAdminDetails = async (req, res) => {
         const adminId = req.user?._id || req.adminId;
         const admin = await adminModel.findById(adminId).select('-password');
         if (!admin) {
-            return res.json({ success: false, message: "Admin not found" });
+            return sendError(res, "Admin not found", 404);
         }
-        res.json({ success: true, admin });
+        sendSuccess(res, { admin });
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Error fetching admin details" });
+        sendError(res, "Error fetching admin details");
     }
 }

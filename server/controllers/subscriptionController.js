@@ -1,5 +1,6 @@
 import { subscriptionModel } from "../models/subscriptionModel.js";
 import validator from "validator";
+import { sendError, sendSuccess } from "../utils/response.js";
 
 
 export const placeSubscription = async (req, res) => {
@@ -7,29 +8,22 @@ export const placeSubscription = async (req, res) => {
         const email = String(req.body?.email || "").trim().toLowerCase();
 
         if (!validator.isEmail(email)) {
-            return res.status(400).json({
-                success: false,
-                message: "Please provide a valid email address.",
-            });
+            return sendError(res, "Please provide a valid email address.", 400);
         }
 
         const existingSubscription = await subscriptionModel.findOne({ email });
         if (existingSubscription) {
-            return res.status(200).json({
-                success: true,
+            return sendSuccess(res, {
                 message: "This email is already subscribed.",
                 subscription: existingSubscription,
             });
         }
 
         const subscription = await subscriptionModel.create({ email });
-        res.status(201).json({ success: true, subscription });
+        sendSuccess(res, { subscription }, 201);
     } catch (error) {
         console.error("SUBSCRIPTION ERROR:", error);
-        res.status(500).json({
-            success: false,
-            message: "Unable to subscribe right now. Please try again.",
-        });
+        sendError(res, "Unable to subscribe right now. Please try again.");
     }
 };
 
@@ -40,13 +34,9 @@ export const getSubscriptionStatus = async (req, res) => {
             ? await subscriptionModel.findOne({ email, status: "active" }).select("email status")
             : null;
 
-        return res.json({
-            success: true,
-            active: Boolean(subscription),
-            subscription,
-        });
+        return sendSuccess(res, { active: Boolean(subscription), subscription });
     } catch (error) {
         console.error("SUBSCRIPTION STATUS ERROR:", error);
-        return res.status(500).json({ success: false, message: "Unable to check subscription status." });
+        return sendError(res, "Unable to check subscription status.");
     }
 };

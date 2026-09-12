@@ -149,15 +149,10 @@ export const ContextProvider = ({ children }) => {
     };
 
     const fetchUserId = async () => {
-        const userEmails = [];
         try {
-            const users = await axios.get(url + '/api/user/list-users');
-            users.data.users.forEach((user) => userEmails.push(user.email));
             const currentToken = localStorage.getItem("token");
             const currentUser = await axios.get(url + '/api/user/profile', { headers: { token: currentToken } });
-            if (userEmails.includes(currentUser.data.user.email)) {
-                return currentUser.data.user._id;
-            }
+            return currentUser.data?.user?._id;
         } catch (error) {
             console.log(error);
         }

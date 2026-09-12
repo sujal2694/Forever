@@ -3,32 +3,33 @@ import { userModel } from '../models/userModel.js';
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import mongoose from 'mongoose';
+import { sendError, sendSuccess } from '../utils/response.js';
 
 export const registerUser = async (req, res) => {
     const { email, password, name, number } = req.body;
     try {
 
         if (typeof email !== 'string') {
-            return res.json({ success: false, message: "Email is incorrect." })
+            return sendError(res, "Email is incorrect.", 400)
         }
 
         const exists = await userModel.findOne({ email: { $eq: email } });
         if (exists) {
-            return res.json({ success: false, message: "User already exists." })
+            return sendError(res, "User already exists.", 409)
         }
 
         //validating email
         if (!validator.isEmail(email)) {
-            return res.json({ success: false, message: "Email is incorrect." })
+            return sendError(res, "Email is incorrect.", 400)
         }
 
         if (password.length < 8) {
-            return res.json({ success: false, message: 'Password is weak, make it at least 8 characters.' })
+            return sendError(res, 'Password is weak, make it at least 8 characters.', 400)
         }
 
         //number validation
         if (!validator.isMobilePhone(number, 'en-IN')) {
-            return res.json({ success: false, message: "Phone number is invalid." })
+            return sendError(res, "Phone number is invalid.", 400)
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -43,12 +44,12 @@ export const registerUser = async (req, res) => {
 
         const user = await newUser.save();
         const token = createToken(user._id)
-        res.json({ success: true, token })
+        sendSuccess(res, { token })
 
 
 
     } catch (error) {
-        res.json({ success: false, message: "error" })
+        sendError(res, "Unable to register user")
         console.log(error);
     }
 }
@@ -61,27 +62,27 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
     try {
         if (typeof email !== 'string') {
-            return res.json({ success: false, message: "Invalid credentials" })
+            return sendError(res, "Invalid credentials", 401)
         }
 
         const user = await userModel.findOne({ email: { $eq: email } })
 
         if (!user) {
-            return res.json({ success: false, message: "User doesn't exists" })
+            return sendError(res, "Invalid credentials", 401)
         }
 
         const isMatch = await bcrypt.compare(password, user.password)
 
         if (!isMatch) {
-            return res.json({ success: false, message: "Invalid credentials" })
+            return sendError(res, "Invalid credentials", 401)
         }
 
         const token = createToken(user._id);
-        res.json({ success: true, token })
+        sendSuccess(res, { token })
 
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Error" })
+        sendError(res, "Unable to log in")
     }
 }
 
@@ -93,28 +94,28 @@ export const getProfile = async (req, res) => {
         const userId = req.userId || req.user?._id;
 
         if (!userId) {
-            return res.status(401).json({ success: false, message: "Not authorized. Login again." });
+            return sendError(res, "Not authorized. Login again.", 401);
         }
 
         const user = await userModel.findById(userId).select('-password');
 
         if (!user) {
-            return res.status(401).json({ success: false, message: "Not authorized. Login again." });
+            return sendError(res, "Not authorized. Login again.", 401);
         }
 
-        res.json({ success: true, user });
+        sendSuccess(res, { user });
     } catch (error) {
         console.error("Error fetching profile:", error);
-        res.status(500).json({ success: false, message: "Unable to fetch profile." });
+        sendError(res, "Unable to fetch profile.");
     }
 }
 
 export const getUsers = async (req, res) => {
     try {
         const users = await userModel.find({}).select('-password');
-        res.json({ success: true, users});
+        sendSuccess(res, { users });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        sendError(res, error.message);
     }
 };
 
@@ -123,19 +124,19 @@ export const getUserById = async (req, res) => {
         const { id } = req.params;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.json({ success: false, message: "Invalid user id." });
+            return sendError(res, "Invalid user id.", 400);
         }
 
         const user = await userModel.findById(id).select('-password');
 
         if (!user) {
-            return res.json({ success: false, message: "User not found." });
+            return sendError(res, "User not found.", 404);
         }
 
-        res.json({ success: true, user });
+        sendSuccess(res, { user });
 
     } catch (error) {
         console.error("Error fetching user by id:", error);
-        res.json({ success: false, message: "Unable to fetch user." });
+        sendError(res, "Unable to fetch user.");
     }
 }

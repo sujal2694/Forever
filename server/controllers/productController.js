@@ -1,6 +1,7 @@
 import { productModel } from "../models/productModel.js";
 import fs from "fs/promises";
 import path from "path";
+import { sendError, sendSuccess } from "../utils/response.js";
 
 const VALID_SIZES = ["S", "M", "L", "XL", "XXL"];
 
@@ -29,10 +30,7 @@ export const addProduct = async (req, res) => {
     try {
         // Check images
         if (uploadedFiles.length === 0) {
-            return res.json({
-                success: false,
-                message: "At least one image is required.",
-            });
+            return sendError(res, "At least one image is required.", 400);
         }
 
         const {
@@ -53,10 +51,7 @@ export const addProduct = async (req, res) => {
             !subcategory ||
             !description
         ) {
-            return res.json({
-                success: false,
-                message: "Please fill all the fields.",
-            });
+            return sendError(res, "Please fill all the fields.", 400);
         }
 
         // Validate price
@@ -68,10 +63,7 @@ export const addProduct = async (req, res) => {
             Number.isNaN(parsedPrice) ||
             parsedPrice < 0
         ) {
-            return res.json({
-                success: false,
-                message: "Price must be a valid positive number.",
-            });
+            return sendError(res, "Price must be a valid positive number.", 400);
         }
 
         // Parse sizes
@@ -84,10 +76,7 @@ export const addProduct = async (req, res) => {
 
         const sizeError = validateSizes(parsedSizes);
         if (sizeError) {
-            return res.json({
-                success: false,
-                message: sizeError,
-            });
+            return sendError(res, sizeError, 400);
         }
 
         // Get uploaded image filenames
@@ -112,11 +101,7 @@ export const addProduct = async (req, res) => {
 
         await product.save();
 
-        return res.json({
-            success: true,
-            message: "Product added successfully.",
-            product,
-        });
+        return sendSuccess(res, { message: "Product added successfully.", product }, 201);
     } catch (error) {
         console.log("ADD PRODUCT ERROR:", error);
 
@@ -127,10 +112,7 @@ export const addProduct = async (req, res) => {
             )
         );
 
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Unable to add product.",
-        });
+        return sendError(res, error.message || "Unable to add product.");
     }
 };
 
@@ -140,17 +122,11 @@ export const listProduct = async (req, res) => {
             .find({})
             .sort({ createdAt: -1 });
 
-        return res.json({
-            success: true,
-            data: products,
-        });
+        return sendSuccess(res, { data: products });
     } catch (error) {
         console.log("LIST PRODUCT ERROR:", error);
 
-        return res.status(500).json({
-            success: false,
-            message: "Unable to fetch product list.",
-        });
+        return sendError(res, "Unable to fetch product list.");
     }
 };
 
@@ -159,23 +135,14 @@ export const getProduct = async (req, res) => {
         const product = await productModel.findById(req.params.id);
 
         if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found.",
-            });
+            return sendError(res, "Product not found.", 404);
         }
 
-        return res.json({
-            success: true,
-            product,
-        });
+        return sendSuccess(res, { product });
     } catch (error) {
         console.log("GET PRODUCT ERROR:", error);
 
-        return res.status(500).json({
-            success: false,
-            message: "Unable to fetch product.",
-        });
+        return sendError(res, "Unable to fetch product.");
     }
 };
 
@@ -184,19 +151,13 @@ export const removeProduct = async (req, res) => {
         const { id } = req.body;
 
         if (!id) {
-            return res.json({
-                success: false,
-                message: "Product id is required.",
-            });
+            return sendError(res, "Product id is required.", 400);
         }
 
         const product = await productModel.findById(id);
 
         if (!product) {
-            return res.json({
-                success: false,
-                message: "Product not found.",
-            });
+            return sendError(res, "Product not found.", 404);
         }
 
         // Delete product from database
@@ -211,17 +172,11 @@ export const removeProduct = async (req, res) => {
             )
         );
 
-        return res.json({
-            success: true,
-            message: "Product removed successfully.",
-        });
+        return sendSuccess(res, { message: "Product removed successfully." });
     } catch (error) {
         console.log("REMOVE PRODUCT ERROR:", error);
 
-        return res.status(500).json({
-            success: false,
-            message: "Unable to remove this product.",
-        });
+        return sendError(res, "Unable to remove this product.");
     }
 };
 
@@ -230,7 +185,7 @@ export const updateProduct = async (req, res) => {
     try {
         const { id, name, category, subcategory, description, price, sizes, bestseller } = req.body;
         const product = id ? await productModel.findById(id) : null;
-        if (!product) return res.json({ success: false, message: "Product not found." });
+        if (!product) return sendError(res, "Product not found.", 404);
 
         const parsedPrice = Number(price);
         let parsedSizes;
@@ -241,7 +196,7 @@ export const updateProduct = async (req, res) => {
         }
         const sizeError = validateSizes(parsedSizes);
         if (!name || !category || !subcategory || !description || !Number.isFinite(parsedPrice) || parsedPrice < 0 || sizeError) {
-            return res.json({ success: false, message: sizeError || "Please provide valid product details." });
+            return sendError(res, sizeError || "Please provide valid product details.", 400);
         }
 
         Object.assign(product, {
@@ -251,9 +206,9 @@ export const updateProduct = async (req, res) => {
         });
         if (uploadedFiles.length > 0) product.images = uploadedFiles.map((file) => file.filename);
         await product.save();
-        return res.json({ success: true, message: "Product updated successfully.", product });
+        return sendSuccess(res, { message: "Product updated successfully.", product });
     } catch (error) {
         await Promise.all(uploadedFiles.map((file) => fs.unlink(file.path).catch(() => {})));
-        return res.status(500).json({ success: false, message: error.message || "Unable to update product." });
+        return sendError(res, error.message || "Unable to update product.");
     }
 };

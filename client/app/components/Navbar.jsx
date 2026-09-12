@@ -1,23 +1,38 @@
 "use client"
 import Image from "next/image"
 import { assets } from "../assets/assets"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState, useSyncExternalStore } from "react"
 import Link from "next/link";
 import { Context } from "../context/Context";
 import { useRouter } from "next/navigation";
 
+const subscribeToMenu = (onStoreChange) => {
+    if (typeof window === "undefined") return () => {};
+
+    window.addEventListener("storage", onStoreChange);
+    window.addEventListener("menuchange", onStoreChange);
+    return () => {
+        window.removeEventListener("storage", onStoreChange);
+        window.removeEventListener("menuchange", onStoreChange);
+    };
+};
+
+const getMenuSnapshot = () => (
+    typeof window === "undefined" ? "home" : localStorage.getItem("menu") || "home"
+);
+
+const getServerMenuSnapshot = () => "home";
+
 export default function Navbar() {
     const { setSearchBar, isLogedin, cartItems } = useContext(Context);
-    const [menu, setMenu] = useState(() => (
-        typeof window === "undefined" ? "home" : localStorage.getItem("menu") || "home"
-    ));
+    const menu = useSyncExternalStore(subscribeToMenu, getMenuSnapshot, getServerMenuSnapshot);
     const [openSidebar, setOpenSidebar] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const router = useRouter();
 
     const navMenuHandler = (menuItem) => {
         localStorage.setItem("menu", menuItem);
-        setMenu(menuItem);
+        window.dispatchEvent(new Event("menuchange"));
     }
 
     useEffect(() => {

@@ -7,7 +7,7 @@ export const orderRouter = e.Router();
 
 orderRouter.post("/place-order", authMiddleware, placeOrder);
 orderRouter.get("/list-orders", authMiddleware, listOrders);
-orderRouter.get("/admin/list-orders", adminListOrders);
+orderRouter.get("/admin/list-orders", adminAuthMiddleware, adminListOrders);
 orderRouter.get("/verify-stripe", authMiddleware, verifyStripePayment);
 orderRouter.get("/cancel-stripe", authMiddleware, cancelStripePayment);
 orderRouter.post("/cancel-order/:orderId", authMiddleware, cancelOrder);
