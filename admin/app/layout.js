@@ -12,9 +12,9 @@ export default function RootLayout({ children }) {
       <head>
         <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet"></link>
       </head>
-      <ContextProvider>
-        <body>{children}</body>
-      </ContextProvider>
+      <body>
+        <ContextProvider>{children}</ContextProvider>
+      </body>
     </html>
   );
 }

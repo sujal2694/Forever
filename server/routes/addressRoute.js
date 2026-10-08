@@ -15,7 +15,7 @@ const addressRouter = express.Router();
 // these controllers run — that's what scopes every address to its owner.
 addressRouter.post("/add-address", authMiddleware, addAddress);
 addressRouter.get("/list-address", authMiddleware, listAddresses);
-addressRouter.get('/addresses', getAllAddresses)
+addressRouter.get('/addresses', adminAuthMiddleware, getAllAddresses)
 addressRouter.patch("/edit-address/:id", authMiddleware, editAddress);
 addressRouter.delete("/delete-address/:id", authMiddleware, deleteAddress);
 

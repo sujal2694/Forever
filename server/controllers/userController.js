@@ -23,12 +23,12 @@ export const registerUser = async (req, res) => {
             return sendError(res, "Email is incorrect.", 400)
         }
 
-        if (password.length < 8) {
+        if (typeof password !== 'string' || password.length < 8) {
             return sendError(res, 'Password is weak, make it at least 8 characters.', 400)
         }
 
         //number validation
-        if (!validator.isMobilePhone(number, 'en-IN')) {
+        if (typeof number !== 'string' || !validator.isMobilePhone(number, 'en-IN')) {
             return sendError(res, "Phone number is invalid.", 400)
         }
 
@@ -50,18 +50,18 @@ export const registerUser = async (req, res) => {
 
     } catch (error) {
         sendError(res, "Unable to register user")
-        console.log(error);
+        console.error("User registration failed:", error);
     }
 }
 
 const createToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET);
+    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 }
 
 export const loginUser = async (req, res) => {
     const { email, password } = req.body;
     try {
-        if (typeof email !== 'string') {
+        if (typeof email !== 'string' || typeof password !== 'string') {
             return sendError(res, "Invalid credentials", 401)
         }
 
@@ -81,7 +81,7 @@ export const loginUser = async (req, res) => {
         sendSuccess(res, { token })
 
     } catch (error) {
-        console.log(error);
+        console.error("User login failed:", error);
         sendError(res, "Unable to log in")
     }
 }
@@ -115,7 +115,8 @@ export const getUsers = async (req, res) => {
         const users = await userModel.find({}).select('-password');
         sendSuccess(res, { users });
     } catch (error) {
-        sendError(res, error.message);
+        console.error("User list lookup failed:", error);
+        sendError(res, "Unable to fetch users.");
     }
 };
 

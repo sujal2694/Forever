@@ -1,15 +1,16 @@
 /** @type {import('next').NextConfig} */
+const apiUrl = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000");
+
 const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '4000',
+        protocol: apiUrl.protocol.slice(0, -1),
+        hostname: apiUrl.hostname,
+        ...(apiUrl.port ? { port: apiUrl.port } : {}),
         pathname: '/images/**',
       },
     ],
-    dangerouslyAllowLocalIP: true, // only for local dev — see note below
   },
 };
 

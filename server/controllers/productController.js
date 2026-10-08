@@ -5,6 +5,10 @@ import { sendError, sendSuccess } from "../utils/response.js";
 
 const VALID_SIZES = ["S", "M", "L", "XL", "XXL"];
 
+const deleteUploadedFiles = async (files) => Promise.all(
+    files.map((file) => fs.unlink(file.path).catch(() => {}))
+);
+
 const parseSizes = (sizes) => {
     const parsed = typeof sizes === "string" ? JSON.parse(sizes) : sizes;
     if (!Array.isArray(parsed) || parsed.length === 0) return null;
@@ -51,6 +55,7 @@ export const addProduct = async (req, res) => {
             !subcategory ||
             !description
         ) {
+            await deleteUploadedFiles(uploadedFiles);
             return sendError(res, "Please fill all the fields.", 400);
         }
 
@@ -63,6 +68,7 @@ export const addProduct = async (req, res) => {
             Number.isNaN(parsedPrice) ||
             parsedPrice < 0
         ) {
+            await deleteUploadedFiles(uploadedFiles);
             return sendError(res, "Price must be a valid positive number.", 400);
         }
 
@@ -76,6 +82,7 @@ export const addProduct = async (req, res) => {
 
         const sizeError = validateSizes(parsedSizes);
         if (sizeError) {
+            await deleteUploadedFiles(uploadedFiles);
             return sendError(res, sizeError, 400);
         }
 
@@ -106,13 +113,9 @@ export const addProduct = async (req, res) => {
         console.log("ADD PRODUCT ERROR:", error);
 
         // Delete uploaded files if something failed
-        await Promise.all(
-            uploadedFiles.map((file) =>
-                fs.unlink(file.path).catch(() => {})
-            )
-        );
+        await deleteUploadedFiles(uploadedFiles);
 
-        return sendError(res, error.message || "Unable to add product.");
+        return sendError(res, "Unable to add product.");
     }
 };
 
@@ -185,7 +188,10 @@ export const updateProduct = async (req, res) => {
     try {
         const { id, name, category, subcategory, description, price, sizes, bestseller } = req.body;
         const product = id ? await productModel.findById(id) : null;
-        if (!product) return sendError(res, "Product not found.", 404);
+        if (!product) {
+            await deleteUploadedFiles(uploadedFiles);
+            return sendError(res, "Product not found.", 404);
+        }
 
         const parsedPrice = Number(price);
         let parsedSizes;
@@ -196,9 +202,11 @@ export const updateProduct = async (req, res) => {
         }
         const sizeError = validateSizes(parsedSizes);
         if (!name || !category || !subcategory || !description || !Number.isFinite(parsedPrice) || parsedPrice < 0 || sizeError) {
+            await deleteUploadedFiles(uploadedFiles);
             return sendError(res, sizeError || "Please provide valid product details.", 400);
         }
 
+        const previousImages = product.images || [];
         Object.assign(product, {
             name: name.trim(), category: category.trim(), subcategory: subcategory.trim(),
             description: description.trim(), price: parsedPrice, sizes: parsedSizes,
@@ -206,9 +214,13 @@ export const updateProduct = async (req, res) => {
         });
         if (uploadedFiles.length > 0) product.images = uploadedFiles.map((file) => file.filename);
         await product.save();
+        if (uploadedFiles.length > 0) {
+            await Promise.all(previousImages.map((image) => fs.unlink(path.join("uploads", image)).catch(() => {})));
+        }
         return sendSuccess(res, { message: "Product updated successfully.", product });
     } catch (error) {
-        await Promise.all(uploadedFiles.map((file) => fs.unlink(file.path).catch(() => {})));
-        return sendError(res, error.message || "Unable to update product.");
+        console.error("Product update failed:", error);
+        await deleteUploadedFiles(uploadedFiles);
+        return sendError(res, "Unable to update product.");
     }
 };

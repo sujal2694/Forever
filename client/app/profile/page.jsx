@@ -1,5 +1,6 @@
 "use client"
 import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { Context } from "../context/Context";
@@ -9,7 +10,8 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 
 const Profile = () => {
-    const { url, dashboardLink, setDashboardLink, token, fetchUserId } = useContext(Context);
+    const { url, dashboardLink, setDashboardLink, token, setToken, fetchUserId } = useContext(Context);
+    const router = useRouter();
     const [addAddress, setAddAddress] = useState(false);
     const [user, setUser] = useState({
         name: "",
@@ -33,8 +35,8 @@ const Profile = () => {
     const [editingAddressId, setEditingAddressId] = useState(null);
 
     const logOut = () => {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
+        setToken("");
+        router.push("/login");
     }
 
     const dashboardLinkHandler = (link) => {
@@ -452,17 +454,14 @@ const Profile = () => {
                                                             <span>Total</span>
                                                             <span className="ml-2 font-semibold text-gray-900">${order.totalAmount || 0}</span>
                                                         </div>
-                                                        <button
-                                                            onClick={() => handleCancelOrder(order._id)}
-                                                            disabled={order.status === 'delivered'}
-                                                            className={
-                                                                order.status === 'delivered'
-                                                                    ? "w-fit rounded-md border border-red-100 px-3 py-2 text-red-200 transition-all cursor-not-allowed"
-                                                                    : "w-fit rounded-md border border-red-300 px-3 py-2 text-red-600 transition-all hover:bg-red-50"
-                                                            }
-                                                        >
-                                                            Cancel Order
-                                                        </button>
+                                                        {!['delivered', 'shipped', 'out-for-delivery', 'cancelled'].includes(order.status) && (
+                                                            <button
+                                                                onClick={() => handleCancelOrder(order._id)}
+                                                                className="w-fit rounded-md border border-red-300 px-3 py-2 text-red-600 transition-all hover:bg-red-50"
+                                                            >
+                                                                Cancel Order
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))

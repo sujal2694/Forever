@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { assets } from '../assets/assets';
 
 function LoginScreen() {
-    const { setIsLogin, setToken, url } = useContext(Context);
+    const { setToken, url } = useContext(Context);
     const [isSignUp, setIsSignUp] = useState("sign-up");
     const [loading, setLoading] = useState(false);
     const [adminData, setAdminData] = useState({
@@ -51,7 +51,6 @@ function LoginScreen() {
                     number: "",
                     password: ""
                 });
-                setIsLogin(true);
                 toast.success("Login successful")
             } else {
                 toast.error(response.data.message)

@@ -8,7 +8,7 @@ import Footer from '../components/Footer'
 import { Context } from '../context/Context'
 
 const Contact = () => {
-    const { fetchSubscriptionStatus } = useContext(Context);
+    const { subscriptionStatus } = useContext(Context);
     const [form, setForm] = useState({ firstName: "", lastName: "", phone: "", email: "", message: "" });
     const [formState, setFormState] = useState("idle");
 
@@ -91,7 +91,7 @@ const Contact = () => {
                     </section>
                 </div>
                 <div className="mb-8 mt-20 sm:mt-28">
-                    {fetchSubscriptionStatus() === "active" && <Subscription />}
+                    {subscriptionStatus === "active" && <Subscription />}
                 </div>
                 <Footer />
             </main>

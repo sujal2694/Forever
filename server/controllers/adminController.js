@@ -7,7 +7,6 @@ import { sendError, sendSuccess } from '../utils/response.js';
 export const registerAdmin = async (req, res) => {
     const { email, password, orgname, ownname, number } = req.body;
     try {
-
         if (typeof email !== 'string' || !validator.isEmail(email)) {
             return sendError(res, "Email is incorrect.", 400)
         }
@@ -51,8 +50,8 @@ export const registerAdmin = async (req, res) => {
         sendSuccess(res, { token, message: "Registration successful" })
 
     } catch (error) {
-        console.log(error);
-        sendError(res, "Unable to register admin")
+        console.error("Admin registration failed:", error);
+        sendError(res, "Unable to register admin.");
     }
 }
 
@@ -84,8 +83,8 @@ export const loginAdmin = async (req, res) => {
         sendSuccess(res, { token, message: "Login successful" })
 
     } catch (error) {
-        console.log(error);
-        sendError(res, "Unable to log in")
+        console.error("Admin login failed:", error);
+        sendError(res, "Unable to log in.");
     }
 }
 
@@ -98,7 +97,7 @@ export const getAdminDetails = async (req, res) => {
         }
         sendSuccess(res, { admin });
     } catch (error) {
-        console.log(error);
-        sendError(res, "Error fetching admin details");
+        console.error("Admin profile lookup failed:", error);
+        sendError(res, "Unable to fetch admin details.");
     }
 }

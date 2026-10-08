@@ -48,9 +48,10 @@ export const ContextProvider = ({ children }) => {
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
     // const url = "https://forever-r56t.onrender.com";
-    const url = "http://localhost:4000";
+    const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
     const [cartItems, setCartItems] = useState({}); // { itemId: { size: qty } }
     const [productList, setProductList] = useState([]);
+    const [subscriptionStatus, setSubscriptionStatus] = useState(null);
     const token = useSyncExternalStore(subscribeToToken, getTokenSnapshot, getServerTokenSnapshot);
     const setToken = (nextToken) => {
         if (typeof window === "undefined") return;
@@ -220,18 +221,6 @@ export const ContextProvider = ({ children }) => {
         }
     };
 
-    const fetchSubscriptionStatus = async () => {
-        try {
-            const currentToken = localStorage.getItem("token");
-            const response = await axios.get(url + '/api/subscription/status', { headers: { token: currentToken } });
-            if (response.data.success) {
-                return response.data.status;
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     useEffect(() => {
         let cancelled = false;
 
@@ -256,8 +245,6 @@ export const ContextProvider = ({ children }) => {
     useEffect(() => {
         if (!token) return;
 
-        fetchUserId();
-
         const loadCartData = async () => {
             try {
                 const response = await axios.post(
@@ -278,6 +265,26 @@ export const ContextProvider = ({ children }) => {
         };
 
         loadCartData();
+    }, [token, url]);
+
+    useEffect(() => {
+        if (!token) return;
+
+        let cancelled = false;
+        axios.get(`${url}/api/subscription/status`, { headers: { token } })
+            .then((response) => {
+                if (!cancelled) setSubscriptionStatus(response.data?.active ? "active" : null);
+            })
+            .catch((error) => {
+                if (!cancelled) {
+                    console.error("Subscription status fetch failed", error);
+                    setSubscriptionStatus(null);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [token, url]);
 
     const sizePopupProduct = productList.find((p) => p._id === sizePopupItemId);
@@ -303,7 +310,7 @@ export const ContextProvider = ({ children }) => {
         id,
         setId,
         fetchUserId,
-        fetchSubscriptionStatus,
+        subscriptionStatus: token ? subscriptionStatus : null,
         openSizePopup,
         closeSizePopup,
     };

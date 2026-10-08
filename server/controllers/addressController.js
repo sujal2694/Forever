@@ -53,7 +53,8 @@ export const addAddress = async (req, res) => {
         const savedAddress = await newAddress.save();
         sendSuccess(res, { data: savedAddress }, 201);
     } catch (error) {
-        sendError(res, error.message, 500);
+        console.error("Address creation failed:", error);
+        sendError(res, "Unable to save address.");
     }
 };
 
@@ -67,7 +68,8 @@ export const listAddresses = async (req, res) => {
         const addresses = await addressModel.find({ userId }).sort({ createdAt: -1 });
         sendSuccess(res, { data: addresses });
     } catch (error) {
-        sendError(res, error.message, 500);
+        console.error("Address listing failed:", error);
+        sendError(res, "Unable to fetch addresses.");
     }
 };
 
@@ -120,7 +122,8 @@ export const editAddress = async (req, res) => {
 
         sendSuccess(res, { data: updatedAddress });
     } catch (error) {
-        sendError(res, error.message, 500);
+        console.error("Address update failed:", error);
+        sendError(res, "Unable to update address.");
     }
 };
 
@@ -142,7 +145,8 @@ export const deleteAddress = async (req, res) => {
 
         sendSuccess(res, { message: "Address deleted successfully" });
     } catch (error) {
-        sendError(res, error.message, 500);
+        console.error("Address deletion failed:", error);
+        sendError(res, "Unable to delete address.");
     }
 };
 
