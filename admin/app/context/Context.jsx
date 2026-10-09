@@ -8,8 +8,8 @@ export const ContextProvider = ({ children }) => {
         typeof window === "undefined" ? "" : localStorage.getItem("adminToken") || ""
     ));
     const [link, setLink] = useState('dashboard');
-    const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-    // const url = "https://forever-r56t.onrender.com"
+    // const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    const url = "https://forever-gagx.vercel.app"
 
     const contextValue = {
         url,

@@ -4,3 +4,4 @@ dist/
 build/
 .next/
 *.log
+.env.example
