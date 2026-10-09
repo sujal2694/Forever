@@ -9,7 +9,7 @@ export const ContextProvider = ({ children }) => {
     ));
     const [link, setLink] = useState('dashboard');
     // const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-    const url = "https://forever-gagx.vercel.app"
+    const url = "https://forever-backend-cywq.onrender.com"
 
     const contextValue = {
         url,

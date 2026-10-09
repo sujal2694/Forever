@@ -47,7 +47,7 @@ const normalizeProductSizes = (value) => {
 export const ContextProvider = ({ children }) => {
     const [searchBar, setSearchBar] = useState(true);
     const currency = 86;
-    const url = "https://forever-gagx.vercel.app";
+    const url = "https://forever-backend-cywq.onrender.com";
     // const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
     const [cartItems, setCartItems] = useState({}); // { itemId: { size: qty } }
     const [productList, setProductList] = useState([]);
