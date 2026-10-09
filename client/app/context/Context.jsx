@@ -1,6 +1,6 @@
 "use client"
 import axios from "axios";
-import { createContext, useEffect, useState, useSyncExternalStore } from "react";
+import { createContext, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import SizePopUp from "../components/SizePopUp";
 import { toast } from "react-toastify";
 
@@ -50,6 +50,7 @@ export const ContextProvider = ({ children }) => {
     const url = "https://forever-backend-cywq.onrender.com";
     // const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
     const [cartItems, setCartItems] = useState({}); // { itemId: { size: qty } }
+    const cartRevision = useRef(0);
     const [productList, setProductList] = useState([]);
     const [subscriptionStatus, setSubscriptionStatus] = useState(null);
     const token = useSyncExternalStore(subscribeToToken, getTokenSnapshot, getServerTokenSnapshot);
@@ -70,6 +71,16 @@ export const ContextProvider = ({ children }) => {
 
     const openSizePopup = (itemId) => setSizePopupItemId(itemId);
     const closeSizePopup = () => setSizePopupItemId(null);
+
+    const updateCartItems = (updater) => {
+        cartRevision.current += 1;
+        setCartItems(updater);
+    };
+
+    const clearCart = useCallback(() => {
+        cartRevision.current += 1;
+        setCartItems({});
+    }, []);
 
     const addToCart = async (itemId, size) => {
         // No size given -> open the popup and stop, don't add yet
@@ -126,7 +137,7 @@ export const ContextProvider = ({ children }) => {
                 );
             }
 
-            setCartItems((prev) => {
+            updateCartItems((prev) => {
                 const sizes = { ...(prev[itemId] || {}) };
                 sizes[normalizedSize] = (sizes[normalizedSize] || 0) + 1;
                 return { ...prev, [itemId]: sizes };
@@ -151,7 +162,7 @@ export const ContextProvider = ({ children }) => {
                 );
             }
 
-            setCartItems((prev) => {
+            updateCartItems((prev) => {
                 const sizes = { ...(prev[itemId] || {}) };
                 const normalizedSize = String(size).toUpperCase();
                 if (!sizes[normalizedSize]) return prev;
@@ -193,13 +204,14 @@ export const ContextProvider = ({ children }) => {
 
     const fetchCartData = async (userToken = token) => {
         if (!userToken) return;
+        const revision = cartRevision.current;
         try {
             const response = await axios.post(
                 `${url}/api/cart/get-cart`,
                 {},
                 { headers: { token: userToken } }
             );
-            if (response.data?.success) {
+            if (response.data?.success && revision === cartRevision.current) {
                 setCartItems(response.data.cartData || {});
             }
         } catch (error) {
@@ -243,6 +255,7 @@ export const ContextProvider = ({ children }) => {
     }, [url]);
 
     useEffect(() => {
+        const revision = ++cartRevision.current;
         if (!token) return;
 
         const loadCartData = async () => {
@@ -252,7 +265,7 @@ export const ContextProvider = ({ children }) => {
                     {},
                     { headers: { token } }
                 );
-                if (response.data?.success) {
+                if (response.data?.success && revision === cartRevision.current) {
                     setCartItems(response.data.cartData || {});
                 }
             } catch (error) {
@@ -298,6 +311,7 @@ export const ContextProvider = ({ children }) => {
         isLogedin,
         cartItems,
         setCartItems,
+        clearCart,
         removeFromCart,
         addToCart,
         getTotalCartAmt,

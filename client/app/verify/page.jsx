@@ -8,7 +8,7 @@ import { Context } from "../context/Context";
 function VerifyContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { url, token } = useContext(Context);
+  const { url, token, clearCart } = useContext(Context);
   const [status, setStatus] = useState("Verifying payment...");
 
   useEffect(() => {
@@ -29,6 +29,7 @@ function VerifyContent() {
         });
 
         if (response.data.success) {
+          clearCart();
           setStatus("Payment verified successfully. Redirecting to your orders...");
           setTimeout(() => router.push("/profile"), 1500);
         } else {
@@ -41,7 +42,7 @@ function VerifyContent() {
     };
 
     verify();
-  }, [searchParams, router, url, token]);
+  }, [searchParams, router, url, token, clearCart]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

@@ -232,15 +232,18 @@ export const placeOrder = async (req, res) => {
 
         await adjustStock(finalItems, -1, session);
         const savedOrder = await order.save({ session });
+        if (!isStripe) {
+            await userModel.updateOne(
+                { _id: userId },
+                { $set: { cartData: {} } },
+                { session }
+            );
+        }
         await session.commitTransaction();
         await session.endSession();
 
         // Cash on delivery: done.
         if (!isStripe) {
-            // Clearing the cart must never fail the order (a retry would create a duplicate).
-            userModel
-                .findByIdAndUpdate(userId, { cartData: {} })
-                .catch((e) => console.error("Cart clear failed after COD order:", e));
             return sendSuccess(res, { order: savedOrder });
         }
 

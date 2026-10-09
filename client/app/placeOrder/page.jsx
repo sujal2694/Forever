@@ -10,7 +10,7 @@ import { products } from "../assets/assets";
 import Image from "next/image";
 
 export default function PlaceOrder() {
-    const { url, cartItems, setCartItems, productList, currency, token } = useContext(Context);
+    const { url, cartItems, clearCart, productList, currency, token } = useContext(Context);
     const availableProducts = productList?.length ? productList : products;
 
     const router = useRouter();
@@ -131,8 +131,6 @@ export default function PlaceOrder() {
                 return;
             }
 
-            setCartItems({});
-
             // Stripe: send the browser to Stripe's hosted checkout.
             if (isStripePayment && res.data.session_url) {
                 window.location.assign(res.data.session_url);
@@ -140,6 +138,7 @@ export default function PlaceOrder() {
             }
 
             // COD (or any non-redirect method): order is already placed, go straight to order history.
+            clearCart();
             router.push("/profile");
         } catch (err) {
             console.error("placeOrder request failed:", err);
