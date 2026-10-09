@@ -12,6 +12,7 @@ import { adminRouter } from './routes/adminRoutes.js';
 import { subscriptionRouter } from './routes/subscriptionRoutes.js';
 import { stripeWebhook } from './controllers/orderController.js';
 import { sendError } from './utils/response.js';
+import { UPLOADS_DIR } from './utils/uploadStorage.js';
 
 const app = express();
 
@@ -45,7 +46,7 @@ app.use((req, res, next) => {
 
 // api endpoints
 app.use("/api/product", productRouter);
-app.use("/images", express.static('uploads'));
+app.use("/images", express.static(UPLOADS_DIR));
 app.use('/api/user', userRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/cart', cartRouter);
@@ -97,4 +98,3 @@ startServer().catch((error) => {
     console.error("Server startup failed:", error.message);
     process.exit(1);
 });
-

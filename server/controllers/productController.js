@@ -2,6 +2,7 @@ import { productModel } from "../models/productModel.js";
 import fs from "fs/promises";
 import path from "path";
 import { sendError, sendSuccess } from "../utils/response.js";
+import { UPLOADS_DIR } from "../utils/uploadStorage.js";
 
 const VALID_SIZES = ["S", "M", "L", "XL", "XXL"];
 
@@ -170,7 +171,7 @@ export const removeProduct = async (req, res) => {
         await Promise.all(
             (product.images || []).map((image) =>
                 fs
-                    .unlink(path.join("uploads", image))
+                    .unlink(path.join(UPLOADS_DIR, image))
                     .catch(() => {})
             )
         );
@@ -215,7 +216,7 @@ export const updateProduct = async (req, res) => {
         if (uploadedFiles.length > 0) product.images = uploadedFiles.map((file) => file.filename);
         await product.save();
         if (uploadedFiles.length > 0) {
-            await Promise.all(previousImages.map((image) => fs.unlink(path.join("uploads", image)).catch(() => {})));
+            await Promise.all(previousImages.map((image) => fs.unlink(path.join(UPLOADS_DIR, image)).catch(() => {})));
         }
         return sendSuccess(res, { message: "Product updated successfully.", product });
     } catch (error) {

@@ -1,7 +1,5 @@
 import express from "express";
 import multer from "multer";
-import path from "path";
-import { fileURLToPath } from "url";
 
 import {
     addProduct,
@@ -11,17 +9,13 @@ import {
     updateProduct,
 } from "../controllers/productController.js";
 import { adminAuthMiddleware } from "../middleware/adminMiddleware.js";
+import { UPLOADS_DIR } from "../utils/uploadStorage.js";
 
 export const productRouter = express.Router();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const uploadDir = path.join(__dirname, "../uploads");
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, uploadDir);
+        cb(null, UPLOADS_DIR);
     },
 
     filename: (req, file, cb) => {
