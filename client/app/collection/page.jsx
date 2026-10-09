@@ -240,15 +240,15 @@ const Collection = () => {
                                 </button>
                                 <ul className={`mt-3 text-sm text-gray-400 font-light tracking-wider ${isOpen ? "block" : "hidden"}`}>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="Men" checked={category.includes("men")} onChange={toggleCategory} />
+                                        <input className="w-3" type="checkbox" value="men" checked={category.includes("men")} onChange={toggleCategory} />
                                         <p>Men</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="Women" checked={category.includes("women")} onChange={toggleCategory} />
+                                        <input className="w-3" type="checkbox" value="women" checked={category.includes("women")} onChange={toggleCategory} />
                                         <p>Women</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="Kids" checked={category.includes("kids")} onChange={toggleCategory} />
+                                        <input className="w-3" type="checkbox" value="kids" checked={category.includes("kids")} onChange={toggleCategory} />
                                         <p>Kids</p>
                                     </li>
                                 </ul>
@@ -261,15 +261,15 @@ const Collection = () => {
                                 </button>
                                 <ul className={`mt-3 text-sm text-gray-400 font-light tracking-wider ${isSubOpen ? "block" : "hidden"}`}>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="Topwear" checked={subCategory.includes("topwear")} onChange={toggleSubCategory} />
+                                        <input className="w-3" type="checkbox" value="topwear" checked={subCategory.includes("topwear")} onChange={toggleSubCategory} />
                                         <p>Topwear</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="Bottomwear" checked={subCategory.includes("bottomwear")} onChange={toggleSubCategory} />
+                                        <input className="w-3" type="checkbox" value="bottomwear" checked={subCategory.includes("bottomwear")} onChange={toggleSubCategory} />
                                         <p>Bottomwear</p>
                                     </li>
                                     <li className="flex items-center gap-3">
-                                        <input className="w-3" type="checkbox" value="Winterwear" checked={subCategory.includes("winterwear")} onChange={toggleSubCategory} />
+                                        <input className="w-3" type="checkbox" value="winterwear" checked={subCategory.includes("winterwear")} onChange={toggleSubCategory} />
                                         <p>Winterwear</p>
                                     </li>
                                 </ul>
