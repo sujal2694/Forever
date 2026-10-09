@@ -15,10 +15,39 @@ const MAX_ORDER_LINES = 30;
 const MAX_QTY_PER_LINE = 10; 
 const SUBSCRIBER_DISCOUNT_RATE = 0.2;
 
-const ALLOWED_ORIGINS = (process.env.CLIENT_URLS || "http://localhost:3000")
-    .split(",")
-    .map((s) => s.trim().replace(/\/$/, ""))
+const normalizeOrigin = (value) => {
+    if (typeof value !== "string") return null;
+
+    try {
+        const url = new URL(value.trim());
+        if (
+            !["http:", "https:"].includes(url.protocol) ||
+            url.username ||
+            url.password ||
+            url.pathname !== "/" ||
+            url.search ||
+            url.hash
+        ) {
+            return null;
+        }
+        return url.origin;
+    } catch {
+        return null;
+    }
+};
+
+const ALLOWED_ORIGINS = [
+    ...(process.env.CLIENT_URLS || "http://localhost:3000").split(","),
+    ...(process.env.CORS_ORIGINS || "http://localhost:3000,http://localhost:3001").split(","),
+]
+    .map(normalizeOrigin)
     .filter(Boolean);
+
+export const isAllowedCheckoutOrigin = (origin, allowedOrigins) => {
+    const normalizedOrigin = normalizeOrigin(origin);
+    return normalizedOrigin !== null &&
+        allowedOrigins.some((allowedOrigin) => normalizeOrigin(allowedOrigin) === normalizedOrigin);
+};
 
 // Delivery fee is decided on the server. Make this match what your frontend shows.
 const FLAT_DELIVERY_FEE = Number.isFinite(Number(process.env.DELIVERY_FEE))
@@ -120,11 +149,12 @@ export const placeOrder = async (req, res) => {
         }
 
         // Validate origin before doing any work or touching stock.
-        const baseUrl = String(origin || "").trim().replace(/\/$/, "");
-        if (isStripe && !baseUrl) {
+        const requestedOrigin = String(origin || "").trim();
+        const baseUrl = normalizeOrigin(requestedOrigin);
+        if (isStripe && !requestedOrigin) {
             return sendError(res, "Missing origin for Stripe checkout", 400);
         }
-        if (isStripe && !ALLOWED_ORIGINS.includes(baseUrl)) {
+        if (isStripe && (!baseUrl || !isAllowedCheckoutOrigin(baseUrl, ALLOWED_ORIGINS))) {
             return sendError(res, "Invalid origin", 400);
         }
 

@@ -44,13 +44,11 @@ export const registerUser = async (req, res) => {
 
         const user = await newUser.save();
         const token = createToken(user._id)
-        sendSuccess(res, { token })
-
-
+        return sendSuccess(res, { token })
 
     } catch (error) {
-        sendError(res, "Unable to register user")
         console.error("User registration failed:", error);
+        return sendError(res, "Unable to register user")
     }
 }
 
@@ -78,11 +76,11 @@ export const loginUser = async (req, res) => {
         }
 
         const token = createToken(user._id);
-        sendSuccess(res, { token })
+        return sendSuccess(res, { token })
 
     } catch (error) {
         console.error("User login failed:", error);
-        sendError(res, "Unable to log in")
+        return sendError(res, "Unable to log in")
     }
 }
 
@@ -103,20 +101,20 @@ export const getProfile = async (req, res) => {
             return sendError(res, "Not authorized. Login again.", 401);
         }
 
-        sendSuccess(res, { user });
+        return sendSuccess(res, { user });
     } catch (error) {
         console.error("Error fetching profile:", error);
-        sendError(res, "Unable to fetch profile.");
+        return sendError(res, "Unable to fetch profile.");
     }
 }
 
 export const getUsers = async (req, res) => {
     try {
         const users = await userModel.find({}).select('-password');
-        sendSuccess(res, { users });
+        return sendSuccess(res, { users });
     } catch (error) {
         console.error("User list lookup failed:", error);
-        sendError(res, "Unable to fetch users.");
+        return sendError(res, "Unable to fetch users.");
     }
 };
 
@@ -134,10 +132,10 @@ export const getUserById = async (req, res) => {
             return sendError(res, "User not found.", 404);
         }
 
-        sendSuccess(res, { user });
+        return sendSuccess(res, { user });
 
     } catch (error) {
         console.error("Error fetching user by id:", error);
-        sendError(res, "Unable to fetch user.");
+        return sendError(res, "Unable to fetch user.");
     }
 }

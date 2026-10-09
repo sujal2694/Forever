@@ -10,6 +10,7 @@ import axios from "axios"
 const Page = () => {
     const { cartItems, addToCart, removeFromCart, url, isLogedin } = useContext(Context);
     const [availableProducts, setAvailableProducts] = useState([]);
+    const [error, setError] = useState("");
 
     const fetchAvailableProducts = async () => {
         try {
@@ -45,7 +46,7 @@ const Page = () => {
 
     const handlePay = () => {
         if (subtotal === 0) {
-            alert("Your cart is empty. Please add some products");
+            setError("Your cart is empty. Please add product!")
         }
     }
 
@@ -138,20 +139,23 @@ const Page = () => {
                     </section>
 
                     <aside className="w-full border border-gray-200 bg-gray-50 p-5 lg:sticky lg:top-28" aria-label="Cart summary">
-                            <h2 className="text-2xl font-medium tracking-tight">Order summary</h2>
-                            <div className="mt-4 w-full border-t border-gray-300 py-4">
-                                <ul className="grid gap-4 text-sm text-gray-600">
-                                    <li className="flex items-center justify-between">Total products:<span>{totalProducts}</span></li>
-                                    <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(1)}</span></li>
-                                    <p className="h-px w-full bg-gray-300"></p>
-                                    <li className="flex items-center justify-between text-base font-medium text-gray-900">Total price: <span>${subtotal.toFixed(1)}</span></li>
-                                </ul>
-                                {subtotal > 0 ? (
-                                    <Link href="/placeOrder" className="mt-6 block w-full bg-black py-3 text-center text-sm font-semibold uppercase tracking-wider text-white transition-all duration-300 hover:bg-gray-800">Proceed to checkout</Link>
-                                ) : (
+                        <h2 className="text-2xl font-medium tracking-tight">Order summary</h2>
+                        <div className="mt-4 w-full border-t border-gray-300 py-4">
+                            <ul className="grid gap-4 text-sm text-gray-600">
+                                <li className="flex items-center justify-between">Total products:<span>{totalProducts}</span></li>
+                                <li className="flex items-center justify-between">MRP: <span>${subtotal.toFixed(1)}</span></li>
+                                <p className="h-px w-full bg-gray-300"></p>
+                                <li className="flex items-center justify-between text-base font-medium text-gray-900">Total price: <span>${subtotal.toFixed(1)}</span></li>
+                            </ul>
+                            {subtotal > 0 ? (
+                                <Link href="/placeOrder" className="mt-6 block w-full bg-black py-3 text-center text-sm font-semibold uppercase tracking-wider text-white transition-all duration-300 hover:bg-gray-800">Proceed to checkout</Link>
+                            ) : (
+                                <>
                                     <button type="button" onClick={handlePay} className="mt-6 w-full cursor-pointer bg-gray-300 py-3 text-center text-sm font-semibold uppercase tracking-wider text-gray-600 transition-all duration-300 hover:bg-gray-400">Proceed to checkout</button>
-                                )}
-                            </div>
+                                    <p className="text-sm mt-2 text-red-600">{error}</p>
+                                </>
+                            )}
+                        </div>
                     </aside>
                 </div>
             </main>

@@ -8,53 +8,53 @@ import { userModel } from "../models/userModel.js";
 // from req.body — a client could otherwise spoof another user's id.
 
 export const addAddress = async (req, res) => {
-    const userId = req.userId;
-    if (!userId) {
-        return sendError(res, "Unauthorized", 401);
-    }
-
-    const { name, number, landmark, address, city, state, pincode } = req.body;
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-        return sendError(res, "User not found", 404);
-    }
-
-    if (typeof name !== 'string' || name.trim().length < 2 || name.length > 50) {
-        return sendError(res, "Invalid name", 400);
-    }
-
-    const numberStr = String(number).trim();
-    if (!/^[1-9][0-9]{9}$/.test(numberStr)) {
-        return sendError(res, "Invalid number", 400);
-    }
-
-    if (typeof address !== 'string' || address.trim().length < 5 || address.length > 200) {
-        return sendError(res, "Invalid address", 400);
-    }
-
-    if (typeof city !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(city.trim())) {
-        return sendError(res, "Invalid city", 400);
-    }
-
-    if (typeof state !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(state.trim())) {
-        return sendError(res, "Invalid state", 400);
-    }
-
-    const pincodeStr = String(pincode).trim();
-    if (!/^[1-9][0-9]{5}$/.test(pincodeStr)) {
-        return sendError(res, "Invalid pincode", 400);
-    }
-
     try {
+        const userId = req.userId;
+        if (!userId) {
+            return sendError(res, "Unauthorized", 401);
+        }
+
+        const { name, number, landmark, address, city, state, pincode } = req.body;
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return sendError(res, "User not found", 404);
+        }
+
+        if (typeof name !== 'string' || name.trim().length < 2 || name.length > 50) {
+            return sendError(res, "Invalid name", 400);
+        }
+
+        const numberStr = String(number).trim();
+        if (!/^[1-9][0-9]{9}$/.test(numberStr)) {
+            return sendError(res, "Invalid number", 400);
+        }
+
+        if (typeof address !== 'string' || address.trim().length < 5 || address.length > 200) {
+            return sendError(res, "Invalid address", 400);
+        }
+
+        if (typeof city !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(city.trim())) {
+            return sendError(res, "Invalid city", 400);
+        }
+
+        if (typeof state !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(state.trim())) {
+            return sendError(res, "Invalid state", 400);
+        }
+
+        const pincodeStr = String(pincode).trim();
+        if (!/^[1-9][0-9]{5}$/.test(pincodeStr)) {
+            return sendError(res, "Invalid pincode", 400);
+        }
+
         const newAddress = new addressModel({
             userId, name, number, landmark, address, city, state, pincode
         });
         const savedAddress = await newAddress.save();
-        sendSuccess(res, { data: savedAddress }, 201);
+        return sendSuccess(res, { data: savedAddress }, 201);
     } catch (error) {
         console.error("Address creation failed:", error);
-        sendError(res, "Unable to save address.");
+        return sendError(res, "Unable to save address.");
     }
 };
 
@@ -74,41 +74,41 @@ export const listAddresses = async (req, res) => {
 };
 
 export const editAddress = async (req, res) => {
-    const userId = req.userId;
-    if (!userId) {
-        return sendError(res, "Unauthorized", 401);
-    }
-
-    const { id } = req.params;
-    const { name, number, landmark, address, city, state, pincode } = req.body;
-
-    if (typeof name !== 'string' || name.trim().length < 2 || name.length > 50) {
-        return sendError(res, "Invalid name", 400);
-    }
-
-    const numberStr = String(number).trim();
-    if (!/^[1-9][0-9]{9}$/.test(numberStr)) {
-        return sendError(res, "Invalid number", 400);
-    }
-
-    if (typeof address !== 'string' || address.trim().length < 5 || address.length > 200) {
-        return sendError(res, "Invalid address", 400);
-    }
-
-    if (typeof city !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(city.trim())) {
-        return sendError(res, "Invalid city", 400);
-    }
-
-    if (typeof state !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(state.trim())) {
-        return sendError(res, "Invalid state", 400);
-    }
-
-    const pincodeStr = String(pincode).trim();
-    if (!/^[1-9][0-9]{5}$/.test(pincodeStr)) {
-        return sendError(res, "Invalid pincode", 400);
-    }
-
     try {
+        const userId = req.userId;
+        if (!userId) {
+            return sendError(res, "Unauthorized", 401);
+        }
+
+        const { id } = req.params;
+        const { name, number, landmark, address, city, state, pincode } = req.body;
+
+        if (typeof name !== 'string' || name.trim().length < 2 || name.length > 50) {
+            return sendError(res, "Invalid name", 400);
+        }
+
+        const numberStr = String(number).trim();
+        if (!/^[1-9][0-9]{9}$/.test(numberStr)) {
+            return sendError(res, "Invalid number", 400);
+        }
+
+        if (typeof address !== 'string' || address.trim().length < 5 || address.length > 200) {
+            return sendError(res, "Invalid address", 400);
+        }
+
+        if (typeof city !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(city.trim())) {
+            return sendError(res, "Invalid city", 400);
+        }
+
+        if (typeof state !== 'string' || !/^[A-Za-z\s]{2,30}$/.test(state.trim())) {
+            return sendError(res, "Invalid state", 400);
+        }
+
+        const pincodeStr = String(pincode).trim();
+        if (!/^[1-9][0-9]{5}$/.test(pincodeStr)) {
+            return sendError(res, "Invalid pincode", 400);
+        }
+
         // { _id: id, userId } ensures a user can only ever edit their own address
         const updatedAddress = await addressModel.findOneAndUpdate(
             { _id: id, userId },
@@ -120,10 +120,10 @@ export const editAddress = async (req, res) => {
             return sendError(res, "Address not found", 404);
         }
 
-        sendSuccess(res, { data: updatedAddress });
+        return sendSuccess(res, { data: updatedAddress });
     } catch (error) {
         console.error("Address update failed:", error);
-        sendError(res, "Unable to update address.");
+        return sendError(res, "Unable to update address.");
     }
 };
 
